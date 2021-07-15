@@ -1,0 +1,85 @@
+{% extends 'mvcapp/base.html' %}
+{% load humanize %}
+{% load static %}
+{% block titulo %}Categorias{% endblock %}
+{% block navegacion %}CARRITO{% endblock %}
+{% block main %}
+    {% if productos %}
+        <div class="row">
+            <form method="post" action="{% url 'mainapp:cobrar' %}">
+                {% csrf_token %}
+                <div class="col-lg-10">
+                    <button type="submit" class="btn btn-primary btn-round"> Cobrar</button>
+                </div>
+            </form>
+            <div class="col-lg-4">
+                <h2 style="color: white;">Total: $ {{ total|floatformat:2|intcomma }}</h2>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-shopping">
+                <thead>
+                <tr>
+                    <th class="text-center"></th>
+                    <th>Producto</th>
+                    <th class="th-description">Cantidad</th>
+                    <th class="text-right">Precio</th>
+                    <th class="text-right">Total</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for producto in productos %}
+                    <tr>
+
+                        <td>
+                            <div class="img-container">
+                                <img src="{{ producto.image }}" alt="...">
+                            </div>
+                        </td>
+                        <td class="td-name">
+                            {{ producto.name }}
+                        </td>
+                        <td class="td-number">
+                            {{ producto.quantity }}
+                        </td>
+                        <td class="td-number">
+                            <small>$</small>{{ producto.price|floatformat:2|intcomma }}
+                        </td>
+                        <td class="td-number">
+                            <small>$</small>{{ producto.total|floatformat:2|intcomma }}
+                        </td>
+                        <td class="td-actions">
+                            <form method="post" action="{% url 'mainapp:eliminar_producto' producto.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" rel="tooltip" data-placement="left" title="Quitar producto"
+                                        class="btn btn-simple">
+                                    <i class="material-icons">close</i>
+                                </button>
+                            </form>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col col-sm-8">
+                <span style="color: white">No existen productos registrados con esa categoria.</span>
+                <button onclick="goBack()" class="btn btn-primary btn-round">regresar al
+                    menu anterior.
+                </button>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+{% endblock %}

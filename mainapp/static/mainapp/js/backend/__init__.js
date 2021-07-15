@@ -28,10 +28,6 @@ miapp.backend.ajax = function (obj) {
     if (obj.url.startsWith("/")) {
         obj.url = obj.url.substring(1);
     }
-    // agregar el / final si no lo tiene
-    if (!obj.url.endsWith("/")) {
-        obj.url += "/";
-    }
     // Agregar el hostname a la ruta solicitada
     obj.url = miapp.backend.url + obj.url;
 
