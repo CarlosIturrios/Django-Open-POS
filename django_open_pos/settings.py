@@ -86,8 +86,14 @@ WSGI_APPLICATION = 'django_open_pos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_open_pos',
+        'USER': 'user001',
+        'PASSWORD': 'j23FJwHFvHJUyzkZ',
+        'HOST': 'db',
+        'PORT': '3306',
+        'CHARSET': 'utf8mb4',
+        'COLLATION': 'utf8mb4_unicode_ci',
     }
 }
 
