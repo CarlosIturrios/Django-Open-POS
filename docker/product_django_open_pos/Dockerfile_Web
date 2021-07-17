@@ -1,5 +1,7 @@
 FROM ubuntu:18.04
 
+RUN apt-get -y update
+
 RUN apt-get update && apt-get install -y \
     wget \
     libmariadbclient-dev \
@@ -21,7 +23,7 @@ RUN ln -s /usr/local/bin/wkhtmltopdf /usr/bin &&\
     ln -s /usr/local/bin/wkhtmltoimage /usr/bin &&\
     rm -f /wkhtmltox_0.12.1.4-2.bionic_amd64.deb
 
-RUN pip install uwsgi
+RUN pip3 install uwsgi
 
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
@@ -43,7 +45,7 @@ RUN pip3 install -r /var/www/django_open_pos/requirements.txt
 
 COPY . /var/www/django_open_pos
 
-RUN python /var/www/django_open_pos/manage.py collectstatic
+RUN python3 /var/www/django_open_pos/manage.py collectstatic
 
 EXPOSE 80
 

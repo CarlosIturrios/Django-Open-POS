@@ -10,6 +10,6 @@ services:
       - DJANGO_DEBUG=FALSE
     build:
       context: ../../
-      dockerfile: ""
+      dockerfile: docker/product_django_open_pos/Dockerfile_Web
     ports:
       - 8090:80
