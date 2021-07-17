@@ -1,22 +1,26 @@
 {% extends 'mvcapp/base.html' %}
 {% load static %}
-{% block navegacion %}CATEGORIAS{% endblock %}
+{% block titulo %}Categorias{% endblock %}
+{% block navegacion %}Categorias{% endblock %}
 {% block main %}
-    <div class="row">
-        {% for categoria in categorias %}
-            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                <a href="{% url 'mainapp:productos' categoria.pk %}">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-category">{{ categoria.description }}</h3>
-                            <div>
-                                <img alt={{ categoria.description }} src="{{ categoria.image.url }}" width="100%"
-                                     height="100%">
+    <div class="container-fluid">
+        <div class="row">
+            {% for categoria in categorias %}
+                <div class="col-12 col-sm-6 col-md-3">
+                    <a href="{% url 'mainapp:productos' categoria.pk %}">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-info elevation-1"><img
+                                    alt={{ categoria.description }} src="{{ categoria.image.url }}" width="100%"
+                                    height="100%"></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">{{ categoria.description }}</span>
                             </div>
+                            <!-- /.info-box-content -->
                         </div>
-                    </div>
-                </a>
-            </div>
-        {% endfor %}
+                    </a>
+                    <!-- /.info-box -->
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

@@ -1,68 +1,73 @@
 {% extends 'mvcapp/base.html' %}
 {% load humanize %}
 {% load static %}
-{% block titulo %}Categorias{% endblock %}
-{% block navegacion %}CARRITO{% endblock %}
+{% block titulo %}Carrito{% endblock %}
+{% block navegacion %}Carrito{% endblock %}
 {% block main %}
     {% if productos %}
         <div class="row">
-            <form method="post" action="{% url 'mainapp:cobrar' %}">
-                {% csrf_token %}
-                <div class="col-lg-10">
-                    <button type="submit" class="btn btn-primary btn-round"> Cobrar</button>
+            <div class="col-md-1"></div>
+            <div class="invoice col-md-10" style="border-radius: 3%">
+                <!-- title row -->
+                <div class="row">
+                    <div class="col-12">
+                        <br>
+                        <form method="post" action="{% url 'mainapp:cobrar' %}" class="float-right">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary form-control">
+                                <i class="fas fa-cash-register"></i> Cobrar
+                            </button>
+                        </form>
+                        <div>
+                            <h2 style="color: white;">Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                        </div>
+                    </div>
+                    <!-- /.col -->
                 </div>
-            </form>
-            <div class="col-lg-4">
-                <h2 style="color: white;">Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                <!-- Table row -->
+                <div class="row">
+                    <div class="col-12 table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for producto in productos %}
+                                <tr>
+                                    <td>
+                                        <img alt="{{ producto.description }}" src="{{ producto.image }}"
+                                             style="width: 64px; height: 64px;"
+                                             class="img-fluid mb-2">
+                                    </td>
+                                    <td>{{ producto.name }}</td>
+                                    <td>{{ producto.quantity }}</td>
+                                    <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
+                                    <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
+                                    <td>
+                                        <form method="post" action="{% url 'mainapp:eliminar_producto' producto.pk %}">
+                                            {% csrf_token %}
+                                            <button type="submit" rel="tooltip" data-placement="left"
+                                                    title="Quitar producto"
+                                                    class="btn btn-simple">
+                                                <i class="fas fa-eraser" style="color: white;"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.col -->
+                </div>
             </div>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-shopping">
-                <thead>
-                <tr>
-                    <th class="text-center"></th>
-                    <th>Producto</th>
-                    <th class="th-description">Cantidad</th>
-                    <th class="text-right">Precio</th>
-                    <th class="text-right">Total</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for producto in productos %}
-                    <tr>
-
-                        <td>
-                            <div class="img-container">
-                                <img src="{{ producto.image }}" alt="...">
-                            </div>
-                        </td>
-                        <td class="td-name">
-                            {{ producto.name }}
-                        </td>
-                        <td class="td-number">
-                            {{ producto.quantity }}
-                        </td>
-                        <td class="td-number">
-                            <small>$</small>{{ producto.price|floatformat:2|intcomma }}
-                        </td>
-                        <td class="td-number">
-                            <small>$</small>{{ producto.total|floatformat:2|intcomma }}
-                        </td>
-                        <td class="td-actions">
-                            <form method="post" action="{% url 'mainapp:eliminar_producto' producto.pk %}">
-                                {% csrf_token %}
-                                <button type="submit" rel="tooltip" data-placement="left" title="Quitar producto"
-                                        class="btn btn-simple">
-                                    <i class="material-icons">close</i>
-                                </button>
-                            </form>
-                        </td>
-
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
         </div>
     {% else %}
         <div class="row">

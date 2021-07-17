@@ -15,4 +15,6 @@ urlpatterns = [
     path('', views.dashboard, name='index'),
     path('orden/', views.carrito_view, name='carrito'),
     path('cobrar/', views.cobrar, name='cobrar'),
+    path('recibo/<int:pk>', views.GeneratePDF, name='recibo'),
+    path('orden-cobrada/<int:pk>', views.orden_cobrada, name='orden_cobrada'),
 ]

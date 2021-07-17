@@ -1,3 +1,9 @@
+from io import BytesIO
+import pdfkit
+
+from django.http import HttpResponse
+from django.template import loader
+from django.template.loader import get_template
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
@@ -5,8 +11,10 @@ from django.contrib import messages
 from django.contrib.auth import views
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
+from django.views.generic import View
 from django.db.models import Sum
 
+from xhtml2pdf import pisa
 from mainapp.models import Category
 from mainapp.models import Product
 from mainapp.models import Order
@@ -135,9 +143,44 @@ def cobrar(request):
         orden.save()
         del request.session['cart']
         messages.add_message(request, messages.SUCCESS,
-                             'Orden cobrada con exito')
-        return redirect('mainapp:dashboard')
+                             'Orden #{0} cobrada con exito'.format(orden.pk))
+        return redirect('mainapp:orden_cobrada', orden.pk)
     else:
         messages.add_message(request, messages.ERROR,
                              'METODO NO PERMITIDO')
         return redirect('mainapp:dashboard')
+
+
+def GeneratePDF(request, pk):
+    order = Order.objects.get(pk=pk)
+    detalle = order.relacion_Order_a_OrderDetail.all()
+    productos = []
+
+    for item in detalle:
+        producto = item.product
+        productos.append({
+            'pk': producto.pk,
+            'name': producto.name,
+            'description': producto.description,
+            'quantity': item.quantity,
+            'image': producto.image.url,
+            'price': float(producto.price),
+            'total': float(producto.price) * float(item.quantity),
+        })
+    html = get_template('mvcapp/recibo.html').render({'order': order, 'productos': productos})
+
+    options = {
+        'page-size': 'Letter',
+        'encoding': "UTF-8",
+        'quiet': '',
+    }
+
+    output = pdfkit.from_string(html, False, options=options)
+    response = HttpResponse(content_type="application/pdf")
+    response.write(output)
+    return response
+
+
+def orden_cobrada(request, pk):
+    return render(request, 'mvcapp/orden_cobrada.html',
+                  {'pk': pk})

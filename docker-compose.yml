@@ -1,0 +1,34 @@
+version: '3.3'
+
+services:
+  db:
+    image: mariadb
+    restart: on-failure
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    environment:
+      MYSQL_USER: user001
+      MYSQL_PASSWORD: j23FJwHFvHJUyzkZ
+      MYSQL_DATABASE: django_open_pos
+      MYSQL_ROOT_PASSWORD: j2FvHyzkZ3FJwHJU
+    ports:
+      - 42333:3306
+    volumes:
+      - mariadbdata:/var/lib/mysql
+
+  web:
+    restart: on-failure
+    stdin_open: true
+    tty: true
+    command: ["runserver", "0.0.0.0:8000"]
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile_Web
+    depends_on:
+      - db
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/var/www/django_open_pos
+
+volumes:
+  mariadbdata:
