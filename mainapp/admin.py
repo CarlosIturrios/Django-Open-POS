@@ -3,16 +3,7 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
 # Register your models here.
-from .models import Level
-from .models import Status
-from .models import OrderDetail
-from .models import Order
-from .models import QuantityType
-from .models import Category
-from .models import Ingredient
-from .models import Product
-from .models import Customer
-from .models import Currency
+from .models import *
 
 
 class CategoryResources(resources.ModelResource):
@@ -43,3 +34,6 @@ admin.site.register(Ingredient)
 admin.site.register(Product)
 admin.site.register(Customer)
 admin.site.register(Currency)
+admin.site.register(OrderType)
+admin.site.register(Place)
+

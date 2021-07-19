@@ -32,7 +32,14 @@
                 <a href="{% url 'mainapp:dashboard' %}" class="nav-link">Home</a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="{% url 'mainapp:categorias' %}" class="nav-link">Categorias</a>
+                <a href="{% url 'mainapp:categorias' %}" class="nav-link">
+                    <i class="far fa-list-alt nav-icon"></i> Categorias
+                </a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="{% url 'mainapp:crear_nueva_orden' %}" class="nav-link">
+                    <i class="fas fa-plus-square nav-icon"></i> Nueva Orden
+                </a>
             </li>
         </ul>
 
@@ -130,11 +137,18 @@
                         {% endif %}
                     {% endfor %}
                     <li class="nav-item">
+                        <a href="{% url 'mainapp:crear_nueva_orden' %}" class="nav-link">
+                            <i class="fas fa-plus-square nav-icon"></i>
+                            <p>
+                                Nueva orden
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{% url 'mainapp:categorias' %}" class="nav-link">
                             <i class="far fa-list-alt nav-icon"></i>
                             <p>
                                 Categorias
-                                <span class="badge badge-info right">2</span>
                             </p>
                         </a>
                     </li>

@@ -1,0 +1,58 @@
+[
+  {
+    "model": "mainapp.ordertype",
+    "pk": 1,
+    "fields": {
+      "eliminado": false,
+      "modificable": true,
+      "fecha_de_creacion": "2021-07-19T00:39:41.212Z",
+      "fecha_de_modificacion": "2021-07-19T00:39:41.212Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "Servicio  a domicilio"
+    }
+  },
+  {
+    "model": "mainapp.ordertype",
+    "pk": 2,
+    "fields": {
+      "eliminado": false,
+      "modificable": true,
+      "fecha_de_creacion": "2021-07-19T00:40:21.930Z",
+      "fecha_de_modificacion": "2021-07-19T00:40:21.930Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "Para recoger en el local"
+    }
+  },
+  {
+    "model": "mainapp.ordertype",
+    "pk": 3,
+    "fields": {
+      "eliminado": false,
+      "modificable": true,
+      "fecha_de_creacion": "2021-07-19T00:40:38.237Z",
+      "fecha_de_modificacion": "2021-07-19T00:40:38.237Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "Para comer en el local"
+    }
+  },
+  {
+    "model": "mainapp.ordertype",
+    "pk": 4,
+    "fields": {
+      "eliminado": false,
+      "modificable": true,
+      "fecha_de_creacion": "2021-07-19T00:41:09.624Z",
+      "fecha_de_modificacion": "2021-07-19T00:41:09.624Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "Pago inmediato"
+    }
+  }
+]

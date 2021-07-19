@@ -1,0 +1,47 @@
+[
+  {
+    "model": "mainapp.level",
+    "pk": 1,
+    "fields": {
+      "eliminado": true,
+      "modificable": true,
+      "fecha_de_creacion": "2021-04-01T03:03:12.839Z",
+      "fecha_de_modificacion": "2021-04-01T03:03:12.839Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "LOW",
+      "priority": 1
+    }
+  },
+  {
+    "model": "mainapp.level",
+    "pk": 2,
+    "fields": {
+      "eliminado": true,
+      "modificable": true,
+      "fecha_de_creacion": "2021-04-01T03:03:19.505Z",
+      "fecha_de_modificacion": "2021-04-01T03:03:19.506Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "MEDIUM",
+      "priority": 2
+    }
+  },
+  {
+    "model": "mainapp.level",
+    "pk": 3,
+    "fields": {
+      "eliminado": true,
+      "modificable": true,
+      "fecha_de_creacion": "2021-04-01T03:03:23.754Z",
+      "fecha_de_modificacion": "2021-04-01T03:03:23.754Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "HIGH",
+      "priority": 3
+    }
+  }
+]

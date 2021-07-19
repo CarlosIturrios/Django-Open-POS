@@ -11,14 +11,14 @@ from django.contrib import messages
 from django.contrib.auth import views
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
-from django.views.generic import View
 from django.db.models import Sum
 
-from xhtml2pdf import pisa
 from mainapp.models import Category
 from mainapp.models import Product
 from mainapp.models import Order
 from mainapp.models import OrderDetail
+from mainapp.models import OrderType
+from mainapp.models import Customer
 
 
 class Index(LoginRequiredMixin, TemplateView):
@@ -62,7 +62,7 @@ def productos_view(request, pk):
                     if item['id_product'] == id_product:
                         item['cantidad'] = int(item['cantidad']) + int(cantidad)
             request.session['cantidad'] = cart
-        messages.add_message(request, messages.SUCCESS, '{0} agregada a la orden    '.format(producto.name))
+        messages.add_message(request, messages.SUCCESS, '{0} agregada a la orden'.format(producto.name))
         return redirect('mainapp:productos', pk)
     productos = Product.objects.filter(category_id=pk)
     return render(request, 'mvcapp/productos.html',
@@ -184,3 +184,41 @@ def GeneratePDF(request, pk):
 def orden_cobrada(request, pk):
     return render(request, 'mvcapp/orden_cobrada.html',
                   {'pk': pk})
+
+
+def crear_nueva_orden(request):
+    tipos_de_orden = OrderType.objects.all()
+    if request.method == "POST":
+        nueva_orden = Order()
+        orden_type = request.POST.get('tipoDeOrden', None)
+        comentario = request.POST.get('comentario', None)
+        id_cliente = request.POST.get('idCliente', None)
+        cliente = None
+        if id_cliente == None or id_cliente == "":
+            cliente_name = request.POST.get('clienteName', None)
+            cliente_cellphone = request.POST.get('clienteCellphone', None)
+            cliente_direction = request.POST.get('clienteDirection', None)
+            cliente_email = request.POST.get('clienteEmail', None)
+            if cliente_name != "" and cliente_cellphone != "":
+                cliente = Customer()
+                cliente.name = cliente_name
+                cliente.cellphone = cliente_cellphone
+                cliente.direction = cliente_direction
+                cliente.email = cliente_email
+                try:
+                    cliente.save()
+                except Exception as e:
+                    messages.add_message(request, messages.ERROR,
+                                         'Existe un problema con el cliente {0}'.format(e))
+                    return render(request, 'mvcapp/crear_nueva_orden.html', {'tipos_de_orden': tipos_de_orden})
+        else:
+            cliente = Customer.objects.get(pk=id_cliente)
+        nueva_orden.order_type_id = orden_type
+        nueva_orden.comments = comentario
+        nueva_orden.customer = cliente
+        nueva_orden.save()
+        if not cliente:
+            messages.add_message(request, messages.SUCCESS, 'Orden sin cliente creada con exito')
+        else:
+            messages.add_message(request, messages.SUCCESS, 'Orden creada con exito')
+    return render(request, 'mvcapp/crear_nueva_orden.html', {'tipos_de_orden': tipos_de_orden})

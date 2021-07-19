@@ -14,6 +14,16 @@ class Status(DatosDeControlMixin):
         return "{0}-{1}".format(self.pk, self.description)
 
 
+class OrderType(DatosDeControlMixin):
+    """
+    La tabla contiene la información de las categorías de solicitudes registradas en el sistema.
+    """
+    description = models.CharField(max_length=100, null=False, blank=False, help_text='Order Type Description')
+
+    def __str__(self):
+        return "{0}-{1}".format(self.pk, self.description)
+
+
 class Place(DatosDeControlMixin):
     """
     La tabla contiene la información de las categorías de solicitudes registradas en el sistema.
@@ -43,10 +53,13 @@ class Order(DatosDeControlMixin):
     done = models.DateTimeField(null=True, blank=True, auto_now=False)
     cashier = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True,
                                 related_name='relacion_Cashier_a_Order',
-                                help_text='Fk a usuario para conocer el usuario que creo el registro')
+                                help_text='Fk a usuario para conocer el usuario que cobro la orden')
+    cook = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True,
+                                related_name='relacion_Cook_a_Order',
+                                help_text='Fk a usuario para conocer el usuario que cocinara la orden')
     customer = models.ForeignKey('mainapp.Customer', on_delete=models.DO_NOTHING, null=True, blank=True,
                                  related_name='relacion_Customer_a_Order',
-                                 help_text='Fk a usuario para conocer el usuario que creo el registro')
+                                 help_text='Fk a usuario para conocer pagara la orden de existir')
     manager = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True,
                                 related_name='relacion_Manager_a_Order',
                                 help_text='Fk a usuario para conocer el usuario que creo el registro')
@@ -59,6 +72,10 @@ class Order(DatosDeControlMixin):
     place = models.ForeignKey('mainapp.Place', on_delete=models.DO_NOTHING, null=True, blank=True,
                               related_name='relacion_Place_a_Order',
                               help_text='Fk a usuario para conocer el usuario que creo el registro')
+    order_type = models.ForeignKey('mainapp.OrderType', on_delete=models.DO_NOTHING, null=True, blank=True,
+                                   related_name='relacion_OrderType_a_Order', default=None,
+                                   help_text='Fk to Order Type')
+
     amount = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)
     change = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)
     cash_paid = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)
@@ -78,3 +95,6 @@ class OrderDetail(DatosDeControlMixin):
     product = models.ForeignKey('mainapp.Product', on_delete=models.DO_NOTHING, null=True, blank=True,
                                 related_name='relacion_Product_a_OrderDetail',
                                 help_text='Fk a usuario para conocer el usuario que creo el registro')
+
+    def __str__(self):
+        return "Product: {0}, quantity: {1}, order #{2}".format(self.product.name, self.quantity, self.order.pk)
