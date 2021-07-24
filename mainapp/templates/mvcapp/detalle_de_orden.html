@@ -1,8 +1,8 @@
 {% extends 'mvcapp/base.html' %}
 {% load humanize %}
 {% load static %}
-{% block titulo %}Carrito{% endblock %}
-{% block navegacion %}Carrito{% endblock %}
+{% block titulo %}Detalle de la Orden{% endblock %}
+{% block navegacion %}Detalle de la Orden{% endblock %}
 {% block main %}
     {% if productos %}
         <div class="row">
@@ -14,10 +14,10 @@
                         <br>
                         {% for group in  request.user.groups.all %}
                             {% if 'MESERO' == group.name or 'PATRON' == group.name %}
-                                <form method="post" action="{% url 'mainapp:detalle_de_la_orden' %}" class="float-left">
+                                <form method="post" action="{% url 'mainapp:categorias' %}" class="float-left">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-primary form-control">
-                                        <i class="fas fa-check-circle"></i> Confirmar orden
+                                        <i class="fas fa-plus"></i> Agregar otro producto
                                     </button>
                                 </form>
                             {% endif %}
@@ -90,18 +90,11 @@
         <div class="row">
             <div class="col col-sm-8">
                 <span style="color: white">No existen productos registrados con esa categoria.</span>
-                <button onclick="goBack()" class="btn btn-primary btn-round">regresar al
+                <a href="{% url 'mainapp:categorias' %}" class="btn btn-primary btn-round">regresar al
                     menu anterior.
-                </button>
+                </a>
             </div>
         </div>
     {% endif %}
 {% endblock %}
 
-{% block script %}
-    <script>
-        function goBack() {
-            window.history.back();
-        }
-    </script>
-{% endblock %}

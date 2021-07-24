@@ -1,0 +1,44 @@
+{% extends 'mvcapp/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block titulo %}Mis Ordenes{% endblock %}
+{% block navegacion %}Mis Ordenes{% endblock %}
+{% block main %}
+    <div class="container-fluid">
+        <!-- Info boxes -->
+        <div class="row">
+            {% for orden in ordenes %}
+                <div class="col-12">
+                    <a href="{% url 'mainapp:orden' orden.pk %}">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-info elevation-1">#{{ orden.pk }}</span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">
+                                    Detalle de la Orden
+                                    {% if orden.comments %}
+                                        - comentarios: {{ orden.comments }}
+                                    {% endif %}
+                                    {% if orden.customer %}
+                                        - {{ orden.customer.name }}
+                                    {% endif %}
+                                    - {{ orden.order_type.description }}
+                                </span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- /.row -->
+
+        <!-- /.row -->
+    </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $(function () {
+            $("#imprimirReciboId").get(0).click();
+        });
+    </script>
+{% endblock %}

@@ -41,6 +41,11 @@
                     <i class="fas fa-plus-square nav-icon"></i> Nueva Orden
                 </a>
             </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="{% url 'mainapp:mis_ordenes' %}" class="nav-link">
+                    <i class="fas fa-th nav-icon"></i> Mis Ordenes
+                </a>
+            </li>
         </ul>
 
         <!-- Right navbar links -->
@@ -149,6 +154,14 @@
                             <i class="far fa-list-alt nav-icon"></i>
                             <p>
                                 Categorias
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'mainapp:mis_ordenes' %}" class="nav-link">
+                            <i class="fas fa-th nav-icon"></i>
+                            <p>
+                                Mis Ordenes
                             </p>
                         </a>
                     </li>

@@ -55,8 +55,11 @@ class Order(DatosDeControlMixin):
                                 related_name='relacion_Cashier_a_Order',
                                 help_text='Fk a usuario para conocer el usuario que cobro la orden')
     cook = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True,
-                                related_name='relacion_Cook_a_Order',
-                                help_text='Fk a usuario para conocer el usuario que cocinara la orden')
+                             related_name='relacion_Cook_a_Order',
+                             help_text='Fk a usuario para conocer el usuario que cocinara la orden')
+    waiter = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True,
+                               related_name='relacion_Waiter_a_Order', default=None,
+                               help_text='Fk a usuario para conocer el usuario que tiene la orden como mesero')
     customer = models.ForeignKey('mainapp.Customer', on_delete=models.DO_NOTHING, null=True, blank=True,
                                  related_name='relacion_Customer_a_Order',
                                  help_text='Fk a usuario para conocer pagara la orden de existir')
@@ -83,7 +86,7 @@ class Order(DatosDeControlMixin):
     taxes = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)
 
     def __str__(self):
-        return "comments: {0}, total: {1}".format(self.comments, self.amount)
+        return "comments: {0}, total: {1}, status: {2}".format(self.comments, self.amount, self.status.description)
 
 
 class OrderDetail(DatosDeControlMixin):

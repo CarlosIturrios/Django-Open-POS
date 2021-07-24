@@ -18,4 +18,7 @@ urlpatterns = [
     path('recibo/<int:pk>', views.GeneratePDF, name='recibo'),
     path('orden-cobrada/<int:pk>', views.orden_cobrada, name='orden_cobrada'),
     path('nueva-orden/', views.crear_nueva_orden, name='crear_nueva_orden'),
+    path('detalle-de-la-orden/', views.detalle_de_la_orden, name='detalle_de_la_orden'),
+    path('mis-ordenes/', views.mis_ordenes, name='mis_ordenes'),
+    path('orden/<int:pk>', views.orden, name='orden'),
 ]

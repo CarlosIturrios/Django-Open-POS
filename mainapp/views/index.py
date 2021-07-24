@@ -1,8 +1,8 @@
 from io import BytesIO
 import pdfkit
+from django.db.models import Q
 
 from django.http import HttpResponse
-from django.template import loader
 from django.template.loader import get_template
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -107,10 +107,28 @@ def dashboard(request):
 
 
 def eliminar_del_carrito(request, pk):
+    if 'order' in request.session and 'cart' not in request.session:
+        order = Order.objects.get(pk=request.session['order'])
+
+        if order.status.pk <= 3:
+            detalle = order.relacion_Order_a_OrderDetail.filter(product_id=pk)
+            for producto in detalle:
+                producto.eliminado = True
+                producto.order = None
+                producto.save()
+            print('si ENTRA AL IF ')
+        messages.add_message(request, messages.SUCCESS,
+                             'Producto eliminado con exito')
+        return redirect('mainapp:carrito')
     if 'cart' not in request.session:
         messages.add_message(request, messages.ERROR,
                              'La orden se encuentra vacia, por favor selecciona algunos productos')
         return redirect('mainapp:categorias')
+    if 'order' in request.session:
+        order = Order.objects.get(pk=pk)
+        if order.status.pk <= 3:
+            detalle = order.relacion_Order_a_OrderDetail.get(product_id=pk)
+            detalle.delete()
     else:
         for i in range(len(request.session['cart'])):
             if request.session['cart'][i]['id_product'] == str(pk):
@@ -126,22 +144,29 @@ def eliminar_del_carrito(request, pk):
 
 def cobrar(request):
     if request.method == "POST":
-        orden = Order()
-        orden.status_id = 1
-        orden.cashier = request.user
-        orden.save()
-        total = float(0)
-        for item in request.session['cart']:
-            producto = Product.objects.get(pk=item['id_product'])
-            detalle = OrderDetail()
-            detalle.product = producto
-            detalle.quantity = item['cantidad']
-            detalle.order = orden
-            detalle.save()
-            total += (float(producto.price) * float(detalle.quantity))
-        orden.amount = total
-        orden.save()
-        del request.session['cart']
+        if 'cart' not in request.session and 'order' in request.session:
+            orden = Order.objects.get(pk=request.session['order'])
+            orden.status_id = 6
+            orden.cashier = request.user
+            orden.save()
+            del request.session['order']
+        else:
+            orden = Order()
+            orden.status_id = 6
+            orden.cashier = request.user
+            orden.save()
+            total = float(0)
+            for item in request.session['cart']:
+                producto = Product.objects.get(pk=item['id_product'])
+                detalle = OrderDetail()
+                detalle.product = producto
+                detalle.quantity = item['cantidad']
+                detalle.order = orden
+                detalle.save()
+                total += (float(producto.price) * float(detalle.quantity))
+            orden.amount = total
+            orden.save()
+            del request.session['cart']
         messages.add_message(request, messages.SUCCESS,
                              'Orden #{0} cobrada con exito'.format(orden.pk))
         return redirect('mainapp:orden_cobrada', orden.pk)
@@ -187,6 +212,10 @@ def orden_cobrada(request, pk):
 
 
 def crear_nueva_orden(request):
+    if 'order' in request.session:
+        messages.add_message(request, messages.ERROR,
+                             'Usted cuenta con una orden pendiente, terminela para continuar con una nueva.')
+        return redirect('mainapp:categorias')
     tipos_de_orden = OrderType.objects.all()
     if request.method == "POST":
         nueva_orden = Order()
@@ -214,11 +243,89 @@ def crear_nueva_orden(request):
         else:
             cliente = Customer.objects.get(pk=id_cliente)
         nueva_orden.order_type_id = orden_type
+        nueva_orden.status_id = 1
+        nueva_orden.manager = request.user
         nueva_orden.comments = comentario
         nueva_orden.customer = cliente
         nueva_orden.save()
+        request.session['order'] = nueva_orden.pk
         if not cliente:
             messages.add_message(request, messages.SUCCESS, 'Orden sin cliente creada con exito')
         else:
             messages.add_message(request, messages.SUCCESS, 'Orden creada con exito')
+        return redirect('mainapp:categorias')
     return render(request, 'mvcapp/crear_nueva_orden.html', {'tipos_de_orden': tipos_de_orden})
+
+
+def detalle_de_la_orden(request):
+    if request.method == "POST":
+        if 'order' in request.session:
+            orden = Order.objects.get(pk=request.session['order'])
+            orden.status_id = 2
+            orden.waiter = request.user
+            orden.save()
+            total = float(0)
+            for item in request.session['cart']:
+                bandera = True
+                for producto in orden.relacion_Order_a_OrderDetail.all():
+                    print(producto.product_id)
+                    if producto.product_id == int(item['id_product']):
+                        print(item['id_product'], 'entre al if')
+                        producto.quantity += int(item['cantidad'])
+                        producto.save()
+                        bandera = False
+                        total += (float(producto.product.price) * float(producto.quantity))
+                if bandera:
+                    producto = Product.objects.get(pk=item['id_product'])
+                    detalle = OrderDetail()
+                    detalle.product = producto
+                    detalle.quantity = item['cantidad']
+                    detalle.order = orden
+                    detalle.save()
+                    total += (float(producto.price) * float(detalle.quantity))
+            orden.amount = total
+            orden.save()
+            del request.session['cart']
+            del request.session['order']
+            messages.add_message(request, messages.SUCCESS,
+                                 'Orden #{0} cobrada con exito'.format(orden.pk))
+            return redirect('mainapp:orden_cobrada', orden.pk)
+        else:
+            messages.add_message(request, messages.ERROR,
+                                 'METODO NO PERMITIDO')
+            return redirect('mainapp:dashboard')
+    else:
+        messages.add_message(request, messages.ERROR,
+                             'No existe una orden para asignar.')
+        return redirect('mainapp:crear_nueva_orden')
+
+
+def mis_ordenes(request):
+    ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=5) & ~Q(status_id=4),
+                                   Q(cashier=request.user) | Q(cook=request.user) | Q(waiter=request.user) | Q(
+                                       manager=request.user))
+    return render(request, 'mvcapp/mis_ordenes.html', {'ordenes': ordenes})
+
+
+@login_required()
+def orden(request, pk):
+    orden = Order.objects.get(pk=pk)
+    productos = []
+    total = float(0)
+    for product in orden.relacion_Order_a_OrderDetail.all():
+        producto = product.product
+        productos.append({
+            'pk': producto.pk,
+            'name': producto.name,
+            'description': producto.description,
+            'quantity': product.quantity,
+            'image': producto.image.url,
+            'price': float(producto.price),
+            'total': float(producto.price) * product.quantity,
+        })
+        total += float(producto.price) * product.quantity
+        request.session['order'] = pk
+        if 'cart' in request.session:
+            del request.session['cart']
+    return render(request, 'mvcapp/detalle_de_orden.html',
+                  {'productos': productos, 'total': total})
