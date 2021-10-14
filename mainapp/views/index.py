@@ -11,6 +11,7 @@ from django.db.models import Q
 from mainapp.models import Product
 from mainapp.models import Order
 from mainapp.models import OrderDetail
+from mainapp.models import Customer
 from adminapp.models import Empresa
 
 
@@ -73,12 +74,36 @@ def dashboard(request):
         return redirect('mainapp:crear_nueva_orden')
     elif request.user.groups.filter(Q(name='COCINERO') | Q(name='REPARTIDOR')).exists():
         return redirect('mainapp:mis_ordenes')
+    if request.method == "POST":
+        fecha_inicial = request.POST.get('date1', None)
+        fecha_final = request.POST.get('date2', None)
 
-    ventas_del_dia = Order.objects.filter(eliminado=False, empresa=empresa).aggregate(Sum('amount'))
+        ventas_del_dia = Order.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final], eliminado=False,
+                                              empresa=empresa).aggregate(Sum('amount'))
+        clientes_nuevos = Customer.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final],
+                                                  eliminado=False, empresa=empresa)
+        ordenes_vendidas = Order.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final],
+                                                pagado=True, eliminado=False, empresa=empresa)
+        ordenes_pendientes = Order.objects.filter(Q(pagado=False) | Q(cocinado=False) | Q(entregado=False),
+                                                  fecha_de_creacion__range=[fecha_inicial, fecha_final],
+                                                  eliminado=False, empresa=empresa)
+    else:
+        ventas_del_dia = Order.objects.filter(eliminado=False, empresa=empresa).aggregate(Sum('amount'))
+        clientes_nuevos = Customer.objects.filter(eliminado=False, empresa=empresa)
+        ordenes_vendidas = Order.objects.filter(pagado=True, eliminado=False, empresa=empresa)
+        ordenes_pendientes = Order.objects.filter(Q(pagado=False) | Q(cocinado=False) | Q(entregado=False),
+                                                  eliminado=False, empresa=empresa)
     ventas_del_dia = ventas_del_dia['amount__sum']
+    clientes_nuevos = clientes_nuevos.count()
+    ordenes_vendidas = ordenes_vendidas.count()
+    ordenes_pendientes = ordenes_pendientes.count()
+
+    ventas_del_dia = 0 if ventas_del_dia == None else ventas_del_dia
 
     return render(request, 'mvcapp/dashboard.html',
-                  {'ventas_del_dia': ventas_del_dia})
+                  {'ventas_del_dia': ventas_del_dia, 'clientes_nuevos': clientes_nuevos,
+                   'ordenes_pendientes': ordenes_pendientes,
+                   'ordenes_vendidas': ordenes_vendidas})
 
 
 @login_required()

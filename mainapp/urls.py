@@ -32,6 +32,7 @@ urlpatterns = [
     path('orden/<int:pk>', views.orden, name='orden'),
     path('orden-lista-para-entrega/<int:pk>', views.orden_lista_para_entrega, name='orden_lista_para_entrega'),
     path('orden-entregada/<int:pk>', views.orden_entregada, name='orden_entregada'),
+    path('listar-ordenes/', views.listar_ordenes_view, name='listar_ordenes_view'),
     # Lugares
     path('agregar-lugar/', views.crear_nuevo_place_view, name='crear_nuevo_place_view'),
     path('listar-lugares/', views.listar_lugares_view, name='listar_lugares_view'),

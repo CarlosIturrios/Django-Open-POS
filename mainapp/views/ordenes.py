@@ -246,3 +246,20 @@ def orden_entregada(request, pk):
     messages.add_message(request, messages.SUCCESS,
                          'Orden actualizada con exito.')
     return redirect('mainapp:mis_ordenes')
+
+
+@login_required()
+def listar_ordenes_view(request):
+    if not 'empresa' in request.session:
+        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        return redirect('administracion:listar_empresas')
+    else:
+        empresa = Empresa.objects.get(pk=request.session['empresa'])
+        if not empresa.vigente:
+            messages.add_message(request, messages.WARNING,
+                                 'La empresa presenta un adeudo, comuniquese con el administrador del portal')
+            return redirect('administracion:listar_empresas')
+
+    ordenes = Order.objects.filter(eliminado=False, empresa=empresa)
+    return render(request, 'mvcapp/ordenes/listar_ordenes.html',
+                  {'ordenes': ordenes})

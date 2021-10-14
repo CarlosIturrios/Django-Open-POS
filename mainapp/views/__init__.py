@@ -17,6 +17,7 @@ from .ordenes import mis_ordenes
 from .ordenes import orden
 from .ordenes import orden_entregada
 from .ordenes import orden_lista_para_entrega
+from .ordenes import listar_ordenes_view
 from .productos import productos_view
 from .productos import crear_nuevo_producto_view
 from .productos import listar_productos_view
