@@ -76,7 +76,7 @@ def dashboard(request):
 
     ventas_del_dia = Order.objects.filter(eliminado=False, empresa=empresa).aggregate(Sum('amount'))
     ventas_del_dia = ventas_del_dia['amount__sum']
-    
+
     return render(request, 'mvcapp/dashboard.html',
                   {'ventas_del_dia': ventas_del_dia})
 

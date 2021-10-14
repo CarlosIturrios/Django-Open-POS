@@ -152,9 +152,8 @@ def mis_ordenes(request):
             return redirect('administracion:listar_empresas')
 
     if request.user.groups.filter(name='CAJERO').exists():
-        ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=5) & ~Q(status_id=4), pagado=False,
-                                       eliminado=False,
-                                       empresa=empresa)
+        ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=4), pagado=False,
+                                       eliminado=False, empresa=empresa)
 
     elif request.user.groups.filter(name='COCINERO').exists():
         ordenes = Order.objects.filter(~Q(status_id=5) & ~Q(status_id=4), Q(cook=None) | Q(cook=request.user),

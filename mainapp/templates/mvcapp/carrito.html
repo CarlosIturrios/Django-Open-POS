@@ -12,6 +12,20 @@
                 <div class="col-sm-12"><br>
                     <h2 style="color: white;" align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
                 </div>
+                {% for group in  request.user.groups.all %}
+                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name %}
+                        <div class="col-6">
+                            <br>
+                            <form method="post" action="{% url 'mainapp:detalle_de_la_orden' %}" class="float-left">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary form-control">
+                                    <i class="fas fa-check-circle"></i> Confirmar orden
+                                </button>
+                            </form>
+
+                        </div>
+                    {% endif %}
+                {% endfor %}
                 <div class="row">
                     {% for group in  request.user.groups.all %}
                         {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}

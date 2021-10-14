@@ -38,7 +38,7 @@
                     <a href="{% url 'mainapp:dashboard' %}" class="nav-link">Home</a>
                 </li>
                 {% for group in  request.user.groups.all %}
-                    {% if 'MESERO' == group.name or 'CAJERO' == group.name %}
+                    {% if 'MESERO' == group.name or 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name %}
                         <li class="nav-item d-none d-sm-inline-block">
                             <a href="{% url 'mainapp:categorias' %}" class="nav-link">
                                 <i class="far fa-list-alt nav-icon"></i> Categorias
@@ -144,7 +144,7 @@
                                     </ul>
                                 </li>
                             {% endif %}
-                            {% if 'MESERO' == group.name or 'CAJERO' == group.name %}
+                            {% if 'MESERO' == group.name or 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name %}
                                 <li class="nav-item">
                                     <a href="{% url 'mainapp:crear_nueva_orden' %}" class="nav-link">
                                         <i class="fas fa-plus-square nav-icon"></i>
