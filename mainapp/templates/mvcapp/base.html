@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DOP | {% block titulo %}{% endblock %}</title>
+    <title>CI - POS | {% block titulo %}{% endblock %}</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -86,10 +86,11 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="{% url 'mainapp:dashboard' %}" class="brand-link">
-            <img src="{% static 'template/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
-                 class="brand-image img-circle elevation-3"
-                 style="opacity: .8">
-            <span class="brand-text font-weight-light">DOP</span>
+            <span class="brand-image font-weight-light"><b>CI</b>-POS</span>
+
+            <!--
+            <img src="#" alt="CI - POS Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+             -->
         </a>
 
         <!-- Sidebar -->
@@ -295,15 +296,16 @@
     <!-- Main Footer -->
     <footer class="main-footer">
         <strong>
-            <a href="https://github.com/CarlosIturrios/django-open-pos" target="_blank">
-                Django Open POS
+            <a href="https://dop.centralsoft.com.mx/" target="_blank">
+                <b>CI</b> - POS
             </a>
             Copyright &copy; 2021-
             <script>
                 document.write(new Date().getFullYear())
             </script>
             , made by
-            <a href="https://github.com/carlositurrios" target="_blank">Carlos Iturrios</a>
+            <a href="https://www.linkedin.com/in/carlos-armando-iturrios-alcaraz-856969176" target="_blank">Carlos
+                Iturrios</a>
             for a better services in your business.
         </strong>
         All rights reserved.
