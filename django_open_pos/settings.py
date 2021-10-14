@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django_filters',
     'import_export',
     'mainapp',
+    'adminapp',
     'api',
     'rest_framework',
 ]

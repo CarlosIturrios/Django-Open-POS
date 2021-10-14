@@ -1,83 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% block title %}CentralSoft Inicio de sesión.{% endblock %}</title>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="stylesheet"
-          href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet"
-          href="//cdnjs.cloudflare.com/ajax/libs/admin-lte/2.3.3/css/AdminLTE.min.css">
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-</head>
-<body class="hold-transition login-page">
-<div class="login-box">
-    <div class="login-logo">
-        <a href="{% url 'mainapp:index' %}"><b>DO</b>P</a>
-    </div>
-    <!-- /.login-logo -->
-    <div class="login-box-body">
-        <p class="login-box-msg">
-            <br>
-            <b>Iniciar sesión</b>
-        </p>
-
-        <form method="post" enctype="multipart/form-data" accept-charset="UTF-8">
-            {% csrf_token %}
-            <div class="form-group" data-validate="Usuario requerido">
-                {% if form.username.errors %}
-                    <div class="alert alert-danger alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        {{ form.username.errors }}</div>{% endif %}
-                <label class="control-label" for="id_username">{{ form.username.label }}</label>
-                <input type="text" name="username" title="" required="" id="id_username" maxlength="254" autofocus=""
-                       placeholder="{{ form.username.label }}" class="form-control"
-                       value="{{ form.username.value|default:'' }}">
-            </div>
-            <div class="form-group" data-validate="Contraseña requerido">
-                {% if form.password.errors %}
-                    <div class="alert alert-danger alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        {{ form.password.errors }}</div>{% endif %}
-                <label class="control-label" for="id_password">{{ form.password.label }}</label>
-                <input type="password" name="password" title="" required="" id="id_password"
-                       placeholder="{{ form.password.label }}" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
-        </form>
+{% extends 'adminapp/base.html' %}
+{% block title %}Login{% endblock %}
+{% block form %}
+    <p class="login-box-msg">
         <br>
-        <div class="modal modal-danger fade in" id="modal-danger" style="padding-right: 16px;">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span>Error</span>
-                            <span aria-hidden="true">×</span>
-                        </button>
-                        <h4 class="modal-title">Verifique su usario y/o contraseña</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>{{ form.non_field_errors }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="btn-okay" class="btn btn-outline" data-dismiss="modal">Okay</button>
-                    </div>
+        <b>Iniciar sesión</b>
+    </p>
+
+    <form method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+        {% csrf_token %}
+        <div class="form-group" data-validate="Usuario requerido">
+            {% if form.username.errors %}
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ form.username.errors }}</div>{% endif %}
+            <label class="control-label" for="id_username">{{ form.username.label }}</label>
+            <input type="text" name="username" title="" required="" id="id_username" maxlength="254" autofocus=""
+                   placeholder="{{ form.username.label }}" class="form-control"
+                   value="{{ form.username.value|default:'' }}">
+        </div>
+        <div class="form-group" data-validate="Contraseña requerido">
+            {% if form.password.errors %}
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ form.password.errors }}</div>{% endif %}
+            <label class="control-label" for="id_password">{{ form.password.label }}</label>
+            <input type="password" name="password" title="" required="" id="id_password"
+                   placeholder="{{ form.password.label }}" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
+    </form>
+    <br>
+    <a href="{% url 'administracion:registro' %}">Registrarme </a><br>
+    <div class="modal modal-danger fade in" id="modal-danger" style="padding-right: 16px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>Error</span>
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">Verifique su usario y/o contraseña</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{{ form.non_field_errors }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-okay" class="btn btn-outline" data-dismiss="modal">Okay</button>
                 </div>
             </div>
-            <!-- /.modal-dialog -->
         </div>
+        <!-- /.modal-dialog -->
     </div>
-</div>
-<script type="text/javascript"
-        src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<script type="text/javascript"
-        src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
-</body>
-</html>
+{% endblock %}

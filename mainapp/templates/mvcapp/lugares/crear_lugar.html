@@ -1,0 +1,38 @@
+{% extends 'mvcapp/base.html' %}
+
+{% block titulo %}Agregar Lugar{% endblock %}
+{% load humanize %}
+{% block navegacion %}Agregar Lugar{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Agregar Lugar</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="post" action="" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="description">Nombre del lugar</label>
+                            <input type="text" class="form-control" id="description" name="description"
+                                   placeholder="Matriz" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="direction">Dirección del lugar</label>
+                            <textarea class="form-control" id="direction" name="direction" rows="2"
+                                      placeholder="Calle 5 y callejon madero  #321" required></textarea>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

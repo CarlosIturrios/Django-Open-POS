@@ -7,41 +7,42 @@
     {% if productos %}
         <div class="row">
             <div class="col-md-1"></div>
-            <div class="invoice col-md-10" style="border-radius: 3%">
+            <div class="invoice col-md-10" style="border-radius: 2%">
                 <!-- title row -->
+                <div class="col-sm-12"><br>
+                    <h2 style="color: white;" align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                </div>
                 <div class="row">
-                    <div class="col-6">
-                        <br>
-                        {% for group in  request.user.groups.all %}
-                            {% if 'MESERO' == group.name or 'PATRON' == group.name %}
-                                <form method="post" action="{% url 'mainapp:detalle_de_la_orden' %}" class="float-left">
+                    {% for group in  request.user.groups.all %}
+                        {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                            <div class="col-sm-6">
+                                <br>
+                                <form method="post" action="{% url 'mainapp:categorias' %}">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary form-control">
-                                        <i class="fas fa-check-circle"></i> Confirmar orden
+                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                        <i class="fas fa-plus"></i> Agregar otro producto
                                     </button>
                                 </form>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                    <div class="col-6">
-                        <br>
-                        {% for group in  request.user.groups.all %}
-                            {% if 'CAJERO' == group.name or 'PATRON' == group.name %}
-                                <form method="post" action="{% url 'mainapp:cobrar' %}" class="float-right">
+
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% for group in  request.user.groups.all %}
+                        {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name %}
+                            <div class="col-sm-6">
+                                <br>
+                                <form method="post" action="{% url 'mainapp:cobrar' %}">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary form-control">
+                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
                                         <i class="fas fa-cash-register"></i> Cobrar
                                     </button>
                                 </form>
-                            {% endif %}
-                        {% endfor %}
-                        <div class="form-group">
-                            <h2 style="color: white;"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
-                        </div>
-                    </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                     <!-- /.col -->
                 </div>
-                <!-- Table row -->
+                <!-- Table row --><br>
                 <div class="row">
                     <div class="col-12 table-responsive">
                         <table class="table table-striped">

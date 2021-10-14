@@ -13,6 +13,11 @@
     <link rel="stylesheet" href="{% static 'template/plugins/fontawesome-free/css/all.min.css' %}">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{% static 'template/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
+    <!-- tables -->
+    <link rel="stylesheet" href="{% static 'template/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'template/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'template/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static 'template/dist/css/adminlte.min.css' %}">
     <link rel="stylesheet" href="{% static 'template/plugins/toastr/toastr.min.css' %}">
@@ -24,42 +29,39 @@
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-dark">
         <!-- Left navbar links -->
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-            </li>
-            <li class="nav-item d-none d-sm-inline-block">
-                <a href="{% url 'mainapp:dashboard' %}" class="nav-link">Home</a>
-            </li>
-            <li class="nav-item d-none d-sm-inline-block">
-                <a href="{% url 'mainapp:categorias' %}" class="nav-link">
-                    <i class="far fa-list-alt nav-icon"></i> Categorias
-                </a>
-            </li>
-            <li class="nav-item d-none d-sm-inline-block">
-                <a href="{% url 'mainapp:crear_nueva_orden' %}" class="nav-link">
-                    <i class="fas fa-plus-square nav-icon"></i> Nueva Orden
-                </a>
-            </li>
-            <li class="nav-item d-none d-sm-inline-block">
-                <a href="{% url 'mainapp:mis_ordenes' %}" class="nav-link">
-                    <i class="fas fa-th nav-icon"></i> Mis Ordenes
-                </a>
-            </li>
-        </ul>
-
-        <!-- Right navbar links -->
-        <ul class="navbar-nav ml-auto">
-            {% if 'cart' in request.session %}
+        {% if 'empresa' in request.session %}
+            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mainapp:carrito' %}">
-                        <i class="far fa-shopping-cart"></i>
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="{% url 'mainapp:dashboard' %}" class="nav-link">Home</a>
+                </li>
+                {% for group in  request.user.groups.all %}
+                    {% if 'MESERO' == group.name or 'CAJERO' == group.name %}
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a href="{% url 'mainapp:categorias' %}" class="nav-link">
+                                <i class="far fa-list-alt nav-icon"></i> Categorias
+                            </a>
+                        </li>
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a href="{% url 'mainapp:crear_nueva_orden' %}" class="nav-link">
+                                <i class="fas fa-plus-square nav-icon"></i> Nueva Orden
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="{% url 'mainapp:mis_ordenes' %}" class="nav-link">
+                        <i class="fas fa-th nav-icon"></i> Mis Ordenes
                     </a>
                 </li>
-            {% endif %}
+            </ul>
+        {% endif %}
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
             <!-- Messages Dropdown Menu -->
             {% if 'cart' in request.session %}
-
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'mainapp:carrito' %}">
                         <i class="fas fa-shopping-cart"></i>
@@ -115,56 +117,132 @@
 
             <!-- Sidebar Menu -->
             <nav class="mt-2">
+
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                     data-accordion="false">
-                    <!-- Add icons to the links using the .nav-icon class
-                         with font-awesome or any other icon font library -->
-                    {% for group in  request.user.groups.all %}
-                        {% if 'PATRON' == group.name %}
+                    {% if 'empresa' in request.session %}
+                        <!-- Add icons to the links using the .nav-icon class
+                             with font-awesome or any other icon font library -->
+                        {% for group in  request.user.groups.all %}
+                            {% if 'ADMINISTRADOR' == group.name %}
 
-                            <li class="nav-item menu-open">
-                                <a href="#" class="nav-link active">
+                                <li class="nav-item menu-open">
+                                    <a href="#" class="nav-link active">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Dashboard
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{% url 'mainapp:dashboard' %}" class="nav-link active">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Dashboard</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% endif %}
+                            {% if 'MESERO' == group.name or 'CAJERO' == group.name %}
+                                <li class="nav-item">
+                                    <a href="{% url 'mainapp:crear_nueva_orden' %}" class="nav-link">
+                                        <i class="fas fa-plus-square nav-icon"></i>
+                                        <p>
+                                            Nueva orden
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'mainapp:categorias' %}" class="nav-link">
+                                        <i class="far fa-list-alt nav-icon"></i>
+                                        <p>
+                                            Categorias
+                                        </p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="nav-item">
+                            <a href="{% url 'mainapp:mis_ordenes' %}" class="nav-link">
+                                <i class="fas fa-th nav-icon"></i>
+                                <p>
+                                    Mis Ordenes
+                                </p>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% for group in  request.user.groups.all %}
+                        {% if 'ADMINISTRADOR' == group.name and 'empresa' in request.session %}
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>
-                                        Dashboard
+                                        Utilerias
                                         <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="{% url 'mainapp:dashboard' %}" class="nav-link active">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Dashboard</p>
+                                        <a href="{% url 'mainapp:listar_categorias_view' %}" class="nav-link">
+                                            <i class="fas fa-list nav-icon"></i>
+                                            <p>Categorias</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'mainapp:listar_monedas_view' %}" class="nav-link">
+                                            <i class="fas fa-coins nav-icon"></i>
+                                            <p>Monedas</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'mainapp:listar_ingredientes_view' %}" class="nav-link">
+                                            <i class="fas fa-boxes nav-icon"></i>
+                                            <p>Ingredientes</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'mainapp:listar_tipos_de_cantidades_view' %}" class="nav-link">
+                                            <i class="fas fa-dolly nav-icon"></i>
+                                            <p>Tipos de cantidades</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'mainapp:listar_lugares_view' %}" class="nav-link">
+                                            <i class="fas fa-place-of-worship nav-icon"></i>
+                                            <p>Lugares</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'mainapp:listar_productos_view' %}" class="nav-link">
+                                            <i class="fas fa-bacon nav-icon"></i>
+                                            <p>Productos</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'mainapp:listar_clientes_view' %}" class="nav-link">
+                                            <i class="fas fa-users-slash nav-icon"></i>
+                                            <p>Clientes</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'mainapp:listar_usuarios_view' %}" class="nav-link">
+                                            <i class="far fa-user nav-icon"></i>
+                                            <p>Usuarios</p>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
+                            <li class="nav-item">
+                                <a href="{% url 'administracion:listar_empresas' %}" class="nav-link">
+                                    <i class="fas fa-business-time nav-icon"></i>
+                                    <p>
+                                        Empresas
+                                    </p>
+                                </a>
+                            </li>
                         {% endif %}
                     {% endfor %}
-                    <li class="nav-item">
-                        <a href="{% url 'mainapp:crear_nueva_orden' %}" class="nav-link">
-                            <i class="fas fa-plus-square nav-icon"></i>
-                            <p>
-                                Nueva orden
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'mainapp:categorias' %}" class="nav-link">
-                            <i class="far fa-list-alt nav-icon"></i>
-                            <p>
-                                Categorias
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'mainapp:mis_ordenes' %}" class="nav-link">
-                            <i class="fas fa-th nav-icon"></i>
-                            <p>
-                                Mis Ordenes
-                            </p>
-                        </a>
-                    </li>
                     <li class="nav-item">
                         <a href="{% url 'mainapp:logout' %}" class="nav-link">
                             <i class="fas fa-sign-out-alt nav-icon"></i>
@@ -237,10 +315,18 @@
 <script src="{% static 'template/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <!-- overlayScrollbars -->
 <script src="{% static 'template/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
-<!-- AdminLTE App -->
-<script src="{% static 'template/dist/js/adminlte.js' %}"></script>
 
 <!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script src="{% static 'template/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'template/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'template/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'template/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'template/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'template/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'template/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'template/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'template/plugins/pdfmake/pdfmake.min.js' %}"></script>
 <!-- jQuery Mapael -->
 <script src="{% static 'template/plugins/jquery-mousewheel/jquery.mousewheel.js' %}"></script>
 <script src="{% static 'template/plugins/raphael/raphael.min.js' %}"></script>
@@ -251,6 +337,8 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{% static 'template/dist/js/demo.js' %}"></script>
 <script src="{% static 'template/plugins/toastr/toastr.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'template/dist/js/adminlte.js' %}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 {% block script %}{% endblock %}
 <script>

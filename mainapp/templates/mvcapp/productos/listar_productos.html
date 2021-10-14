@@ -1,0 +1,90 @@
+{% extends 'mvcapp/base.html' %}
+
+{% block titulo %}Productos{% endblock %}
+{% load humanize %}
+{% block navegacion %}Productos{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <a class="btn btn-primary btn-round" href="{% url 'mainapp:crear_nuevo_producto_view' %}">Agregar
+                        nuevo Producto</a>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="example1" class="table table-bordered table-striped dataTable dtr-inline"
+                                       role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
+
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
+                                            Nombre
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
+                                            Descripcion
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
+                                            Categoria
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
+                                            Precio
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for producto in productos %}
+                                        <tr class="odd">
+                                            <td class="dtr-control sorting_1"><img src="{{ producto.image.url }}"
+                                                                                   width="100%"
+                                                                                   height="100%"></td>
+                                            <td class="dtr-control sorting_1">{{ producto.name }}</td>
+                                            <td class="dtr-control sorting_1">{{ producto.description }}</td>
+                                            <td class="dtr-control sorting_1">{{ producto.category.description }}</td>
+                                            <td class="dtr-control sorting_1">
+                                                {{ producto.currency.symbol }}
+                                                {{ producto.price |floatformat:2|intcomma }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "print",]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+{% endblock %}

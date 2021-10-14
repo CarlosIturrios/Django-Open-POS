@@ -30,6 +30,7 @@ class Place(DatosDeControlMixin):
     """
     description = models.CharField(max_length=100, null=False, blank=False, help_text='Place Description')
     direction = models.TextField(null=False, blank=False, help_text='Place Direction')
+    empresa = models.ForeignKey('adminapp.Empresa', null=False, blank=False, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return "{0}-{1}".format(self.pk, self.description)
@@ -60,6 +61,9 @@ class Order(DatosDeControlMixin):
     waiter = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True,
                                related_name='relacion_Waiter_a_Order', default=None,
                                help_text='Fk a usuario para conocer el usuario que tiene la orden como mesero')
+    dealer = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True,
+                               related_name='relacion_Dealer_a_Order', default=None,
+                               help_text='Fk a usuario para conocer el usuario que entrego la orden')
     customer = models.ForeignKey('mainapp.Customer', on_delete=models.DO_NOTHING, null=True, blank=True,
                                  related_name='relacion_Customer_a_Order',
                                  help_text='Fk a usuario para conocer pagara la orden de existir')
@@ -84,6 +88,13 @@ class Order(DatosDeControlMixin):
     cash_paid = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)
     subtotal = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)
     taxes = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)
+    empresa = models.ForeignKey('adminapp.Empresa', null=False, blank=False, on_delete=models.DO_NOTHING)
+    pagado = models.BooleanField(default=False,
+                                 help_text='Parametro que nos dira si la orden ya se ha pagado')
+    cocinado = models.BooleanField(default=False,
+                                   help_text='Parametro que nos dira si la orden ya se ha cocinado')
+    entregado = models.BooleanField(default=False,
+                                    help_text='Parametro que nos dira si la orden ya se ha entregado al cliente')
 
     def __str__(self):
         return "comments: {0}, total: {1}, status: {2}".format(self.comments, self.amount, self.status.description)
@@ -98,6 +109,7 @@ class OrderDetail(DatosDeControlMixin):
     product = models.ForeignKey('mainapp.Product', on_delete=models.DO_NOTHING, null=True, blank=True,
                                 related_name='relacion_Product_a_OrderDetail',
                                 help_text='Fk a usuario para conocer el usuario que creo el registro')
+    empresa = models.ForeignKey('adminapp.Empresa', null=False, blank=False, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return "Product: {0}, quantity: {1}, order #{2}".format(self.product.name, self.quantity, self.order.pk)
