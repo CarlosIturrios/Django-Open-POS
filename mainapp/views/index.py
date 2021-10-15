@@ -78,7 +78,8 @@ def dashboard(request):
         fecha_inicial = request.POST.get('date1', None)
         fecha_final = request.POST.get('date2', None)
 
-        ventas_del_dia = Order.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final], eliminado=False,
+        ventas_del_dia = Order.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final], pagado=True,
+                                              eliminado=False,
                                               empresa=empresa).aggregate(Sum('amount'))
         clientes_nuevos = Customer.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final],
                                                   eliminado=False, empresa=empresa)
@@ -88,7 +89,7 @@ def dashboard(request):
                                                   fecha_de_creacion__range=[fecha_inicial, fecha_final],
                                                   eliminado=False, empresa=empresa)
     else:
-        ventas_del_dia = Order.objects.filter(eliminado=False, empresa=empresa).aggregate(Sum('amount'))
+        ventas_del_dia = Order.objects.filter(pagado=True, eliminado=False, empresa=empresa).aggregate(Sum('amount'))
         clientes_nuevos = Customer.objects.filter(eliminado=False, empresa=empresa)
         ordenes_vendidas = Order.objects.filter(pagado=True, eliminado=False, empresa=empresa)
         ordenes_pendientes = Order.objects.filter(Q(pagado=False) | Q(cocinado=False) | Q(entregado=False),

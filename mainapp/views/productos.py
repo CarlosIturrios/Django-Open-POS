@@ -93,7 +93,7 @@ def crear_nuevo_producto_view(request):
             for ingredient in ingredients:
                 producto.ingredients.add(ingredient)
             messages.add_message(request, messages.INFO, 'Tipo de cantidad agregado con exito')
-            return redirect('mainapp:categorias')
+            return redirect('mainapp:listar_productos_view')
         else:
             print(str(form.errors))
             return render(request, 'mvcapp/productos/crear_producto.html',
