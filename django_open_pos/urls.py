@@ -19,8 +19,9 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-                  path('admin/', admin.site.urls),
+                  path('panel-de-control/', admin.site.urls),
                   path('', include('mainapp.urls', 'template')),
+                  path('administracion/', include('adminapp.urls', 'administracion')),
                   path('api/', include('api.urls', 'api')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -1,0 +1,106 @@
+{% extends 'adminapp/base.html' %}
+
+{% block title %}Registro{% endblock %}
+
+{% block form %}
+    <p class="login-box-msg">
+        <br>
+        <b>Registrar usuario</b>
+    </p>
+
+    <form method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+        {% csrf_token %}
+        <div class="form-group" data-validate="email requerido">
+            {% if form.email.errors %}
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ form.email.errors }}</div>{% endif %}
+            <label class="control-label" for="id_correo_electronico">Correo Electrónico</label>
+            <input type="email" name="email" title="" required="" class="form-control" id="id_correo_electronico"
+                   placeholder="{{ form.email.label }}" value="{{ form.email.value|default:'' }}">
+        </div>
+        <div class="form-group" data-validate="first_name requerido">
+            {% if form.first_name.errors %}
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ form.first_name.errors }}</div>{% endif %}
+            <label class="control-label" for="id_nombre">{{ form.first_name.label }}</label>
+            <input type="text" name="first_name" title="" required="" id="id_nombre" maxlength="30" class="form-control"
+                   placeholder="{{ form.first_name.label }}" value="{{ form.first_name.value|default:'' }}">
+        </div>
+        <div class="form-group" data-validate="last_name requerido">
+            {% if form.last_name.errors %}
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ form.last_name.errors }}</div>{% endif %}
+            <label class="control-label" for="id_apellido">{{ form.last_name.label }}</label>
+            <input type="text" name="last_name" title="" required="" id="id_apellido" maxlength="30"
+                   placeholder="{{ form.last_name.label }}" value="{{ form.last_name.value|default:'' }}"
+                   class="form-control">
+        </div>
+        <div class="form-group" data-validate="password1 requerido">
+            {% if form.password1.errors %}
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ form.password1.errors }}</div>{% endif %}
+            <label class="control-label" for="id_contrasena1">Contraseña</label>
+            <input type="password" name="password1" title="Ingrese una contraseña segura" required=""
+                   id="id_contrasena1" class="form-control" placeholder="{{ form.password1.label }}">
+
+        </div>
+        <div class="form-group" data-validate="password2 requerido">
+            {% if form.password2.errors %}
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ form.password2.errors }}</div>{% endif %}
+            <label class="control-label" for="id_contrasena2">Repetir contraseña </label>
+            <input type="password" name="password2" title="Ingrese nuevamente su contraseña" required=""
+                   id="id_contrasena2" placeholder="{{ form.password2.label }}" class="form-control">
+            <div class="help-block">Ingrese nuevamente su contraseña</div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label for="id_terminos">
+                    <input type="checkbox" name="terminos" required="" class="" id="id_terminos"> Acepto los <a
+                        target="_blank" href="#">términos y condiciones del servicio</a>
+                </label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-flat">Registrarme</button>
+    </form>
+    <br>
+    <a href="{% url 'mainapp:login' %}">Iniciar sesión </a><br>
+    <div class="modal modal-danger fade in" id="modal-danger" style="padding-right: 16px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>Error</span>
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">Error.</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{{ form.non_field_errors }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-okay" class="btn btn-outline" data-dismiss="modal">Okay</button>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+{% endblock %}
+
+{% block script %}
+    {% if form.non_field_errors %}
+        <script>
+            $("#modal-danger").modal('show');
+            $(document).on('keypress', function (e) {
+                if (event.keyCode == 13) {
+                    $("#modal-danger").modal('hide');
+                }
+            });
+        </script>
+    {% endif %}
+{% endblock %}

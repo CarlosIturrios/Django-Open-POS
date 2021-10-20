@@ -1,0 +1,68 @@
+{% extends 'mvcapp/base.html' %}
+{% load humanize %}
+{% load static %}
+{% block titulo %}Empresas{% endblock %}
+{% block navegacion %}Empresas{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            {% if empresas %}
+                <div class="col-sm-12 right">
+                    <a href="{% url 'administracion:registrar_empresa' %}" class="btn btn-primary btn-round">Agregar una
+                        nueva empresa
+                    </a>
+                </div>
+                <br><br>
+                {% for empresa in empresas %}
+                    <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column"
+                            {% if empresa.vigente %}
+                         onclick="window.location='{% url 'administracion:acceder' empresa.pk %}'"
+                            {% endif %}
+                    >
+                        <div class="card bg-light d-flex flex-fill">
+                            <div class="card-header text-muted border-bottom-0">
+
+                            </div>
+                            <div class="card-body pt-0">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <h4><b>{{ empresa.nombre_comercial }}</b></h4>
+                                        Vencimiento: {{ empresa.cuenta.vencimiento }}
+                                        {% if not empresa.vigente %}
+                                            - <b style="color: red">VENCIDA</b>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if empresa.logo %}
+                                        <div class="col-5 text-center">
+                                            <img alt="{{ empresa.nombre_comercial }}" src="{{ empresa.logo.url }}"
+                                                 style="width: 128px; height: 128px;"
+                                                 class="img-fluid mb-2">
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 col-sm-6 col-md-6 d-flex align-items-stretch flex-column">
+                    <span style="color: white">No existen empresas registradas.</span>
+                    <a href="{% url 'administracion:registrar_empresa' %}" class="btn btn-primary btn-round">Agregar una
+                        nueva empresa
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+{% endblock %}
+

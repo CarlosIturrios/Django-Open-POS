@@ -1,0 +1,37 @@
+FROM ubuntu:18.04
+
+RUN apt-get update && apt-get install -y \
+    wget \
+    nano \
+    libmariadbclient-dev\
+    libssl-dev \
+    python3.8 \
+    python3.8-dev \
+    python3-pip
+
+RUN pip3 install setuptools
+
+RUN wget -O /wkhtmltox_0.12.1.4-2.bionic_amd64.deb \
+    https://github.com/wkhtmltopdf/packaging/releases/download/0.12.1.4-2/wkhtmltox_0.12.1.4-2.bionic_amd64.deb
+
+RUN apt-get -f install -y /wkhtmltox_0.12.1.4-2.bionic_amd64.deb
+
+RUN ln -s /usr/local/bin/wkhtmltopdf /usr/bin &&\
+    ln -s /usr/local/bin/wkhtmltoimage /usr/bin &&\
+    rm -f /wkhtmltox_0.12.1.4-2.bionic_amd64.deb
+
+RUN apt-get install -y python-m2crypto
+
+RUN mkdir -p /var/www/django_open_pos
+
+WORKDIR /var/www/django_open_pos
+
+COPY requirements.txt requirements.txt
+
+RUN pip3 install -r requirements.txt
+
+EXPOSE 8000
+
+STOPSIGNAL SIGINT
+
+ENTRYPOINT ["python3", "manage.py"]

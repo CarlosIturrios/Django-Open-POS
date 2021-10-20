@@ -1,0 +1,86 @@
+[
+  {
+    "model": "mainapp.status",
+    "pk": 1,
+    "fields": {
+      "eliminado": true,
+      "modificable": true,
+      "fecha_de_creacion": "2021-04-01T02:57:36.513Z",
+      "fecha_de_modificacion": "2021-04-01T02:57:36.513Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "PENNDING"
+    }
+  },
+  {
+    "model": "mainapp.status",
+    "pk": 2,
+    "fields": {
+      "eliminado": true,
+      "modificable": true,
+      "fecha_de_creacion": "2021-04-01T02:57:47.718Z",
+      "fecha_de_modificacion": "2021-04-01T02:57:47.718Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "APPROVED"
+    }
+  },
+  {
+    "model": "mainapp.status",
+    "pk": 3,
+    "fields": {
+      "eliminado": true,
+      "modificable": true,
+      "fecha_de_creacion": "2021-04-01T02:57:53.120Z",
+      "fecha_de_modificacion": "2021-04-01T02:57:53.120Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "PROCESS"
+    }
+  },
+  {
+    "model": "mainapp.status",
+    "pk": 4,
+    "fields": {
+      "eliminado": true,
+      "modificable": true,
+      "fecha_de_creacion": "2021-04-01T02:57:59.274Z",
+      "fecha_de_modificacion": "2021-04-01T02:57:59.274Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "CANCELED"
+    }
+  },
+  {
+    "model": "mainapp.status",
+    "pk": 5,
+    "fields": {
+      "eliminado": true,
+      "modificable": true,
+      "fecha_de_creacion": "2021-04-01T02:58:03.016Z",
+      "fecha_de_modificacion": "2021-04-01T02:58:03.016Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "DONE"
+    }
+  },
+  {
+    "model": "mainapp.status",
+    "pk": 6,
+    "fields": {
+      "eliminado": false,
+      "modificable": true,
+      "fecha_de_creacion": "2021-07-18T04:24:30.351Z",
+      "fecha_de_modificacion": "2021-07-18T04:24:30.351Z",
+      "usuario_creo": null,
+      "usuario_modifico": null,
+      "usuario_elimino": null,
+      "description": "PAID"
+    }
+  }
+]

@@ -1,0 +1,129 @@
+{% extends 'mvcapp/base.html' %}
+{% load humanize %}
+{% load static %}
+{% block titulo %}Detalle de la Orden{% endblock %}
+{% block navegacion %}Detalle de la Orden{% endblock %}
+{% block main %}
+    {% if productos %}
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="invoice col-md-10" style="border-radius: 2%">
+                <!-- title row -->
+                <div class="row">
+                    <div class="col-sm-12"><br>
+                        <h2 style="color: white;" align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                    </div>
+                    {% if orden.pagado == False %}
+                        {% for group in  request.user.groups.all %}
+                            {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                                <div class="col-sm-6">
+                                    <br>
+                                    <form method="post" action="{% url 'mainapp:categorias' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                            <i class="fas fa-plus"></i> Agregar otro producto
+                                        </button>
+                                    </form>
+
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% for group in  request.user.groups.all %}
+                            {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name %}
+                                <div class="col-sm-6">
+                                    <br>
+                                    <form method="post" action="{% url 'mainapp:cobrar' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                            <i class="fas fa-cash-register"></i> Cobrar
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    {% for group in  request.user.groups.all %}
+                        {% if 'COCINERO' == group.name or 'ADMINISTRADOR' == group.name %}
+                            <div class="col-sm-6">
+                                <br>
+                                <form method="post" action="{% url 'mainapp:orden_lista_para_entrega' orden.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                        <i class="fas fa-check-double"></i> Orden lista para entrega
+                                    </button>
+                                </form>
+                            </div>{% endif %}
+                    {% endfor %}
+                    {% for group in  request.user.groups.all %}
+                        {% if 'REPARTIDOR' == group.name or 'ADMINISTRADOR' == group.name %}
+                            <div class="col-sm-6">
+                                <br>
+                                <form method="post" action="{% url 'mainapp:orden_entregada' orden.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                        <i class="fas fa-shipping-fast"></i> Orden entregada
+                                    </button>
+                                </form>
+
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <!-- /.col -->
+                </div>
+                <!-- Table row --><br>
+                <div class="row">
+                    <div class="col-12 table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for producto in productos %}
+                                <tr>
+                                    <td>
+                                        <img alt="{{ producto.description }}" src="{{ producto.image }}"
+                                             style="width: 64px; height: 64px;"
+                                             class="img-fluid mb-2">
+                                    </td>
+                                    <td>{{ producto.name }}</td>
+                                    <td>{{ producto.quantity }}</td>
+                                    <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
+                                    <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
+                                    <td>
+                                        <form method="post" action="{% url 'mainapp:eliminar_producto' producto.pk %}">
+                                            {% csrf_token %}
+                                            <button type="submit" rel="tooltip" data-placement="left"
+                                                    title="Quitar producto"
+                                                    class="btn btn-simple">
+                                                <i class="fas fa-eraser" style="color: white;"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col col-sm-8">
+                <span style="color: white">No existen productos registrados con esa categoria.</span>
+                <a href="{% url 'mainapp:categorias' %}" class="btn btn-primary btn-round">regresar al
+                    menu anterior.
+                </a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+

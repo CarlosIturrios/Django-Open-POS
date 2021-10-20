@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+  web:
+    restart: on-failure
+    container_name: product_django_open_pos
+    stdin_open: true
+    tty: true
+    environment:
+      - DJANGO_DEBUG=FALSE
+    build:
+      context: ../../
+      dockerfile: docker/product_django_open_pos/Dockerfile_Web
+    ports:
+      - 8090:80

@@ -17,6 +17,7 @@ class QuantityType(DatosDeControlMixin):
     La tabla contiene la información de las categorías de solicitudes registradas en el sistema.
     """
     description = models.CharField(max_length=100, null=False, blank=False, help_text='Quantity type Description')
+    empresa = models.ForeignKey('adminapp.Empresa', null=False, blank=False, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return "{0}-{1}".format(self.pk, self.description)
@@ -32,6 +33,7 @@ class Ingredient(DatosDeControlMixin):
     quantity_type = models.ForeignKey('mainapp.QuantityType', on_delete=models.DO_NOTHING,
                                       related_name='relation_QuantityType_Ingredient',
                                       help_text='Fk a la dependencia correspondiente')
+    empresa = models.ForeignKey('adminapp.Empresa', null=False, blank=False, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return "{0}".format(self.description)
@@ -49,6 +51,7 @@ class Category(DatosDeControlMixin):
         blank=True,
         help_text='Su imagen se re-dimensionara (200px~100px)',  # translate to english
     )
+    empresa = models.ForeignKey('adminapp.Empresa', null=False, blank=False, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return "{0}-{1}".format(self.pk, self.description)
@@ -80,6 +83,7 @@ class Product(DatosDeControlMixin):
     currency = models.ForeignKey('mainapp.Currency', on_delete=models.DO_NOTHING,
                                  related_name='relation_Currency_Product',
                                  help_text='Fk to currency')
+    empresa = models.ForeignKey('adminapp.Empresa', null=False, blank=False, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return "{0}-{1}-{2}".format(self.pk, self.name, self.description)

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django_filters',
     'import_export',
     'mainapp',
+    'adminapp',
     'api',
     'rest_framework',
 ]
@@ -86,8 +87,14 @@ WSGI_APPLICATION = 'django_open_pos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_open_pos',
+        'USER': 'user001',
+        'PASSWORD': 'j23FJwHFvHJUyzkZ',
+        'HOST': 'db',
+        'PORT': '3306',
+        'CHARSET': 'utf8mb4',
+        'COLLATION': 'utf8mb4_unicode_ci',
     }
 }
 
@@ -126,10 +133,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATIC_ROOT = '/var/www/template/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'mainapp:index'

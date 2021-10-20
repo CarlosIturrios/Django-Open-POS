@@ -1,0 +1,218 @@
+{% extends 'mvcapp/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block titulo %}Nueva orden{% endblock %}
+{% block navegacion %}Nueva orden{% endblock %}
+{% block main %}
+    <div class="container-fluid">
+        <!-- Info boxes -->
+        <div class="row">
+            <div class="col-12 col-sm-6">
+                <a href="{% url 'mainapp:categorias' %}">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-shopping-cart"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Crear orden con pago inmediato</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="col-12 col-sm-6">
+                <a data-toggle="modal" data-target="#modal-xl">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-receipt"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Crear orden detallada</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                </a>
+                <!-- /.info-box -->
+            </div>
+
+        </div>
+        <!-- /.row -->
+        <section class="content">
+            <div class="modal fade" id="modal-xl">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Datos de la orden</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="post" action="{% url 'mainapp:crear_nueva_orden' %}">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <div class="col-md-12" id="">
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Ingrese los datos de la orden los datos de la
+                                                orden</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="tipoDeOrden">Tipo de orden</label>
+                                                <select class="form-control" name="tipoDeOrden" id="tipoDeOrden">
+                                                    {% for tipo in tipos_de_orden %}
+                                                        <option id="tipo{{ tipo.id }}"
+                                                                value="{{ tipo.id }}">
+                                                            {{ tipo.description }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="comentario">Comentarios de la orden</label>
+                                                <textarea class="form-control" rows="3" name="comentario"
+                                                          id="comentario"
+                                                          placeholder="Escriba algun comentario sobre la orden"
+                                                          required>
+                                                </textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <a class="btn btn-app" onclick="agregarCliente()" id="aAgregarCliente">
+                                                    <i class="fas fa-plus-square"></i> Agregar nuevo cliente
+                                                </a>
+                                                <a class="btn btn-app" onclick="buscarCliente()" id="aBuscarCliente">
+                                                    <i class="fas fa-search"></i> Buscar cliente
+                                                </a>
+                                            </div>
+                                            <div class="row" id="datosDelCliente" hidden>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <label for="informacionDelCliente">Datos del cliente</label>
+                                                        <textarea class="form-control" rows="3"
+                                                                  name="informacionDelCliente"
+                                                                  id="informacionDelCliente" disabled>
+                                                    </textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="buscarCliente" hidden>
+                                                <input class="form-control" type="text" name="idCliente"
+                                                       id="idCliente" hidden>
+                                                <div class="col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="buscarClienteCellphone">Numero de telefono</label>
+                                                        <input class="form-control" type="text"
+                                                               name="buscarClienteCellphone"
+                                                               id="buscarClienteCellphone"
+                                                               placeholder="Telefono del cliente" maxlength="10">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="buscarClienteEmail">Email</label>
+                                                        <input class="form-control" type="text"
+                                                               name="buscarClienteEmail"
+                                                               id="buscarClienteEmail"
+                                                               placeholder="Email del cliente">
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-block btn-primary"
+                                                        id="btnBuscarCliente" onclick="fctBuscarCliente()">
+                                                    Buscar
+                                                </button>
+                                            </div>
+                                            <div class="row" id="agregarCliente" hidden>
+                                                <div class="col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="clienteName">Nombre</label>
+                                                        <input class="form-control" type="text" name="clienteName"
+                                                               id="clienteName"
+                                                               placeholder="Nombre del cliente">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="clienteCellphone">Numero de telefono</label>
+                                                        <input class="form-control" type="text" name="clienteCellphone"
+                                                               id="clienteCellphone"
+                                                               placeholder="Telefono del cliente" maxlength="10">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="clienteDirection">Dirección</label>
+                                                        <input class="form-control" type="text" name="clienteDirection"
+                                                               id="clienteDirection"
+                                                               placeholder="Dirección del cliente">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="clienteEmail">Email</label>
+                                                        <input class="form-control" type="text" name="clienteEmail"
+                                                               id="clienteEmail"
+                                                               placeholder="Email del cliente">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Crear nueva Orden</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </section>
+        <!-- /.row -->
+    </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        function fctBuscarCliente() {
+            var email = $('#buscarClienteEmail').val();
+            var cellphone = $('#buscarClienteCellphone').val();
+            $.ajax({
+                url: '/api/customers/?email=' + email + '&cellphone=' + cellphone,
+                success: function (respuesta) {
+                    if (respuesta.length === 1) {
+                        $('#buscarCliente').attr("hidden", true);
+                        var datosDelCliente = "Nombre: " + respuesta[0].name + "\nDirección: "
+                            + respuesta[0].direction + "\nTelefono: " + respuesta[0].cellphone;
+                        $('#informacionDelCliente').val(datosDelCliente);
+                        $('#datosDelCliente').attr("hidden", false);
+                        $('#idCliente').val(respuesta[0].id)
+                    } else {
+                        toastr.options.progressBar = true;
+                        toastr.options.closeButton = true;
+                        toastr.warning("No se encontro el cliente");
+                    }
+                },
+                error: function () {
+                    toastr.options.progressBar = true;
+                    toastr.error("Ocurrio un proceso inesperado");
+                }
+            });
+        }
+
+        function agregarCliente() {
+            $('#agregarCliente').attr("hidden", false);
+            $('#aAgregarCliente').attr("hidden", true);
+            $('#aBuscarCliente').attr("hidden", false);
+            $('#datosDelCliente').attr("hidden", true);
+            $('#buscarCliente').attr("hidden", true);
+        }
+
+        function buscarCliente() {
+            $('#buscarCliente').attr("hidden", false);
+            $('#aBuscarCliente').attr("hidden", true);
+            $('#aAgregarCliente').attr("hidden", false);
+            $('#agregarCliente').attr("hidden", true);
+            $('#datosDelCliente').attr("hidden", true);
+        }
+    </script>
+{% endblock %}
