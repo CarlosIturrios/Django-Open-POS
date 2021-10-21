@@ -70,10 +70,6 @@ def dashboard(request):
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
 
-    if request.user.groups.filter(Q(name='CAJERO') | Q(name='CAJERO')).exists():
-        return redirect('mainapp:crear_nueva_orden')
-    elif request.user.groups.filter(Q(name='COCINERO') | Q(name='REPARTIDOR')).exists():
-        return redirect('mainapp:mis_ordenes')
     if request.method == "POST":
         fecha_inicial = request.POST.get('date1', None)
         fecha_final = request.POST.get('date2', None)

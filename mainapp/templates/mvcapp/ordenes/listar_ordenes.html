@@ -24,7 +24,7 @@
                                     <tr role="row">
                                         <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
                                             colspan="1">
-                                            Fecha
+                                            Fecha creación
                                         </th>
                                         <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
                                             colspan="1">
@@ -66,12 +66,16 @@
                                             colspan="1">
                                             Total de la orden
                                         </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
+                                            Fecha final
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for orden in ordenes %}
                                         <tr class="odd">
-                                            <td class="dtr-control sorting_1">{{ orden.fecha_de_creacion.date }}</td>
+                                            <td class="dtr-control sorting_1">{{ orden.fecha_de_creacion }}</td>
                                             <td class="dtr-control sorting_1">{{ orden.comments }}</td>
                                             <td class="dtr-control sorting_1">{{ orden.order_type.description }}</td>
                                             <td class="dtr-control sorting_1">{{ orden.status.description }}</td>
@@ -98,6 +102,7 @@
                                                 {% endif %}
                                             </td>
                                             <td class="dtr-control sorting_1">{{ orden.amount }}</td>
+                                            <td class="dtr-control sorting_1">{{ orden.fecha_de_modificacion }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tfoot>

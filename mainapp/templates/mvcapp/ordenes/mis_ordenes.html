@@ -37,8 +37,12 @@
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
+        function autoRefreshPage() {
+            window.location = window.location.href;
+        }
+
         $(function () {
-            $("#imprimirReciboId").get(0).click();
+            setInterval('autoRefreshPage()', 10000);
         });
     </script>
 {% endblock %}
