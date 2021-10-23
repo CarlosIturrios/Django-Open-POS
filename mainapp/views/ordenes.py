@@ -22,6 +22,8 @@ def orden_cobrada(request, pk):
             messages.add_message(request, messages.WARNING,
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
+    if 'order' in request.session:
+        del request.session['order']
     return render(request, 'mvcapp/ordenes/orden_cobrada.html',
                   {'pk': pk})
 
@@ -150,7 +152,8 @@ def mis_ordenes(request):
             messages.add_message(request, messages.WARNING,
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
-
+    if 'order' in request.session:
+        del request.session['order']
     if request.user.groups.filter(name='CAJERO').exists():
         ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=4), pagado=False,
                                        eliminado=False, empresa=empresa)
@@ -199,7 +202,7 @@ def orden(request, pk):
         total += float(producto.price) * product.quantity
         if 'cart' in request.session:
             del request.session['cart']
-    print(request.session['order'])
+
     return render(request, 'mvcapp/ordenes/detalle_de_orden.html',
                   {'productos': productos, 'total': total, 'orden': orden})
 
@@ -223,6 +226,8 @@ def orden_lista_para_entrega(request, pk):
     orden.save()
     messages.add_message(request, messages.SUCCESS,
                          'Orden actualizada con exito.')
+    if 'order' in request.session:
+        del request.session['order']
     return redirect('mainapp:mis_ordenes')
 
 
@@ -245,6 +250,8 @@ def orden_entregada(request, pk):
     orden.save()
     messages.add_message(request, messages.SUCCESS,
                          'Orden actualizada con exito.')
+    if 'order' in request.session:
+        del request.session['order']
     return redirect('mainapp:mis_ordenes')
 
 

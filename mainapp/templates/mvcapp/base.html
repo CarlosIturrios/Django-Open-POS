@@ -354,6 +354,7 @@
         {% for message in messages %}
             toastr.options.closeButton = true;
             toastr.options.progressBar = true;
+            toastr.options.positionClass = "toast-bottom-right";
             toastr.{{ message.tags }}("{{ message }}");
         {% endfor %}
     {% endif %}
