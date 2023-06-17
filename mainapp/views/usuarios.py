@@ -11,7 +11,8 @@ from adminapp import forms
 @login_required()
 def listar_usuarios_view(request):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -31,7 +32,8 @@ def crear_usuario(request):
     Agregar un usuario totalmente nuevo
     """
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -40,7 +42,7 @@ def crear_usuario(request):
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
 
-    grupos = Group.objects.all()
+    grupos = Group.objects.exclude(pk=5)
     if request.method == 'POST':
         form = forms.UserForm(request.POST)
         if form.is_valid():
@@ -51,8 +53,10 @@ def crear_usuario(request):
             new_group = Group.objects.get(pk=request.POST.get('grupo', None))
             new_group.user_set.add(usuario)
             empresa.usuarios.add(usuario)
-            messages.add_message(request, messages.INFO, 'Usuario agregado con exito')
-            return redirect('mainapp:listar_usuarios_view')  # cambia a get de usuarios
+            messages.add_message(request, messages.INFO,
+                                 'Usuario agregado con exito')
+            # cambia a get de usuarios
+            return redirect('mainapp:listar_usuarios_view')
         else:
             return render(request, 'mvcapp/usuarios/crear_usuario.html', {'form': form, 'grupos': grupos})
     else:

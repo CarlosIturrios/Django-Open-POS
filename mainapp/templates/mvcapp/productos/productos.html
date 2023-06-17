@@ -28,25 +28,30 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer">
-                                <div class="text-right">
-                                    <form action="{% url 'mainapp:productos' producto.category_id %}" method="post">
-                                        {% csrf_token %}
-                                        <div class="row">
-                                            <input type="text" name="id_product" value="{{ producto.id }}"
-                                                   hidden>
-                                            <label for="cantidad">Cantidad</label>
-                                            <input class="form-control" type="number" id="cantidad"
-                                                   name="cantidad" value="1">
-                                            <br>
-                                            <br>
-                                            <button type="submit" class="btn btn-primary form-control">
-                                                <i class="fas fa-plus"></i> Añadir a la orden
-                                            </button>
-                                        </div>
-                                    </form>
+                            {% for group in request.user.groups.all %}
+                                {% if 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                                <div class="card-footer">
+                                    <div class="text-right">
+                                        <form action="{% url 'mainapp:productos' producto.category_id %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <input type="text" name="id_product" value="{{ producto.id }}"
+                                                    hidden>
+                                                <label for="cantidad">Cantidad</label>
+                                                <input class="form-control" type="number" id="cantidad"
+                                                    name="cantidad" value="1">
+                                                <br>
+                                                <br>
+                                                <button type="submit" class="btn btn-primary form-control">
+                                                    <i class="fas fa-plus"></i> Añadir a la orden
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
+                                {% endif %}
+                            {% endfor %}
+                    
                         </div>
                     </div>
                 {% endfor %}

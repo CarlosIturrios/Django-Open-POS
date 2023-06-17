@@ -23,7 +23,8 @@
 <body>
 
 <h2>Orden numero: <b>#{{ order.pk }}</b> Total: $ {{ order.amount|floatformat:2|intcomma }}</h2>
-<h2>Estado de la orden: <b>{{ order.status.description }}</b></h2>
+<h2>Estado de la orden: <b>{{ order.status.description }} </b></h2>
+<p><b>{{ orden.customer.name }} {{ orden.customer.name }} {{ orden.customer.name }}</b></p>
 <table>
     <tr>
         <th>Producto</th>
@@ -43,6 +44,7 @@
 <br><hr><br>
 <h2>Orden numero: <b>#{{ order.pk }}</b> Total: $ {{ order.amount|floatformat:2|intcomma }}</h2>
 <h2>Estado de la orden: <b>{{ order.status.description }}</b></h2>
+<p><b>{{ orden.customer.name }} {{ orden.customer.name }} {{ orden.customer.name }}</b></p>
 <table>
     <tr>
         <th>Producto</th>

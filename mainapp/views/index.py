@@ -11,6 +11,7 @@ from django.db.models import Q
 from mainapp.models import Product
 from mainapp.models import Order
 from mainapp.models import OrderDetail
+from mainapp.models import OrderType
 from mainapp.models import Customer
 from adminapp.models import Empresa
 
@@ -27,7 +28,8 @@ class LogoutView(views.LogoutView):
 @login_required()
 def carrito_view(request):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -40,10 +42,12 @@ def carrito_view(request):
                              'La orden se encuentra vacia, por favor selecciona algunos productos')
         return redirect('mainapp:categorias')
     else:
+        tipos_de_orden = OrderType.objects.all()
         productos = []
         total = float(0)
         for item in request.session['cart']:
-            producto = Product.objects.get(pk=item['id_product'], eliminado=False, empresa=empresa)
+            producto = Product.objects.get(
+                pk=item['id_product'], eliminado=False, empresa=empresa)
             productos.append({
                 'pk': producto.pk,
                 'name': producto.name,
@@ -55,13 +59,14 @@ def carrito_view(request):
             })
             total += float(producto.price) * float(item['cantidad'])
         return render(request, 'mvcapp/carrito.html',
-                      {'productos': productos, 'total': total})
+                      {'productos': productos, 'total': total, 'tipos_de_orden': tipos_de_orden})
 
 
 @login_required()
 def dashboard(request):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -82,12 +87,16 @@ def dashboard(request):
         ordenes_vendidas = Order.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final],
                                                 pagado=True, eliminado=False, empresa=empresa)
         ordenes_pendientes = Order.objects.filter(Q(pagado=False) | Q(cocinado=False) | Q(entregado=False),
-                                                  fecha_de_creacion__range=[fecha_inicial, fecha_final],
+                                                  fecha_de_creacion__range=[
+                                                      fecha_inicial, fecha_final],
                                                   eliminado=False, empresa=empresa)
     else:
-        ventas_del_dia = Order.objects.filter(pagado=True, eliminado=False, empresa=empresa).aggregate(Sum('amount'))
-        clientes_nuevos = Customer.objects.filter(eliminado=False, empresa=empresa)
-        ordenes_vendidas = Order.objects.filter(pagado=True, eliminado=False, empresa=empresa)
+        ventas_del_dia = Order.objects.filter(
+            pagado=True, eliminado=False, empresa=empresa).aggregate(Sum('amount'))
+        clientes_nuevos = Customer.objects.filter(
+            eliminado=False, empresa=empresa)
+        ordenes_vendidas = Order.objects.filter(
+            pagado=True, eliminado=False, empresa=empresa)
         ordenes_pendientes = Order.objects.filter(Q(pagado=False) | Q(cocinado=False) | Q(entregado=False),
                                                   eliminado=False, empresa=empresa)
     ventas_del_dia = ventas_del_dia['amount__sum']
@@ -106,7 +115,8 @@ def dashboard(request):
 @login_required()
 def eliminar_del_carrito(request, pk):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -115,10 +125,12 @@ def eliminar_del_carrito(request, pk):
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
     if 'order' in request.session and 'cart' not in request.session:
-        order = Order.objects.get(pk=request.session['order'], eliminado=False, empresa=empresa)
+        order = Order.objects.get(
+            pk=request.session['order'], eliminado=False, empresa=empresa)
 
         if order.status.pk <= 3:
-            detalle = order.relacion_Order_a_OrderDetail.filter(product_id=pk, eliminado=False, empresa=empresa)
+            detalle = order.relacion_Order_a_OrderDetail.filter(
+                product_id=pk, eliminado=False, empresa=empresa)
             for producto in detalle:
                 producto.eliminado = True
                 producto.order = None
@@ -133,7 +145,8 @@ def eliminar_del_carrito(request, pk):
     if 'order' in request.session:
         order = Order.objects.get(pk=pk, eliminado=False, empresa=empresa)
         if order.status.pk <= 3:
-            detalle = order.relacion_Order_a_OrderDetail.get(product_id=pk, eliminado=False, empresa=empresa)
+            detalle = order.relacion_Order_a_OrderDetail.get(
+                product_id=pk, eliminado=False, empresa=empresa)
             detalle.delete()
     else:
         for i in range(len(request.session['cart'])):
@@ -151,7 +164,8 @@ def eliminar_del_carrito(request, pk):
 @login_required()
 def cobrar(request):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -161,7 +175,8 @@ def cobrar(request):
             return redirect('administracion:listar_empresas')
     if request.method == "POST":
         if 'cart' not in request.session and 'order' in request.session:
-            orden = Order.objects.get(pk=request.session['order'], eliminado=False, empresa=empresa)
+            orden = Order.objects.get(
+                pk=request.session['order'], eliminado=False, empresa=empresa)
             orden.status_id = 6
             orden.pagado = True
             orden.cashier = request.user
@@ -176,7 +191,8 @@ def cobrar(request):
             orden.save()
             total = float(0)
             for item in request.session['cart']:
-                producto = Product.objects.get(pk=item['id_product'], eliminado=False, empresa=empresa)
+                producto = Product.objects.get(
+                    pk=item['id_product'], eliminado=False, empresa=empresa)
                 detalle = OrderDetail()
                 detalle.product = producto
                 detalle.quantity = item['cantidad']
@@ -199,7 +215,8 @@ def cobrar(request):
 @login_required()
 def GeneratePDF(request, pk):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -222,7 +239,8 @@ def GeneratePDF(request, pk):
             'price': float(producto.price),
             'total': float(producto.price) * float(item.quantity),
         })
-    html = get_template('mvcapp/recibo.html').render({'order': order, 'productos': productos})
+    html = get_template(
+        'mvcapp/recibo.html').render({'order': order, 'productos': productos})
 
     options = {
         'page-size': 'Letter',

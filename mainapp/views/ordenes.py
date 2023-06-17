@@ -14,7 +14,8 @@ from adminapp.models import Empresa
 @login_required()
 def orden_cobrada(request, pk):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -31,7 +32,8 @@ def orden_cobrada(request, pk):
 @login_required()
 def crear_nueva_orden(request):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -49,6 +51,9 @@ def crear_nueva_orden(request):
         orden_type = request.POST.get('tipoDeOrden', None)
         comentario = request.POST.get('comentario', None)
         id_cliente = request.POST.get('idCliente', None)
+        pago = request.POST.get('pago', None)
+        confirmar_orden = request.POST.get('confirmar_orden', None)
+
         cliente = None
         if id_cliente == None or id_cliente == "":
             cliente_name = request.POST.get('clienteName', None)
@@ -69,7 +74,8 @@ def crear_nueva_orden(request):
                                          'Existe un problema con el cliente {0}'.format(e))
                     return render(request, 'mvcapp/ordenes/crear_nueva_orden.html', {'tipos_de_orden': tipos_de_orden})
         else:
-            cliente = Customer.objects.get(pk=id_cliente, eliminado=False, empresa=empresa)
+            cliente = Customer.objects.get(
+                pk=id_cliente, eliminado=False, empresa=empresa)
         nueva_orden.order_type_id = orden_type
         nueva_orden.status_id = 1
         nueva_orden.manager = request.user
@@ -77,11 +83,68 @@ def crear_nueva_orden(request):
         nueva_orden.customer = cliente
         nueva_orden.empresa = empresa
         nueva_orden.save()
+        if confirmar_orden:
+            nueva_orden.status_id = 2
+            nueva_orden.waiter = request.user
+            nueva_orden.save()
+            total = float(0)
+            for item in request.session['cart']:
+                bandera = True
+                for producto in nueva_orden.relacion_Order_a_OrderDetail.all():
+                    print(producto.product_id)
+                    if producto.product_id == int(item['id_product']):
+                        print(item['id_product'], 'entre al if')
+                        producto.quantity += int(item['cantidad'])
+                        producto.save()
+                        bandera = False
+                        total += (float(producto.product.price)
+                                  * float(producto.quantity))
+                if bandera:
+                    producto = Product.objects.get(
+                        pk=item['id_product'], eliminado=False, empresa=empresa)
+                    detalle = OrderDetail()
+                    detalle.product = producto
+                    detalle.quantity = item['cantidad']
+                    detalle.order = nueva_orden
+                    detalle.empresa = empresa
+                    detalle.save()
+                    total += (float(producto.price) * float(detalle.quantity))
+            nueva_orden.amount = total
+            nueva_orden.save()
+            del request.session['cart']
+            messages.add_message(request, messages.SUCCESS,
+                                 'Orden #{0} creada con exito pedido en cocina'.format(nueva_orden.pk))
+            return redirect('mainapp:orden_cobrada', nueva_orden.pk)
+        if pago:
+            nueva_orden.status_id = 6
+            nueva_orden.pagado = True
+            nueva_orden.cashier = request.user
+            nueva_orden.empresa = empresa
+            nueva_orden.save()
+            total = float(0)
+            for item in request.session['cart']:
+                producto = Product.objects.get(
+                    pk=item['id_product'], eliminado=False, empresa=empresa)
+                detalle = OrderDetail()
+                detalle.product = producto
+                detalle.quantity = item['cantidad']
+                detalle.order = nueva_orden
+                detalle.empresa = empresa
+                detalle.save()
+                total += (float(producto.price) * float(detalle.quantity))
+            nueva_orden.amount = total
+            nueva_orden.save()
+            del request.session['cart']
+            messages.add_message(request, messages.SUCCESS,
+                                 'Orden #{0} cobrada con exito'.format(nueva_orden.pk))
+            return redirect('mainapp:orden_cobrada', nueva_orden.pk)
         request.session['order'] = nueva_orden.pk
         if not cliente:
-            messages.add_message(request, messages.SUCCESS, 'Orden sin cliente creada con exito')
+            messages.add_message(request, messages.SUCCESS,
+                                 'Orden sin cliente creada con exito')
         else:
-            messages.add_message(request, messages.SUCCESS, 'Orden creada con exito')
+            messages.add_message(request, messages.SUCCESS,
+                                 'Orden creada con exito')
         return redirect('mainapp:categorias')
     return render(request, 'mvcapp/ordenes/crear_nueva_orden.html', {'tipos_de_orden': tipos_de_orden})
 
@@ -89,7 +152,8 @@ def crear_nueva_orden(request):
 @login_required()
 def detalle_de_la_orden(request):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -98,9 +162,9 @@ def detalle_de_la_orden(request):
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
     if request.method == "POST":
-        print(request.session['order'])
         if 'order' in request.session:
-            orden = Order.objects.get(pk=request.session['order'], eliminado=False, empresa=empresa)
+            orden = Order.objects.get(
+                pk=request.session['order'], eliminado=False, empresa=empresa)
             orden.status_id = 2
             orden.waiter = request.user
             orden.save()
@@ -114,9 +178,11 @@ def detalle_de_la_orden(request):
                         producto.quantity += int(item['cantidad'])
                         producto.save()
                         bandera = False
-                        total += (float(producto.product.price) * float(producto.quantity))
+                        total += (float(producto.product.price)
+                                  * float(producto.quantity))
                 if bandera:
-                    producto = Product.objects.get(pk=item['id_product'], eliminado=False, empresa=empresa)
+                    producto = Product.objects.get(
+                        pk=item['id_product'], eliminado=False, empresa=empresa)
                     detalle = OrderDetail()
                     detalle.product = producto
                     detalle.quantity = item['cantidad']
@@ -144,7 +210,8 @@ def detalle_de_la_orden(request):
 @login_required()
 def mis_ordenes(request):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -176,7 +243,8 @@ def mis_ordenes(request):
 @login_required()
 def orden(request, pk):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -210,7 +278,8 @@ def orden(request, pk):
 @login_required()
 def orden_lista_para_entrega(request, pk):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -234,7 +303,8 @@ def orden_lista_para_entrega(request, pk):
 @login_required()
 def orden_entregada(request, pk):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])
@@ -258,7 +328,8 @@ def orden_entregada(request, pk):
 @login_required()
 def listar_ordenes_view(request):
     if not 'empresa' in request.session:
-        messages.add_message(request, messages.ERROR, 'Tiene que acceder con una empresa.')
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
         return redirect('administracion:listar_empresas')
     else:
         empresa = Empresa.objects.get(pk=request.session['empresa'])

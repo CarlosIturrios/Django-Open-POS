@@ -116,20 +116,25 @@
                 <!-- /.row -->
             {% endif %}
         {% endfor %}
-        <div class="row">
-            <div class="col-12 col-sm-6 col-md-4">
-                <a href="{% url "mainapp:crear_nueva_orden" %}">
-                    <div class="info-box mb-3">
-                            <span class="info-box-icon bg-info elevation-1"><i
-                                    class="fas fa-plus-square"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Nueva Orden</span>
-                        </div>
-                        <!-- /.info-box-content -->
+            <div class="row">
+            {% for group in request.user.groups.all %}
+                {% if 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                    <div class="col-12 col-sm-6 col-md-4">
+                        <a href="{% url "mainapp:crear_nueva_orden" %}">
+                            <div class="info-box mb-3">
+                                    <span class="info-box-icon bg-info elevation-1">
+                                        <iclass="fas fa-plus-square"></i>
+                                    </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Nueva Orden</span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                        </a>
+                        <!-- /.info-box -->
                     </div>
-                </a>
-                <!-- /.info-box -->
-            </div>
+                {% endif %}
+            {% endfor %}
             <!-- /.col -->
             <div class="col-12 col-sm-6 col-md-4">
                 <a href="{% url "mainapp:categorias" %}">

@@ -21,7 +21,24 @@
                                     {% if orden.customer %}
                                         - {{ orden.customer.name }}
                                     {% endif %}
-                                    - {{ orden.order_type.description }}
+                                    {% if orden.order_type %}
+                                        - {{ orden.order_type.description }}
+                                    {% endif %}
+                                    - {{ orden.status.description }}
+                                    {% if orden.pagado %}
+                                        |Pagado|
+                                    {% else %}
+                                        |Pendiente de pago|
+                                    {% endif %}
+                                    {% if orden.cocinado == False %}
+                                        |Pendiente en cocina|
+                                    {% endif %}
+                                    {% if orden.entregado %}
+                                        |Entregado|
+                                    {% else %}
+                                        |Pendiente de entrega|
+                                    {% endif %}
+                                        <!-- /.info-box -->
                                 </span>
                             </div>
                             <!-- /.info-box-content -->
