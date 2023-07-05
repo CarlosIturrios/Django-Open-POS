@@ -1,5 +1,4 @@
 function listarProductos(idCategory) {
-    console.log('si entro' + idCategory);
     var dvMainCategories = $("#dvMainCategories");
     var prom = miapp.backend.ajax({
         method: "GET",
@@ -7,7 +6,6 @@ function listarProductos(idCategory) {
     });
     var item = "";
     prom.done(function (data) {
-        console.log(data.length);
         if (data.length === 0) {
             item += "<div class=\"card\">";
             item += "<div class=\"card-header card-header-danger\">";

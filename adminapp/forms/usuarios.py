@@ -20,7 +20,7 @@ class UserForm(forms.ModelForm):
         strip=False,
         help_text='Introduzca la misma contraseña que antes, para la verificación.',
     )
-
+    
     class Meta:
         model = User
         fields = ('first_name', 'last_name',
@@ -38,7 +38,16 @@ class UserForm(forms.ModelForm):
         password_validation.validate_password(
             self.cleaned_data.get('password2'), self.instance)
         return password2
+    
+    def clean_email(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
 
+        if email:
+            if User.objects.filter(email=email).exists():
+                raise forms.ValidationError('El correo electrónico ya está en uso.')
+        return email
+    
     def save(self, commit=True):
         user = super(UserForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
@@ -61,3 +70,12 @@ class UserProfileForm(forms.ModelForm):
         model = User
         fields = ('first_name', 'last_name',
                   'email',)
+
+class UserUpdateForm(forms.ModelForm):
+    groups = forms.ModelMultipleChoiceField(required=False,
+                                            queryset=Group.objects.all(),
+                                            widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
+    
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'groups')

@@ -1,9 +1,18 @@
 {% extends 'mvcapp/base.html' %}
 {% load humanize %}
 {% load static %}
-{% block titulo %}Detalle de la Orden{% endblock %}
-{% block navegacion %}Detalle de la Orden{% endblock %}
+{% block titulo %}Detalle de la Orden #{{orden.pk}} {% endblock %}
+{% block navegacion %}Detalle de la Orden #{{orden.pk}} {% endblock %}
 {% block main %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-11"></div>
+        <div class="col-md-1">
+            <a href="{% url 'mainapp:recibo' orden.pk %}" id="imprimirReciboId" target="_blank">
+                <button type="button" class="btn btn-block btn-info btn-xs">Imprimir Comanda</button>
+            </a>
+        </div>
+    </div>
     {% if productos %}
         <div class="row">
             <div class="col-md-1"></div>
@@ -11,7 +20,27 @@
                 <!-- title row -->
                 <div class="row">
                     <div class="col-sm-12"><br>
-                        <h2 style="color: white;" align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                        <h2 align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                    </div>
+                    <div class="col-sm-6">
+                        <h3>
+                            <p>
+                                {{ comentarios }}
+                            </p>
+                        </h3>
+                    </div>
+                    <div class="col-sm-6">
+                        <h3>
+                            <p>
+                                {{ orden.place.description }} - {{ orden.place.direction }}
+                            </p>
+                            <p>
+                                {% if orden.customer %}
+                                    Cliente: {{ orden.customer.name }} {{ orden.customer.direction }}
+                                    {{ orden.customer.cellphone }}
+                                {% endif %}
+                            </p>
+                        </h3>
                     </div>
                     {% if orden.pagado == False %}
                         {% for group in  request.user.groups.all %}
@@ -29,7 +58,7 @@
                             {% endif %}
                         {% endfor %}
                         {% for group in  request.user.groups.all %}
-                            {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name %}
+                            {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name and orden.pagado == False %}
                                 <div class="col-sm-6">
                                     <br>
                                     <form method="post" action="{% url 'mainapp:cobrar' %}">
@@ -42,8 +71,13 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
+                    {% if pago %}
+                        <div class="col-sm-12">
+                            <p style="word-break: break-all;"><b style="color: yellowgreen;">Pago en MercadoPago</b>: collection_id{{ pago }}</p>
+                        </div>            
+                    {% endif %}
                     {% for group in  request.user.groups.all %}
-                        {% if 'COCINERO' == group.name or 'ADMINISTRADOR' == group.name %}
+                        {% if 'COCINERO' == group.name or 'ADMINISTRADOR' == group.name and orden.cocinado == False %}
                             <div class="col-sm-6">
                                 <br>
                                 <form method="post" action="{% url 'mainapp:orden_lista_para_entrega' orden.pk %}">
@@ -55,7 +89,7 @@
                             </div>{% endif %}
                     {% endfor %}
                     {% for group in  request.user.groups.all %}
-                        {% if 'REPARTIDOR' == group.name or 'ADMINISTRADOR' == group.name %}
+                        {% if 'REPARTIDOR' == group.name or 'ADMINISTRADOR' == group.name and orden.entregado == False %}
                             <div class="col-sm-6">
                                 <br>
                                 <form method="post" action="{% url 'mainapp:orden_entregada' orden.pk %}">
@@ -97,13 +131,15 @@
                                     <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
                                     <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
                                     <td>
-                                        <form method="post" action="{% url 'mainapp:eliminar_producto' producto.pk %}">
+                                        <form method="post" action="{% url 'mainapp:eliminar_del_carrito_view' producto.pk %}">
                                             {% csrf_token %}
-                                            <button type="submit" rel="tooltip" data-placement="left"
-                                                    title="Quitar producto"
-                                                    class="btn btn-simple">
-                                                <i class="fas fa-eraser" style="color: white;"></i>
-                                            </button>
+                                            {% if orden.cobrado == False %}
+                                                <button type="submit" rel="tooltip" data-placement="left"
+                                                        title="Quitar producto"
+                                                        class="btn btn-simple">
+                                                    <i class="fas fa-eraser" style="color: white;"></i>
+                                                </button>
+                                            {% endif %}
                                         </form>
                                     </td>
                                 </tr>
@@ -115,6 +151,7 @@
                 </div>
             </div>
         </div>
+        <br>
     {% else %}
         <div class="row">
             <div class="col col-sm-8">
@@ -124,6 +161,8 @@
                 </a>
             </div>
         </div>
+        <br>
     {% endif %}
+</div>
 {% endblock %}
 

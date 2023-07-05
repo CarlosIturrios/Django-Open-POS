@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -61,3 +63,32 @@ def registro(request):
     else:
         form = forms.UserForm()
     return render(request, 'adminapp/registro.html', {'form': form})
+
+
+@login_required()
+def actualizar_empresa(request, empresa_id):
+    if not 'empresa' in request.session:
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
+        return redirect('administracion:listar_empresas')
+    else:
+        empresa = Empresa.objects.get(pk=request.session['empresa'])
+        if not empresa.vigente:
+            messages.add_message(request, messages.WARNING,
+                                 'La empresa presenta un adeudo, comuniquese con el administrador del portal')
+            return redirect('administracion:listar_empresas')
+    empresa = get_object_or_404(Empresa, id=empresa_id)
+    
+    if request.method == 'POST':
+        form = forms.EmpresaForm(request.POST, request.FILES, instance=empresa)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS,
+                             'Empresa actualizada con exito')
+            return redirect('mainapp:dashboard')
+    else:
+        form = forms.EmpresaForm(instance=empresa)
+        form.fields['nombre_para_pagos'].label = mark_safe(f'<a href="{request.scheme}://{request.get_host()}/app/{empresa.nombre_para_pagos}" target="_blank">Acceso para los clientes. Click Aquí.</a>')
+    
+    
+    return render(request, 'adminapp/actualizar_empresa.html', {'form': form, 'empresa': empresa, 'empresa_pk': empresa.pk})

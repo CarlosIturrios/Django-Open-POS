@@ -67,6 +67,17 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
+                                                <label for="place">Sucursal</label>
+                                                <select class="form-control" name="place" id="place">
+                                                    {% for place in places %}
+                                                        <option id="place{{ place.id }}"
+                                                                value="{{ place.id }}">
+                                                            {{ place.description }} - {{ place.direction }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="comentario">Comentarios de la orden</label>
                                                 <textarea class="form-control" rows="3" name="comentario"
                                                           id="comentario"
@@ -152,6 +163,14 @@
                                                                placeholder="Email del cliente">
                                                     </div>
                                                 </div>
+                                                <div class="col-sm-12 col-md-6" hidden>
+                                                    <div class="form-group">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" name="pago" id="pago">
+                                                            <label class="form-check-label">Checkbox checked</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -174,10 +193,11 @@
 {% block script %}
     <script type="text/javascript">
         function fctBuscarCliente() {
+            var empresa_pk = {{ empresa_pk }};
             var email = $('#buscarClienteEmail').val();
             var cellphone = $('#buscarClienteCellphone').val();
             $.ajax({
-                url: '/api/customers/?email=' + email + '&cellphone=' + cellphone,
+                url: '/api/customers/?empresa='+empresa_pk+'&email=' + email + '&cellphone=' + cellphone,
                 success: function (respuesta) {
                     if (respuesta.length === 1) {
                         $('#buscarCliente').attr("hidden", true);

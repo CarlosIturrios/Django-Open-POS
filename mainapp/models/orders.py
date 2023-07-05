@@ -82,7 +82,9 @@ class Order(DatosDeControlMixin):
     order_type = models.ForeignKey('mainapp.OrderType', on_delete=models.DO_NOTHING, null=True, blank=True,
                                    related_name='relacion_OrderType_a_Order', default=None,
                                    help_text='Fk to Order Type')
-
+    PaymentWithMercadoPago = models.ForeignKey('adminapp.PaymentWithMercadoPago', on_delete=models.DO_NOTHING, null=True, blank=True,
+                              related_name='relacion_PaymentWithMercadoPago_a_Order',
+                              help_text='Fk a usuario para conocer el usuario que creo el registro')
     amount = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)
     change = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)
     cash_paid = models.DecimalField(max_digits=14, decimal_places=4, help_text='Product price', default=0)

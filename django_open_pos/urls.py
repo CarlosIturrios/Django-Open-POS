@@ -20,7 +20,8 @@ from django.urls import include, path
 
 urlpatterns = [
                   path('panel-de-control/', admin.site.urls),
-                  path('', include('mainapp.urls', 'template')),
+                  path('app/', include('mainapp.urls', 'mainapp')),
+                  path('', include('website.urls', 'website')),
                   path('administracion/', include('adminapp.urls', 'administracion')),
                   path('api/', include('api.urls', 'api')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

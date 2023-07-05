@@ -16,74 +16,338 @@
                 <form method="post" action="" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="name">Nombre del producto</label>
-                            <input type="text" class="form-control" id="name" name="name"
-                                   placeholder="Hamburguesa doble con papas" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Descripción del producto</label>
-                            <textarea class="form-control" id="description" name="description" rows="2"
-                                      placeholder="Hamburguesa con dos carnes acompañada de papas fritas"
-                                      required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="product_code">Codigo del producto</label>
-                            <input type="text" class="form-control" id="product_code" name="product_code"
-                                   placeholder="HA7221" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="category">Categoria del producto</label>
-                            <select id="category" name="category" class="form-control"
-                                    required>
-                                {% for categoria in categorias %}
-                                    <option value="{{ categoria.pk }}">{{ categoria.description }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="image">Foto del producto</label>
-                            <input type="file" id="image" name="image" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="price">Precio del producto</label>
-                            <input type="number" class="form-control" id="price" name="price"
-                                   required>
-                        </div>
-                        <div class="form-group">
-                            <label for="stock">Stock del producto</label>
-                            <input type="number" class="form-control" id="stock" name="stock"
-                                   required>
-                        </div>
-                        <div class="form-group">
-                            <label for="ingredients">Ingredientes con los que se prepara el producto</label>
-                            <select multiple="" class="form-control" id="ingredients" name="ingredients">
-                                {% for ingrediente in ingredientes %}
-                                    <option value="{{ ingrediente.pk }}">{{ ingrediente.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="barcode">Codigo de barras del producto</label>
-                            <input type="text" class="form-control" id="barcode" name="barcode"
-                                   placeholder="HA7221" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="currency">Moneda en la que se cobrará del producto</label>
-                            <select id="currency" name="currency" class="form-control"
-                                    required>
-                                {% for moneda in monedas %}
-                                    <option value="{{ moneda.pk }}">{{ moneda.symbol }} - {{ moneda.description }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.name.id_for_label }}">Nombre del producto</label>
+                                        {{ form.name }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.product_code.id_for_label }}">Código del producto</label>
+                                        {{ form.product_code }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.category.id_for_label }}">Categoría del Producto
+                                            <a data-toggle="modal" data-target="#modal-categoria" class="btn btn-block bg-gradient-info btn-xs"> 
+                                                Agregar nueva categoria
+                                            </a>
+                                        </label>
+                                        {{ form.category }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.price.id_for_label }}">Precio del producto</label>
+                                        {{ form.price }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.stock.id_for_label }}">Stock del producto</label>
+                                        {{ form.stock }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.barcode.id_for_label }}">Código de barras del producto</label>
+                                        {{ form.barcode }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.currency.id_for_label }}">Moneda en la que se cobrará el producto
+                                            <a data-toggle="modal" data-target="#modal-moneda" class="btn btn-block bg-gradient-info btn-xs"> 
+                                                Agregar nueva moneda
+                                            </a>
+                                        </label>
+                                        {{ form.currency }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.description.id_for_label }}">Descripción del producto</label>
+                                        {{ form.description }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.ingredients.id_for_label }}">Ingredientes con los que se prepara el producto</label>
+                                        {{ form.ingredients }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.image.id_for_label }}">Foto del producto</label>
+                                        {{ form.image }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-body -->
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                        <button type="submit" class="btn btn-primary float-right">Guardar</button>
                     </div>
                 </form>
+                
             </div>
         </div>
+        <section class="content">
+            <div class="modal fade" id="modal-moneda">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Agregar nueva moneda</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12" id="">
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Ingrese los datos de la nueva moneda</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="id_description_moneda">Descripción de la moneda</label>
+                                                <input type="text" name="description" class="form-control" placeholder="MXN" id="id_description_moneda">
+                                                <small id="id_description_moneda-error" class="text-danger" style="display: none;">El campo de descripción es obligatorio.</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_symbol">Simbolo de la moneda</label>
+                                                <input type="text" name="symbol" class="form-control" placeholder="$" required="" id="id_symbol_moneda">
+                                                <small id="id_symbol_moneda-error" class="text-danger" style="display: none;">El campo de descripción es obligatorio.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary float-right" onclick="guardarTipoMoneda()">Guardar</button>
+                        </div>
+                    </div>
+                    <!-- /.colsm-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </section>
+        <section class="content">
+            <div class="modal fade" id="modal-categoria">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Agregar nueva Categoria</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12" id="">
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Ingrese los datos de la nueva Categoria</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="id_description_categoria">Descripción de la categoria</label>
+                                                <input type="text" name="description" class="form-control" placeholder="Hamburguesas" required="" id="id_description_categoria">
+                                                <small id="id_description_categoria-error" class="text-danger" style="display: none;">El campo de descripción es obligatorio.</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_clave_categoria">Clave de la categoria</label>
+                                                <input type="text" name="clave" class="form-control" placeholder="H01" required="" id="id_clave_categoria">
+                                                <small id="id_clave_categoria-error" class="text-danger" style="display: none;">El campo de descripción es obligatorio.</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_image_categoria">Imagen de la categoria</label>
+                                                <input type="file" name="image" class="form-control" accept="image/*" required="" id="id_image_categoria">
+                                                <small id="id_image_categoria-error" class="text-danger" style="display: none;">El campo de descripción es obligatorio.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary float-right" onclick="guardarTipoCategoria()">Guardar</button>
+                        </div>
+                    </div>
+                    <!-- /.colsm-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </section>
     </div>
+{% endblock %}
+
+{% block script %} 
+<script>
+    function guardarTipoMoneda() {
+        const descriptionInput = document.getElementById('id_description_moneda');
+        const descriptionError = document.getElementById('id_description_moneda-error');
+        const symbolInput = document.getElementById('id_description_moneda');
+        const symbolError = document.getElementById('id_description_moneda-error');
+        // Obtener el valor del campo de descripción
+        const description = descriptionInput.value;
+        const symbol = symbolInput.value;
+        // Validar si el campo de descripción está vacío
+        if (description.trim() === '') {
+            descriptionError.style.display = 'block'; // Mostrar el mensaje de error
+            return; // Detener la ejecución
+        }
+        if (symbol.trim() === '') {
+            symbolError.style.display = 'block'; // Mostrar el mensaje de error
+            return; // Detener la ejecución
+        }
+
+        var empresa_pk = {{ empresa_pk }};
+
+        const data = {
+            description: description,
+            symbol: symbol,
+            empresa: empresa_pk,
+        };
+
+        // Enviar la solicitud POST a la API utilizando fetch
+        fetch('/api/monedas/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Incluir el token CSRF en los encabezados
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                // El nuevo tipo de cantidad se agregó correctamente
+                // Aquí puedes realizar cualquier acción adicional necesaria, como mostrar un mensaje de éxito
+                toastr.options.progressBar = true;
+                toastr.success("Nueva moneda agregada correctamente");
+                const modalElement = document.getElementById('modal-moneda');
+
+                // Cerrar el modal utilizando el método modal('hide') de Bootstrap
+                $(modalElement).modal('hide');
+                // Realizar una solicitud GET al mismo endpoint para obtener los datos actualizados del select
+                fetch('/api/monedas/?empresa='+empresa_pk)
+                .then(response => response.json())
+                .then(data => {
+                    // Limpiar el select existente
+                    const selectElement = document.getElementById('id_currency');
+                    selectElement.innerHTML = '';
+
+                    // Agregar los nuevos datos al select
+                    data.forEach((item, index) => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = item.id;
+                        optionElement.textContent = item.description;
+                        if (index === data.length - 1) {
+                            optionElement.selected = true;
+                        }
+                        selectElement.appendChild(optionElement);
+                    });
+                })
+                .catch(error => {
+                    toastr.options.progressBar = true;
+                    toastr.error("Error al obtener los datos del select: "+ error);
+                });
+
+            } else {
+                // Hubo un error al agregar el nuevo tipo de cantidad
+                // Aquí puedes manejar el error de acuerdo a tus necesidades
+                toastr.options.progressBar = true;
+                toastr.error("Ocurrio un proceso inesperado al agregar la nueva moneda");
+            }
+        })
+        .catch(error => {
+            // Hubo un error de red u otro error al enviar la solicitud
+            // Aquí puedes manejar el error de acuerdo a tus necesidades
+            console.error('Error al enviar la solicitud:', error);
+        });
+    }
+</script>
+<script>
+    function guardarTipoCategoria() {
+        const descriptionInput = document.getElementById('id_description_categoria');
+        const descriptionError = document.getElementById('id_description_categoria-error');
+        const claveInput = document.getElementById('id_clave_categoria');
+        const claveError = document.getElementById('id_clave_categoria-error');
+        const imageInput = document.getElementById('id_image_categoria');
+        const imageError = document.getElementById('id_image_categoria-error');
+
+        const description = descriptionInput.value;
+        const clave = claveInput.value;
+        const image = imageInput.files[0]; // Obtener el archivo de imagen seleccionado
+
+        if (description.trim() === '') {
+            descriptionError.style.display = 'block';
+            return;
+        }
+        if (clave.trim() === '') {
+            claveError.style.display = 'block';
+            return;
+        }
+
+        const empresa_pk = {{ empresa_pk }};
+
+        const formData = new FormData();
+        formData.append('description', description);
+        formData.append('clave', clave);
+        formData.append('empresa', empresa_pk);
+        formData.append('image', image);
+
+        fetch('/api/categories/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                toastr.options.progressBar = true;
+                toastr.success("Nueva categoria agregada correctamente");
+                const modalElement = document.getElementById('modal-categoria');
+                $(modalElement).modal('hide');
+                fetch('/api/categories/?empresa='+empresa_pk)
+                .then(response => response.json())
+                .then(data => {
+                    const selectElement = document.getElementById('id_category');
+                    selectElement.innerHTML = '';
+
+                    data.forEach((item, index) => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = item.id;
+                        optionElement.textContent = item.description;
+                        if (index === data.length - 1) {
+                            optionElement.selected = true;
+                        }
+                        selectElement.appendChild(optionElement);
+                    });
+                })
+                .catch(error => {
+                    toastr.options.progressBar = true;
+                    toastr.error("Error al obtener los datos del select: "+ error);
+                });
+
+            } else {
+                toastr.options.progressBar = true;
+                toastr.error("Ocurrio un proceso inesperado al agregar la nueva categoria");
+            }
+        })
+        .catch(error => {
+            console.error('Error al enviar la solicitud:', error);
+        });
+    }
+</script>
+
 {% endblock %}

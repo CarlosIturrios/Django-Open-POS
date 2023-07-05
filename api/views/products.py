@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from rest_framework import viewsets
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
@@ -12,12 +13,12 @@ from api.serializers import CategorySerializer
 from api.serializers import ProductSerializer
 
 
-class CategoryView(ReadOnlyModelViewSet):
+class CategoryView(viewsets.ModelViewSet):
     """
         Vista de Rubro para crear, modificar y listar rubros
     """
-    permission_classes = (IsAuthenticated,)
-    queryset = Category.objects.filter(eliminado=True)
+    #permission_classes = (IsAuthenticated,)
+    queryset = Category.objects.filter(eliminado=False)
     serializer_class = CategorySerializer
     filterset_class = CategoryFilter
 

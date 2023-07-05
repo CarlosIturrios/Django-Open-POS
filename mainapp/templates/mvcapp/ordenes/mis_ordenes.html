@@ -21,7 +21,24 @@
                                     {% if orden.customer %}
                                         - {{ orden.customer.name }}
                                     {% endif %}
-                                    - {{ orden.order_type.description }}
+                                    {% if orden.order_type %}
+                                        - {{ orden.order_type.description }}
+                                    {% endif %}
+                                    - {{ orden.status.description }}
+                                    {% if orden.pagado %}
+                                        |Pagado|
+                                    {% else %}
+                                        |Pendiente de pago|
+                                    {% endif %}
+                                    {% if orden.cocinado == False %}
+                                        |Pendiente en cocina|
+                                    {% endif %}
+                                    {% if orden.entregado %}
+                                        |Entregado|
+                                    {% else %}
+                                        |Pendiente de entrega|
+                                    {% endif %}
+                                        <!-- /.info-box -->
                                 </span>
                             </div>
                             <!-- /.info-box-content -->
@@ -37,8 +54,12 @@
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
+        function autoRefreshPage() {
+            window.location = window.location.href;
+        }
+
         $(function () {
-            $("#imprimirReciboId").get(0).click();
+            setInterval('autoRefreshPage()', 10000);
         });
     </script>
 {% endblock %}

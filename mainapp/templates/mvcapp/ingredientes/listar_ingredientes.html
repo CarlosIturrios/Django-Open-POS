@@ -9,7 +9,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-round" href="{% url 'mainapp:crear_nuevo_ingredient_view' %}">Agregar
+                    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                    <a class="btn btn-primary btn-round float-right" href="{% url 'mainapp:crear_nuevo_ingredient_view' %}">Agregar
                         nuevo Ingrediente</a>
                 </div>
                 <!-- /.card-header -->
@@ -33,15 +34,25 @@
                                             colspan="1">
                                             Cantidad en stock
                                         </th>
+                                        <th>Eliminar</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for ingrediente in ingredientes %}
                                         <tr class="odd">
-                                            <td class="dtr-control sorting_1">{{ ingrediente.name }}</td>
+                                            <td class="dtr-control sorting_1">
+                                                <a href="{% url 'mainapp:modificar_ingredient_view' ingrediente.pk %}">{{ ingrediente.name }}</a></td>
                                             <td class="dtr-control sorting_1">{{ ingrediente.clasification }}</td>
                                             <td class="dtr-control sorting_1">
                                                 {{ ingrediente.quantity }} {{ ingrediente.quantity_type.description }}
+                                            </td>
+                                            <td class="dtr-control sorting_1">
+                                                <form method="post" action="{% url 'mainapp:eliminar_ingredient_view' ingrediente.pk %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-link text-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este Ingrediente?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     {% endfor %}

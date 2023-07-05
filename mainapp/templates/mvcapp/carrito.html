@@ -10,10 +10,10 @@
             <div class="invoice col-md-10" style="border-radius: 2%">
                 <!-- title row -->
                 <div class="col-sm-12"><br>
-                    <h2 style="color: white;" align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                    <h2 align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
                 </div>
                 {% for group in  request.user.groups.all %}
-                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name %}
+                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name and 'order' in request.session %}
                         <div class="col-6">
                             <br>
                             <form method="post" action="{% url 'mainapp:detalle_de_la_orden' %}" class="float-left">
@@ -45,12 +45,15 @@
                         {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name %}
                             <div class="col-sm-6">
                                 <br>
-                                <form method="post" action="{% url 'mainapp:cobrar' %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
-                                        <i class="fas fa-cash-register"></i> Cobrar
-                                    </button>
-                                </form>
+                                <a data-toggle="modal" data-target="#modal-xl">
+                                    <div class="info-box mb-3">
+                                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-cash-register"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Confirmar Orden</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
                             </div>
                         {% endif %}
                     {% endfor %}
@@ -83,7 +86,7 @@
                                     <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
                                     <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
                                     <td>
-                                        <form method="post" action="{% url 'mainapp:eliminar_producto' producto.pk %}">
+                                        <form method="post" action="{% url 'mainapp:eliminar_del_carrito_view' producto.pk %}">
                                             {% csrf_token %}
                                             <button type="submit" rel="tooltip" data-placement="left"
                                                     title="Quitar producto"
@@ -100,11 +103,188 @@
                     <!-- /.col -->
                 </div>
             </div>
+            <section class="content">
+                <div class="modal fade" id="modal-xl">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Datos de la orden</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% if 'order' not in request.session %}
+                                <form method="post" action="{% url 'mainapp:crear_nueva_orden' %}" id="crearNuevaOrden">
+                                    {% csrf_token %}
+                                    <div class="modal-body">
+                                        <div class="col-md-12" id="">
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Ingrese los datos de la orden los datos de la
+                                                        orden</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <label for="tipoDeOrden">Tipo de orden</label>
+                                                        <select class="form-control" name="tipoDeOrden" id="tipoDeOrden">
+                                                            {% for tipo in tipos_de_orden %}
+                                                                <option id="tipo{{ tipo.id }}"
+                                                                        value="{{ tipo.id }}">
+                                                                    {{ tipo.description }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="place">Sucursal</label>
+                                                        <select class="form-control" name="place" id="place">
+                                                            {% for place in places %}
+                                                                <option id="place{{ place.id }}"
+                                                                        value="{{ place.id }}">
+                                                                    {{ place.description }} - {{ place.direction }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="comentario">Comentarios de la orden</label>
+                                                        <textarea class="form-control" rows="3" name="comentario"
+                                                                id="comentario"
+                                                                placeholder="Escriba algun comentario sobre la orden"
+                                                                required>
+                                                        </textarea>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <a class="btn btn-app" onclick="agregarCliente()" id="aAgregarCliente">
+                                                            <i class="fas fa-plus-square"></i> Agregar nuevo cliente
+                                                        </a>
+                                                        <a class="btn btn-app" onclick="buscarCliente()" id="aBuscarCliente">
+                                                            <i class="fas fa-search"></i> Buscar cliente
+                                                        </a>
+                                                    </div>
+                                                    <div class="row" id="datosDelCliente" hidden>
+                                                        <div class="col-sm-12">
+                                                            <div class="form-group">
+                                                                <label for="informacionDelCliente">Datos del cliente</label>
+                                                                <textarea class="form-control" rows="3"
+                                                                        name="informacionDelCliente"
+                                                                        id="informacionDelCliente" disabled>
+                                                            </textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" id="buscarCliente" hidden>
+                                                        <input class="form-control" type="text" name="idCliente"
+                                                            id="idCliente" hidden>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="buscarClienteCellphone">Numero de telefono</label>
+                                                                <input class="form-control" type="text"
+                                                                    name="buscarClienteCellphone"
+                                                                    id="buscarClienteCellphone"
+                                                                    placeholder="Telefono del cliente" maxlength="10">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="buscarClienteEmail">Email</label>
+                                                                <input class="form-control" type="text"
+                                                                    name="buscarClienteEmail"
+                                                                    id="buscarClienteEmail"
+                                                                    placeholder="Email del cliente">
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="btn btn-block btn-primary"
+                                                                id="btnBuscarCliente" onclick="fctBuscarCliente()">
+                                                            Buscar
+                                                        </button>
+                                                    </div>
+                                                    <div class="row" id="agregarCliente" hidden>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="clienteName">Nombre</label>
+                                                                <input class="form-control" type="text" name="clienteName"
+                                                                    id="clienteName"
+                                                                    placeholder="Nombre del cliente">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="clienteCellphone">Numero de telefono</label>
+                                                                <input class="form-control" type="text" name="clienteCellphone"
+                                                                    id="clienteCellphone"
+                                                                    placeholder="Telefono del cliente" maxlength="10">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="clienteDirection">Dirección</label>
+                                                                <input class="form-control" type="text" name="clienteDirection"
+                                                                    id="clienteDirection"
+                                                                    placeholder="Dirección del cliente">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="clienteEmail">Email</label>
+                                                                <input class="form-control" type="text" name="clienteEmail"
+                                                                    id="clienteEmail"
+                                                                    placeholder="Email del cliente">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6" hidden>
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" name="pago" id="pago">
+                                                                    <label class="form-check-label">Pagar Orden</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6" hidden>
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" name="confirmar_orden" id="confirmar_orden">
+                                                                    <label class="form-check-label">Confirmar Orden</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="button" name="submit2" class="btn btn-danger" 
+                                            onclick="handleButtonClick('submit2')">Pagar Orden</button>
+                                        <button type="button" name="submit1" class="btn btn-info" 
+                                            onclick="handleButtonClick('submit1')">Confirmar Orden</button>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <div class="col-sm-12 col-md-12">
+                                    <div class="form-group">
+                                        <form method="post" action="{% url 'mainapp:cobrar' %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                                <i class="fas fa-cash-register"></i> Esta seguro de realizar el cobro? 
+                                            </button>
+                                        </form>
+                                    </div>
+                                <!-- /.form-group -->
+                                </div>
+                            {% endif %}
+                        </div>
+                        <!-- /.colsm-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+            </section>
         </div>
     {% else %}
         <div class="row">
             <div class="col col-sm-8">
-                <span style="color: white">No existen productos registrados con esa categoria.</span>
+                <span style="color: white">No existen productos registrados en la orden.</span>
                 <button onclick="goBack()" class="btn btn-primary btn-round">regresar al
                     menu anterior.
                 </button>
@@ -119,4 +299,68 @@
             window.history.back();
         }
     </script>
+
+    <script>
+        function handleButtonClick(buttonName) {
+            if (buttonName === 'submit1') {
+                document.getElementById('confirmar_orden').checked = true;
+                document.getElementById('pago').checked = false;
+            } else if (buttonName === 'submit2') {
+                document.getElementById('pago').checked = true;
+                document.getElementById('confirmar_orden').checked = false;
+            }
+    
+            // Envía el formulario manualmente
+            document.getElementById('crearNuevaOrden').submit();
+        }
+    </script>
+    
+    <script type="text/javascript">
+        function fctBuscarCliente() {
+            var empresa_pk = {{ empresa_pk }};
+            var email = $('#buscarClienteEmail').val();
+            var cellphone = $('#buscarClienteCellphone').val();
+            $.ajax({
+                url: '/api/customers/?empresa='+empresa_pk+'&email=' + email + '&cellphone=' + cellphone,
+                success: function (respuesta) {
+                    if (respuesta.length === 1) {
+                        $('#buscarCliente').attr("hidden", true);
+                        var datosDelCliente = "Nombre: " + respuesta[0].name + "\nDirección: "
+                            + respuesta[0].direction + "\nTelefono: " + respuesta[0].cellphone;
+                        $('#informacionDelCliente').val(datosDelCliente);
+                        $('#datosDelCliente').attr("hidden", false);
+                        $('#idCliente').val(respuesta[0].id)
+                    } else {
+                        toastr.options.progressBar = true;
+                        toastr.options.closeButton = true;
+                        toastr.warning("No se encontro el cliente");
+                    }
+                },
+                error: function () {
+                    toastr.options.progressBar = true;
+                    toastr.error("Ocurrio un proceso inesperado");
+                }
+            });
+        }
+
+        function agregarCliente() {
+            $('#agregarCliente').attr("hidden", false);
+            $('#aAgregarCliente').attr("hidden", true);
+            $('#aBuscarCliente').attr("hidden", false);
+            $('#datosDelCliente').attr("hidden", true);
+            $('#buscarCliente').attr("hidden", true);
+        }
+
+        function buscarCliente() {
+            $('#buscarCliente').attr("hidden", false);
+            $('#aBuscarCliente').attr("hidden", true);
+            $('#aAgregarCliente').attr("hidden", false);
+            $('#agregarCliente').attr("hidden", true);
+            $('#datosDelCliente').attr("hidden", true);
+        }
+    </script>
 {% endblock %}
+
+<!--
+
+-->

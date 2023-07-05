@@ -24,7 +24,8 @@
                     </div>
                     <!-- /.card-body -->
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                        <button type="submit" class="btn btn-primary float-right">Guardar</button>
                     </div>
                 </form>
             </div>

@@ -9,7 +9,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-round" href="{% url 'mainapp:crear_nueva_categoria_view' %}">Agregar
+                    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                    <a class="btn btn-primary btn-round float-right" href="{% url 'mainapp:crear_nueva_categoria_view' %}">Agregar
                         nueva categoria</a>
                 </div>
                 <!-- /.card-header -->
@@ -17,28 +18,42 @@
                     <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
                         <div class="row">
                             <div class="col-sm-12">
-                                <table id="example1" class="table table-bordered table-striped dataTable dtr-inline"
-                                       role="grid" aria-describedby="example1_info">
+                                <table id="example1" class="table table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
                                     <thead>
-                                    <tr role="row">
-                                        <th>Imagen
-                                        </th>
-                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
-                                            colspan="1" aria-label="Browser: activate to sort column ascending">
-                                            Descripción
-                                        </th>
-                                    </tr>
+                                        <tr role="row">
+                                            <th>Clave</th>
+                                            <th>Imagen</th>
+                                            <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">
+                                                Descripción
+                                            </th>
+                                            <th>Eliminar</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    {% for categoria in categorias %}
-                                        <tr class="odd">
-                                            <td><img src="{{ categoria.image.url }}" alt="{{ categoria.description }}"
-                                                     style="width: 64px; height: 64px;"
-                                                     class="img-fluid mb-2">
-                                            </td>
-                                            <td class="dtr-control sorting_1">{{ categoria.description }}</td>
-                                        </tr>
-                                    {% endfor %}
+                                        {% for categoria in categorias %}
+                                            <tr class="odd">
+                                                <td class="dtr-control sorting_1">
+                                                    <a href="{% url 'mainapp:modificar_categoria_view' categoria.pk %}">{{ categoria.clave }}</a>
+                                                </td>
+                                                <td>
+                                                    {% if categoria.image %}
+                                                        <img src="{{ categoria.image.url }}" alt="{{ categoria.description }}" style="width: 64px; height: 64px;" class="img-fluid mb-2">
+                                                    {% endif %}
+                                                </td>
+                                                <td class="dtr-control sorting_1">{{ categoria.description }}</td>
+                                                <td class="dtr-control sorting_1">
+                                                    <form method="post" action="{% url 'mainapp:eliminar_categoria_view' categoria.pk %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-link text-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <!-- Footer content here -->
                                     </tfoot>
                                 </table>
                             </div>
@@ -50,12 +65,13 @@
         </div>
     </div>
 {% endblock %}
+
 {% block script %}
     <script>
         $(function () {
             $("#example1").DataTable({
                 "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "print",]
+                "buttons": ["copy", "csv", "excel", "print"]
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
             $('#example2').DataTable({
                 "paging": true,
@@ -64,7 +80,7 @@
                 "ordering": true,
                 "info": true,
                 "autoWidth": false,
-                "responsive": true,
+                "responsive": true
             });
         });
     </script>
