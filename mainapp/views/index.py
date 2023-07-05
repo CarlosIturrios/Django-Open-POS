@@ -4,6 +4,8 @@ import uuid
 from django.contrib.auth.models import Group
 import pdfkit
 import mercadopago
+from datetime import datetime
+from django.utils import timezone
 
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -215,6 +217,14 @@ def GeneratePDF(request, pk):
 
 def carrito_customer_view(request, cadena):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
+    if empresa.horario_de_acceso:
+        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_inicio = empresa.horario_de_acceso.hora_inicio
+        hora_fin = empresa.horario_de_acceso.hora_fin
+        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
+            # Verificar también los minutos
+            messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
+            return redirect('website:website')
     if not empresa.vigente:
         messages.add_message(request, messages.WARNING,
                              'La empresa presenta adeudo y no tiene disponible la sección de pedidos')
@@ -302,6 +312,14 @@ def carrito_customer_view(request, cadena):
 
 def eliminar_del_carrito_customer_view(request, pk, cadena):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
+    if empresa.horario_de_acceso:
+        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_inicio = empresa.horario_de_acceso.hora_inicio
+        hora_fin = empresa.horario_de_acceso.hora_fin
+        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
+            # Verificar también los minutos
+            messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
+            return redirect('website:website')
     if not empresa.vigente:
         messages.add_message(request, messages.WARNING,
                              'La empresa presenta adeudo y no tiene disponible la sección de pedidos')
@@ -388,6 +406,14 @@ def eliminar_del_carrito(request, pk, empresa, cadena=None):
 
 def crear_nueva_orden_customer_view(request, cadena):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
+    if empresa.horario_de_acceso:
+        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_inicio = empresa.horario_de_acceso.hora_inicio
+        hora_fin = empresa.horario_de_acceso.hora_fin
+        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
+            # Verificar también los minutos
+            messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
+            return redirect('website:website')
     if not empresa.vigente:
         messages.add_message(request, messages.WARNING,
                              'La empresa presenta adeudo y no tiene disponible la sección de pedidos')
@@ -535,6 +561,14 @@ def crear_nueva_orden_customer_view(request, cadena):
 
 def index_customers_view(request, cadena):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
+    if empresa.horario_de_acceso:
+        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_inicio = empresa.horario_de_acceso.hora_inicio
+        hora_fin = empresa.horario_de_acceso.hora_fin
+        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
+            # Verificar también los minutos
+            messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
+            return redirect('website:website')
     if not empresa.vigente:
         messages.add_message(request, messages.WARNING,
                              'La empresa presenta adeudo y no tiene disponible la sección de pedidos')

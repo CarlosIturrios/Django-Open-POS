@@ -45,5 +45,173 @@
                 </form>
             </div>
         </div>
+        <section class="content">
+            <div class="modal fade" id="modal-horario-de-acceso">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Agregar el Horario de Acceso</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12" id="">
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Ingrese la hora de inicio y fin del horario de acceso</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="hora_inicio">Hora de inicio:</label>
+                                                    <div class="input-group">
+                                                        <input type="time" id="hora_inicio" name="hora_inicio" class="form-control" required step="any">
+                                                        <small id="hora-inicio-error" class="text-danger" style="display: none;">El campo de Hora Inicio es obligatorio.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="hora_fin">Hora de cierre:</label>
+                                                    <div class="input-group">
+                                                        <input type="time" id="hora_fin" name="hora_fin" class="form-control" required>
+                                                        <small id="hora-fin-error" class="text-danger" style="display: none;">El campo de Hora Fin es obligatorio.</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary float-right" onclick="guardarHorarioDeAcceso()">Guardar</button>
+                        </div>
+                    </div>
+                    <!-- /.colsm-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </section>
     </div>
+{% endblock %}
+
+{% block script %} 
+<script>
+    function guardarHorarioDeAcceso() {
+        const horaInicioInput = document.getElementById('hora_inicio');
+        const horaFinInput = document.getElementById('hora_fin');
+        const horaInicioError = document.getElementById('hora-inicio-error');
+        const horaFinError = document.getElementById('hora-fin-error');
+        // Obtener el valor del campo de descripción
+        const horaInicio = horaInicioInput.value;
+        const horaFin = horaFinInput.value;
+        // Validar si el campo de descripción está vacío
+        if (horaInicio.trim() === '') {
+            horaInicioError.style.display = 'block'; // Mostrar el mensaje de error
+            if (horaFin.trim() === '') {
+                horaFinError.style.display = 'block';
+            }; // Mostrar el mensaje de error
+            return; // Detener la ejecución
+        }
+        else if (horaFin.trim() === '') {
+                horaFinError.style.display = 'block';
+            return;
+        };
+        
+        const data = {
+            hora_inicio: horaInicio,
+            hora_fin: horaFin,
+        };
+
+        // Enviar la solicitud POST a la API utilizando fetch
+        fetch('/api/horarios-de-acceso/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Incluir el token CSRF en los encabezados
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                // Aquí puedes realizar cualquier acción adicional necesaria, como mostrar un mensaje de éxito
+                toastr.options.progressBar = true;
+                toastr.success("Nuevo Horario de acceso agregado correctamente");
+                const modalElement = document.getElementById('modal-horario-de-acceso');
+
+                // Cerrar el modal utilizando el método modal('hide') de Bootstrap
+                $(modalElement).modal('hide');
+                // Realizar una solicitud GET al mismo endpoint para obtener los datos actualizados del select
+                fetch('/api/horarios-de-acceso/')
+                .then(response => response.json())
+                .then(data => {
+                    // Limpiar el select existente
+                    const selectElement = document.getElementById('id_horario_de_acceso');
+                    selectElement.innerHTML = '';
+
+                    // Agregar los nuevos datos al select
+                    data.forEach((item, index) => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = item.id;
+
+                        const horaInicioParts = item.hora_inicio.split(':');
+                        const horaFinParts = item.hora_fin.split(':');
+
+                        const horaInicio = new Date();
+                        horaInicio.setHours(parseInt(horaInicioParts[0], 10));
+                        horaInicio.setMinutes(parseInt(horaInicioParts[1], 10));
+                        horaInicio.setSeconds(parseInt(horaInicioParts[2], 10));
+
+                        const horaFin = new Date();
+                        horaFin.setHours(parseInt(horaFinParts[0], 10));
+                        horaFin.setMinutes(parseInt(horaFinParts[1], 10));
+                        horaFin.setSeconds(parseInt(horaFinParts[2], 10));
+
+                        const horaInicioFormatted = horaInicio.toLocaleString('en-US', {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: true
+                        });
+
+                        const horaFinFormatted = horaFin.toLocaleString('en-US', {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: true
+                        });
+
+                        const descripcion = `${item.id} - Hora de inicio: ${horaInicioFormatted} - Hora de cierre: ${horaFinFormatted}`;
+                        optionElement.textContent = descripcion;
+
+                        if (index === data.length - 1) {
+                            optionElement.selected = true;
+                        }
+
+                        selectElement.appendChild(optionElement);
+                    });
+
+
+                })
+                .catch(error => {
+                    toastr.options.progressBar = true;
+                    toastr.error("Error al obtener los datos del select: "+ error);
+                });
+
+            } else {
+                // Aquí puedes manejar el error de acuerdo a tus necesidades
+                toastr.options.progressBar = true;
+                toastr.error("Ocurrio un proceso inesperado al agregar el nuevo Horario de acceso");
+            }
+        })
+        .catch(error => {
+            // Hubo un error de red u otro error al enviar la solicitud
+            // Aquí puedes manejar el error de acuerdo a tus necesidades
+            console.error('Error al enviar la solicitud:', error);
+        });
+    }
+</script>
+
 {% endblock %}
