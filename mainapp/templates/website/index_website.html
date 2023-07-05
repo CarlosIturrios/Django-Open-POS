@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="{% static 'website/css/owl.carousel.min.css' %}">
     <!-- Main css -->
     <link href="{% static 'website/css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'template/plugins/toastr/toastr.min.css' %}">
 </head>
 
 <body data-spy="scroll" data-target="#navbar" data-offset="30">
@@ -418,7 +419,17 @@
     <script src="{% static 'website/js/owl.carousel.min.js' %}"></script>
     <!-- Custom JS -->
     <script src="{% static 'website/js/script.js' %}"></script>
-
+    <script src="{% static 'template/plugins/toastr/toastr.min.js' %}"></script>
+    <script>
+        {% if messages %}
+            {% for message in messages %}
+                toastr.options.closeButton = true;
+                toastr.options.progressBar = true;
+                toastr.options.positionClass = "toast-bottom-right";
+                toastr.{{ message.tags }}("{{ message }}");
+            {% endfor %}
+        {% endif %}
+    </script>
 </body>
 
 </html>

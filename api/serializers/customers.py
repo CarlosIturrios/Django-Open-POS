@@ -4,6 +4,7 @@ from mainapp.models import Customer
 from mainapp.models import QuantityType
 from mainapp.models import Currency
 from adminapp.models import Empresa
+from adminapp.models import HorarioAcceso
 from adminapp.models import CiudadadPermitida
 
 
@@ -76,3 +77,18 @@ class CurrencySerializer(serializers.ModelSerializer):
         read_only_fields = (
             'id', 
         )
+
+class HorarioAccesoSerializer(serializers.ModelSerializer):
+    """
+        
+    """
+    class Meta:
+        model = HorarioAcceso
+        fields = (
+            'id',
+            'hora_inicio',
+            'hora_fin',
+        )
+        read_only_fields = (
+            'id', 
+        )        

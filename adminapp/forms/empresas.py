@@ -5,6 +5,17 @@ from django import forms
 from django.utils.safestring import mark_safe
 
 from adminapp.models import Empresa
+from adminapp.models import HorarioAcceso
+
+
+class HorarioAccesoForm(forms.ModelForm):
+    class Meta:
+        model = HorarioAcceso
+        fields = ['hora_inicio', 'hora_fin']
+        widgets = {
+            'hora_inicio': forms.TimeInput(attrs={'class': 'form-control'}),
+            'hora_fin': forms.TimeInput(attrs={'class': 'form-control'}),
+        }
 
 
 class ConfiguracionAgregarEmpresa(forms.ModelForm):
@@ -44,6 +55,12 @@ class EmpresaForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
     )
 
+    horario_de_acceso = forms.ModelChoiceField(
+        queryset=HorarioAcceso.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+)
+
     class Meta:
         model = Empresa
         fields = [
@@ -55,6 +72,7 @@ class EmpresaForm(forms.ModelForm):
             'nombre_para_pagos',
             'sdk_private',
             'sdk_public',
+            'horario_de_acceso',
             'ciudades_permitidas',
             'usuarios',
             'cer',
@@ -79,6 +97,7 @@ class EmpresaForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['horario_de_acceso'].initial = self.instance.horario_de_acceso
         self.fields['usuarios'].queryset = self.instance.usuarios.all()
         self.fields['sdk_private'].label = mark_safe('SDK Private<a href="https://www.mercadopago.com.mx/developers/es/docs/checkout-pro/additional-content/your-integrations/credentials" target="_blank" title="Mercado Pago SDK Credentials"> - ¿Aún no tienes tus credenciales? Haz clic aquí</a>')
     

@@ -37,6 +37,18 @@ class CiudadadPermitida(DatosDeControlMixin):
 class CiudadadPermitidaAdmin(ModelAdmin):
     search_fields = ['description'] 
 
+class HorarioAcceso(DatosDeControlMixin):    
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
+
+    def __str__(self):
+        hora_inicio_str = self.hora_inicio.strftime("%I:%M %p")
+        hora_fin_str = self.hora_fin.strftime("%I:%M %p")
+        return f"{self.pk} - Hora de inicio: {hora_inicio_str} - Hora de cierre: {hora_fin_str}"
+    
+class HorarioAccesoAdmin(ModelAdmin):
+    search_fields = ['hora_inicio'] 
+
 class Empresa(DatosDeControlMixin):
     rfc = models.CharField(
         max_length=13, blank=True, null=True, unique=True,
@@ -80,6 +92,8 @@ class Empresa(DatosDeControlMixin):
     usuarios = models.ManyToManyField(User)
     sdk_private = models.CharField(max_length=100, unique=True, null=True, blank=True, default=None)
     sdk_public = models.CharField(max_length=100, unique=True, null=True, blank=True, default=None)
+    horario_de_acceso = models.ForeignKey(HorarioAcceso, null=True, blank=True, default=None, on_delete=models.CASCADE,
+                                       related_name='horarios_acceso', help_text="Horario de acceso al portal del cliente.")
 
     nombre_para_pagos = models.CharField(
         max_length=200, blank=False, null=True, db_index=True, verbose_name='Nombre con el que accederán los clientes de esta empresa*'
