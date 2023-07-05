@@ -1,0 +1,49 @@
+{% extends 'mvcapp/base.html' %}
+
+{% block titulo %}Modificar Empresa{% endblock %}
+{% load humanize %}
+{% block navegacion %}Modificar Empresa{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Modificar Empresa</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="post" action="" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="card-body row">
+                        {% for field in form %}
+                            <div class="form-group col-md-6 {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% if field.field.widget.input_type != 'hidden' %}
+                                    {{ field }}
+                                {% else %}
+                                    {{ field.as_hidden }}
+                                {% endif %}
+                                {% if field.field.help_text %}
+                                    <small class="form-text text-muted">{{ field.field.help_text }}</small>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <ul class="errorlist" style="color: red;">
+                                        {% for error in field.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                        <button type="submit" class="btn btn-primary float-right">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

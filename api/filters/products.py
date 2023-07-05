@@ -10,6 +10,7 @@ class CategoryFilter(FilterSet):
         fields = (
             'id',
             'description',
+            'empresa',
         )
 
 
@@ -21,4 +22,5 @@ class ProductFilter(FilterSet):
             'id',
             'description',
             'category',
+            'empresa',
         )

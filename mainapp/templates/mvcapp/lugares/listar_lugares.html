@@ -9,7 +9,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-round" href="{% url 'mainapp:crear_nuevo_place_view' %}">Agregar
+                    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                    <a class="btn btn-primary btn-round float-right" href="{% url 'mainapp:crear_nuevo_place_view' %}">Agregar
                         nuevo Lugar</a>
                 </div>
                 <!-- /.card-header -->
@@ -29,13 +30,23 @@
                                             colspan="1">
                                             Dirección
                                         </th>
+                                        <th>Eliminar</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for lugar in lugares %}
                                         <tr class="odd">
-                                            <td class="dtr-control sorting_1">{{ lugar.description }}</td>
+                                            <td class="dtr-control sorting_1">
+                                                <a href="{% url 'mainapp:modificar_place_view' lugar.pk %}">{{ lugar.description }}</a></td>
                                             <td class="dtr-control sorting_1">{{ lugar.direction }}</td>
+                                            <td class="dtr-control sorting_1">
+                                                <form method="post" action="{% url 'mainapp:eliminar_place_view' lugar.pk %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-link text-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este Lugar?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tfoot>

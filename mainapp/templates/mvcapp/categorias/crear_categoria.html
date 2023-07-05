@@ -16,19 +16,24 @@
                 <form method="post" action="" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="description">Descripción de la categoria</label>
-                            <input type="text" class="form-control" id="description" name="description"
-                                   placeholder="Hamburguesas" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="image">Imagen</label>
-                            <input type="file" id="image" name="image" required>
-                        </div>
+                        {% for field in form %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% if field.field.widget.input_type != 'hidden' %}
+                                    {{ field }}
+                                {% else %}
+                                    {{ field.as_hidden }}
+                                {% endif %}
+                                {% if field.field.help_text %}
+                                    <small class="form-text text-muted">{{ field.field.help_text }}</small>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
                     </div>
                     <!-- /.card-body -->
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                        <button type="submit" class="btn btn-primary float-right">Guardar</button>
                     </div>
                 </form>
             </div>

@@ -10,7 +10,7 @@
             <div class="invoice col-md-10" style="border-radius: 2%">
                 <!-- title row -->
                 <div class="col-sm-12"><br>
-                    <h2 style="color: white;" align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                    <h2 align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
                 </div>
                 {% for group in  request.user.groups.all %}
                     {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name and 'order' in request.session %}
@@ -49,7 +49,7 @@
                                     <div class="info-box mb-3">
                                         <span class="info-box-icon bg-success elevation-1"><i class="fas fa-cash-register"></i></span>
                                         <div class="info-box-content">
-                                            <span class="info-box-text">Continuar</span>
+                                            <span class="info-box-text">Confirmar Orden</span>
                                         </div>
                                         <!-- /.info-box-content -->
                                     </div>
@@ -86,7 +86,7 @@
                                     <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
                                     <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
                                     <td>
-                                        <form method="post" action="{% url 'mainapp:eliminar_producto' producto.pk %}">
+                                        <form method="post" action="{% url 'mainapp:eliminar_del_carrito_view' producto.pk %}">
                                             {% csrf_token %}
                                             <button type="submit" rel="tooltip" data-placement="left"
                                                     title="Quitar producto"
@@ -131,6 +131,17 @@
                                                                 <option id="tipo{{ tipo.id }}"
                                                                         value="{{ tipo.id }}">
                                                                     {{ tipo.description }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="place">Sucursal</label>
+                                                        <select class="form-control" name="place" id="place">
+                                                            {% for place in places %}
+                                                                <option id="place{{ place.id }}"
+                                                                        value="{{ place.id }}">
+                                                                    {{ place.description }} - {{ place.direction }}
                                                                 </option>
                                                             {% endfor %}
                                                         </select>
@@ -306,10 +317,11 @@
     
     <script type="text/javascript">
         function fctBuscarCliente() {
+            var empresa_pk = {{ empresa_pk }};
             var email = $('#buscarClienteEmail').val();
             var cellphone = $('#buscarClienteCellphone').val();
             $.ajax({
-                url: '/api/customers/?email=' + email + '&cellphone=' + cellphone,
+                url: '/api/customers/?empresa='+empresa_pk+'&email=' + email + '&cellphone=' + cellphone,
                 success: function (respuesta) {
                     if (respuesta.length === 1) {
                         $('#buscarCliente').attr("hidden", true);

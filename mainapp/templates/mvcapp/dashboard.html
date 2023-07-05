@@ -5,9 +5,7 @@
 {% block navegacion %}Dashboard{% endblock %}
 {% block loader %}<!-- Preloader -->
     <div class="preloader flex-column justify-content-center align-items-center">
-        <img class="animation__wobble" src="{% static 'template/dist/img/AdminLTELogo.png' %}" alt="AdminLTELogo"
-             height="60"
-             width="60">
+        <img class="animation__wobble" src="{% static 'template/dist/img/AdminLTELogo.png' %}" alt="PoSLogo" height="60" width="60">
     </div>
 {% endblock %}
 {% block main %}
@@ -45,7 +43,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group" align="right">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary">Filtrar</button>
                                     </div>
                                 </form>
 
@@ -122,9 +120,7 @@
                     <div class="col-12 col-sm-6 col-md-4">
                         <a href="{% url "mainapp:crear_nueva_orden" %}">
                             <div class="info-box mb-3">
-                                    <span class="info-box-icon bg-info elevation-1">
-                                        <iclass="fas fa-plus-square"></i>
-                                    </span>
+                                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-plus-square "></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Nueva Orden</span>
                                 </div>

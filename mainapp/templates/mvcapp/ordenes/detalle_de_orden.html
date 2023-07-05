@@ -1,9 +1,18 @@
 {% extends 'mvcapp/base.html' %}
 {% load humanize %}
 {% load static %}
-{% block titulo %}Detalle de la Orden{% endblock %}
-{% block navegacion %}Detalle de la Orden{% endblock %}
+{% block titulo %}Detalle de la Orden #{{orden.pk}} {% endblock %}
+{% block navegacion %}Detalle de la Orden #{{orden.pk}} {% endblock %}
 {% block main %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-11"></div>
+        <div class="col-md-1">
+            <a href="{% url 'mainapp:recibo' orden.pk %}" id="imprimirReciboId" target="_blank">
+                <button type="button" class="btn btn-block btn-info btn-xs">Imprimir Comanda</button>
+            </a>
+        </div>
+    </div>
     {% if productos %}
         <div class="row">
             <div class="col-md-1"></div>
@@ -11,10 +20,19 @@
                 <!-- title row -->
                 <div class="row">
                     <div class="col-sm-12"><br>
-                        <h2 style="color: white;" align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                        <h2 align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                    </div>
+                    <div class="col-sm-6">
                         <h3>
                             <p>
-                                {{ orden.comments }}
+                                {{ comentarios }}
+                            </p>
+                        </h3>
+                    </div>
+                    <div class="col-sm-6">
+                        <h3>
+                            <p>
+                                {{ orden.place.description }} - {{ orden.place.direction }}
                             </p>
                             <p>
                                 {% if orden.customer %}
@@ -52,6 +70,11 @@
                                 </div>
                             {% endif %}
                         {% endfor %}
+                    {% endif %}
+                    {% if pago %}
+                        <div class="col-sm-12">
+                            <p style="word-break: break-all;"><b style="color: yellowgreen;">Pago en MercadoPago</b>: collection_id{{ pago }}</p>
+                        </div>            
                     {% endif %}
                     {% for group in  request.user.groups.all %}
                         {% if 'COCINERO' == group.name or 'ADMINISTRADOR' == group.name and orden.cocinado == False %}
@@ -108,7 +131,7 @@
                                     <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
                                     <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
                                     <td>
-                                        <form method="post" action="{% url 'mainapp:eliminar_producto' producto.pk %}">
+                                        <form method="post" action="{% url 'mainapp:eliminar_del_carrito_view' producto.pk %}">
                                             {% csrf_token %}
                                             {% if orden.cobrado == False %}
                                                 <button type="submit" rel="tooltip" data-placement="left"
@@ -128,6 +151,7 @@
                 </div>
             </div>
         </div>
+        <br>
     {% else %}
         <div class="row">
             <div class="col col-sm-8">
@@ -137,22 +161,8 @@
                 </a>
             </div>
         </div>
+        <br>
     {% endif %}
-    <br>
-    <div class="row">
-        <div class="col-md-1"></div>
-        <div class="invoice col-md-10" style="border-radius: 2%">
-            <!-- title row -->
-            <div class="row">
-                <div class="col-sm-12"><br>
-    
-                    <a href="{% url 'mainapp:recibo' orden.pk %}" id="imprimirReciboId" target="_blank">
-                        <button type="button" class="btn btn-block btn-light btn-xs">Imprimir Comanda</button>
-                    </a>
-                    <br>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
 {% endblock %}
 

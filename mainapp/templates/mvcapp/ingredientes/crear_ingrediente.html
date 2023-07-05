@@ -1,57 +1,188 @@
 {% extends 'mvcapp/base.html' %}
 
-{% block titulo %}Agregar Lugar{% endblock %}
+{% block titulo %}Agregar Ingrediente{% endblock %}
 {% load humanize %}
-{% block navegacion %}Agregar Lugar{% endblock %}
+{% block navegacion %}Agregar Ingrediente{% endblock %}
 
 {% block main %}
     <div class="row">
         <div class="col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Agregar Lugar</h3>
+                    <h3 class="card-title">Agregar Ingrediente</h3>
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
                 <form method="post" action="" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="name">Nombre del ingrediente</label>
-                            <input type="text" class="form-control" id="name" name="name"
-                                   placeholder="Tomate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Descripción del ingrediente</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"
-                                      placeholder="Tomate rojo del sur" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="clasification">Clasificación del ingrediente</label>
-                            <input type="text" class="form-control" id="clasification" name="clasification"
-                                   placeholder="Verduras" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity">Cantidad en stock del ingrediente</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity"
-                                   required>
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity_type">Tipo de cantidad del ingrediente</label>
-                            <select id="quantity_type" name="quantity_type" class="form-control"
-                                    required>
-                                {% for cantidad in quantity_types %}
-                                    <option value="{{ cantidad.pk }}">{{ cantidad.description }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.name.id_for_label }}">Nombre del ingrediente</label>
+                                        {{ form.name }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.clasification.id_for_label }}">Clasificación del ingrediente</label>
+                                        {{ form.clasification }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.quantity.id_for_label }}">Cantidad en stock del ingrediente</label>
+                                        {{ form.quantity }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.quantity_type.id_for_label }}">Tipo de cantidad del ingrediente
+                                            
+                                            <a data-toggle="modal" data-target="#modal-xl" class="btn btn-block bg-gradient-info btn-xs"> 
+                                                Agregar nuevo
+                                            </a>
+                                        </label>
+                                        {{ form.quantity_type }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.description.id_for_label }}">Descripción del ingrediente</label>
+                                        {{ form.description }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-body -->
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                        <button type="submit" class="btn btn-primary float-right">Guardar</button>
                     </div>
                 </form>
+
             </div>
         </div>
+        <section class="content">
+            <div class="modal fade" id="modal-xl">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Agregar Tipo de cantidad</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12" id="">
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Ingrese los datos del nuevo tipo de cantidad</h3>
+                                    </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="description">Tipo de cantidad</label>
+                                                <input type="text" class="form-control" id="description" name="description"
+                                                        placeholder="Pieza" required>
+                                                <small id="description-error" class="text-danger" style="display: none;">El campo de descripción es obligatorio.</small>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary float-right" onclick="guardarTipoCantidad()">Guardar</button>
+                        </div>
+                    </div>
+                    <!-- /.colsm-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </section>
     </div>
+{% endblock %}
+{% block script %} 
+<script>
+    function guardarTipoCantidad() {
+        const descriptionInput = document.getElementById('description');
+        const descriptionError = document.getElementById('description-error');
+
+        // Obtener el valor del campo de descripción
+        const description = descriptionInput.value;
+
+        // Validar si el campo de descripción está vacío
+        if (description.trim() === '') {
+            descriptionError.style.display = 'block'; // Mostrar el mensaje de error
+            return; // Detener la ejecución
+        }
+        var empresa_pk = {{ empresa_pk }};
+
+        const data = {
+            description: description,
+            empresa: empresa_pk,
+        };
+
+        // Enviar la solicitud POST a la API utilizando fetch
+        fetch('/api/tipos-de-ingredientes/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Incluir el token CSRF en los encabezados
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                // El nuevo tipo de cantidad se agregó correctamente
+                // Aquí puedes realizar cualquier acción adicional necesaria, como mostrar un mensaje de éxito
+                toastr.options.progressBar = true;
+                toastr.success("Nuevo tipo de cantidad agregado correctamente");
+                const modalElement = document.getElementById('modal-xl');
+
+                // Cerrar el modal utilizando el método modal('hide') de Bootstrap
+                $(modalElement).modal('hide');
+                // Realizar una solicitud GET al mismo endpoint para obtener los datos actualizados del select
+                fetch('/api/tipos-de-ingredientes/?empresa='+empresa_pk)
+                .then(response => response.json())
+                .then(data => {
+                    // Limpiar el select existente
+                    const selectElement = document.getElementById('id_quantity_type');
+                    selectElement.innerHTML = '';
+
+                    // Agregar los nuevos datos al select
+                    data.forEach((item, index) => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = item.id;
+                        optionElement.textContent = item.description;
+                        if (index === data.length - 1) {
+                            optionElement.selected = true;
+                        }
+                        selectElement.appendChild(optionElement);
+                    });
+                })
+                .catch(error => {
+                    toastr.options.progressBar = true;
+                    toastr.error("Error al obtener los datos del select: "+ error);
+                });
+
+            } else {
+                // Hubo un error al agregar el nuevo tipo de cantidad
+                // Aquí puedes manejar el error de acuerdo a tus necesidades
+                toastr.options.progressBar = true;
+                toastr.error("Ocurrio un proceso inesperado al agregar el nuevo tipo de cantidad");
+            }
+        })
+        .catch(error => {
+            // Hubo un error de red u otro error al enviar la solicitud
+            // Aquí puedes manejar el error de acuerdo a tus necesidades
+            console.error('Error al enviar la solicitud:', error);
+        });
+    }
+</script>
+
 {% endblock %}

@@ -14,12 +14,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'description',
+            'clave',
             'image',
+            'empresa'
         )
         read_only_fields = (
             'id',
-            'description',
-            'image',
         )
 
 

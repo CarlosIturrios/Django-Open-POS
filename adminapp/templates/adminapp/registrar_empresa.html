@@ -24,27 +24,63 @@
                         <div class="form-group">
                             <label for="rfc">RFC</label>
                             <input type="text" class="form-control" id="rfc" name="rfc"
-                                   placeholder="XXX010101AX1">
+                                   placeholder="XXX010101AX1" oninput="this.value = this.value.toUpperCase()">
+                            <small class="text-muted">*Este campo es opcional</small>
+                            {% if form.rfc.errors %}
+                                   <small style="color: red;">
+                                       {% for error in form.rfc.errors %}
+                                           {{ error }}
+                                       {% endfor %}
+                                   </small>
+                            {% endif %}                                   
                         </div>
                         <div class="form-group">
                             <label for="razon_social">Razon social</label>
                             <input type="text" class="form-control" id="razon_social" name="razon_social"
                                    placeholder="Empresa de ejemplo S.A. de C.V.">
+                            <small class="text-muted">*Este campo es opcional</small>
                         </div>
                         <div class="form-group">
                             <label for="nombre_comercial">Nombre comercial</label>
                             <input type="text" class="form-control" id="nombre_comercial" name="nombre_comercial"
-                                   placeholder="Empresa" required>
+                                   placeholder="Hot Dogs el buen sabor" required>
+                                {% if form.nombre_comercial.errors %}
+                                   <small style="color: red;">
+                                       {% for error in form.nombre_comercial.errors %}
+                                           {{ error }}
+                                       {% endfor %}
+                                   </small>
+                               {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre_para_pagos">Nombre que recibira tu portal de pagos</label>
+                            <input type="text" class="form-control" id="nombre_para_pagos" name="nombre_para_pagos"
+                                   placeholder="hotdogselbuensabor">
+                                {% if form.nombre_para_pagos.errors %}
+                                   <small style="color: red;">
+                                       {% for error in form.nombre_para_pagos.errors %}
+                                           {{ error }}
+                                       {% endfor %}
+                                   </small>
+                               {% endif %}
                         </div>
                         <div class="form-group">
                             <label for="logo">Logotipo</label>
                             <input type="file" id="logo" name="logo">
+                            {% if form.logo.errors %}
+                                <small style="color: red;">
+                                    {% for error in form.logo.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </small>
+                            {% endif %}
                         </div>
                     </div>
                     <!-- /.card-body -->
 
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                        <button type="submit" class="btn btn-primary float-right">Agregar empresa</button>
                     </div>
                 </form>
             </div>

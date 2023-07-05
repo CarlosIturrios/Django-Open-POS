@@ -9,7 +9,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-round" href="{% url 'mainapp:crear_usuario' %}">Agregar
+                    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                    <a class="btn btn-primary btn-round float-right" href="{% url 'mainapp:crear_usuario' %}">Agregar
                         nuevo Usuarios</a>
                 </div>
                 <!-- /.card-header -->
@@ -38,10 +39,14 @@
                                     <tbody>
                                     {% for usuario in usuarios %}
                                         <tr class="odd">
-                                            <td class="dtr-control sorting_1">{{ usuario.email }}</td>
+                                            <td class="dtr-control sorting_1">
+                                                <a href="{% url 'mainapp:modificar_usuario' usuario.pk %}">{{ usuario.email }}</a>
+                                            </td>
                                             <td class="dtr-control sorting_1">{{ usuario.get_full_name }}</td>
                                             <td class="dtr-control sorting_1">
-                                                {{ usuario.groups.all.0.name }}
+                                                {% for group in usuario.groups.all %}
+                                                    {{ group.name }} | 
+                                                {% endfor %}
                                             </td>
                                         </tr>
                                     {% endfor %}

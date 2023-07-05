@@ -13,19 +13,18 @@
                 <div class="alert alert-danger alert-dismissible">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                     {{ form.username.errors }}</div>{% endif %}
-            <label class="control-label" for="id_username">{{ form.username.label }}</label>
+            <label class="control-label" for="id_username">Correo</label>
             <input type="text" name="username" title="" required="" id="id_username" maxlength="254" autofocus=""
-                   placeholder="{{ form.username.label }}" class="form-control"
-                   value="{{ form.username.value|default:'' }}">
+                   placeholder="Escriba su correo" class="form-control">
         </div>
         <div class="form-group" data-validate="Contraseña requerido">
             {% if form.password.errors %}
                 <div class="alert alert-danger alert-dismissible">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                     {{ form.password.errors }}</div>{% endif %}
-            <label class="control-label" for="id_password">{{ form.password.label }}</label>
+            <label class="control-label" for="id_password">Contraseña</label>
             <input type="password" name="password" title="" required="" id="id_password"
-                   placeholder="{{ form.password.label }}" class="form-control">
+                   placeholder="Escriba su Contraseña" class="form-control">
         </div>
         <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
     </form>

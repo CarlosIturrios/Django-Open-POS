@@ -1,0 +1,424 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>DOP - Automatizando tu negocio</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="DOP - Carlos Iturrios APP">
+    <meta name="keywords" content="HTML5, bootstrap, mobile, app, landing, ios, android, responsive">
+
+    <!-- Font -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
+    <!-- Themify Icons -->
+    <link rel="stylesheet" href="{% static 'website/css/themify-icons.css' %}">
+    <!-- Owl carousel -->
+    <link rel="stylesheet" href="{% static 'website/css/owl.carousel.min.css' %}">
+    <!-- Main css -->
+    <link href="{% static 'website/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body data-spy="scroll" data-target="#navbar" data-offset="30">
+
+    <!-- Nav Menu -->
+
+    <div class="nav-menu fixed-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav class="navbar navbar-dark navbar-expand-lg">
+                        <a class="navbar-brand" href="index.html">
+                            DOP
+                        </a> 
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" 
+                        aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"> 
+                            <span class="navbar-toggler-icon"></span> 
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbar">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item"> <a class="nav-link active" href="#home">Inicio <span class="sr-only">(current)</span></a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="#funcionalidades">Soluciones</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="#gallery">Conoce el APP</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="#pricing">Precios</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="#contact">Contactanos</a> </li>
+                                <li class="nav-item"><a href="{% url 'administracion:registro' %}" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">Inicia la Magia</a></li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <header class="bg-gradient" id="home">
+        <div class="container mt-5">
+            <h1>Administra y digitaliza tu negocio.</h1>
+            <p class="tagline">Controla tus ordenes, pedidos, envios y pagos.</p>
+            <h3>Pago en linea para tus clientes.</h3><b>Activa el pago en linea de manera rapida y sencilla.</b>
+        </div>
+        <div class="img-holder mt-3"><img src="{% static 'website/images/iphonex.png' %}" alt="phone" class="img-fluid"></div>
+    </header>
+
+    <div class="section light-bg" id="features">
+
+
+        <div class="container">
+
+            <div class="section-title">
+                <small>Nuestras soluciones</small>
+                <h3>Lo que amas que hagamos por tí</h3>
+            </div>
+
+
+            <div class="row">
+                <div class="col-12 col-lg-4">
+                    <div class="card features">
+                        <div class="card-body">
+                            <div class="media">
+                                <span class="ti-face-smile gradient-fill ti-3x mr-3"></span>
+                                <div class="media-body">
+                                    <h4 class="card-title">Usabilidad Sencilla y Eficiente</h4>
+                                    <p class="card-text">Nuestra solución se destaca por su interfaz intuitiva y eficaz, permitiéndote realizar tareas con 
+                                        tan solo unos pocos clics. Genera, cobra y administra tus pedidos de forma ágil y sin complicaciones. Apto para una amplia 
+                                        gama de negocios, desde taquerías y locales de comida rápida hasta boutiques y más.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="card features">
+                        <div class="card-body">
+                            <div class="media">
+                                <span class="ti-settings gradient-fill ti-3x mr-3"></span>
+                                <div class="media-body">
+                                    <h4 class="card-title">Experiencia Multiplataforma</h4>
+                                    <p class="card-text">Nuestra aplicación está diseñada para adaptarse perfectamente a cualquier dispositivo que utilices. 
+                                        Ya sea que estés en tu teléfono móvil, computadora (Windows, Mac) o incluso en tu Smart TV (conectando un teclado a la TV), 
+                                        disfrutarás de una experiencia fluida y sin interrupciones.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="card features">
+                        <div class="card-body">
+                            <div class="media">
+                                <span class="ti-lock gradient-fill ti-3x mr-3"></span>
+                                <div class="media-body">
+                                    <h4 class="card-title">Potente Administración para Múltiples Usuarios y Empresas</h4>
+                                    <p class="card-text">Controla todos tus negocios desde una única cuenta centralizada. Crea cuentas de usuario para tus empleados
+                                         y gestiónalos fácilmente en cada empresa. Dale acceso solo a la empresa en la que trabajan. Gestiona sus permisos y accesos.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+    <!-- // end .section -->
+    <div class="section">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-6">
+                    <div class="box-icon"><span class="ti-mobile gradient-fill ti-3x"></span></div>
+                    <h2>Descubre un nuevo nivel de eficiencia en tu negocio</h2>
+                    <p class="mb-4">¡Bienvenido al mundo digital! No te quedes fuera.
+                        Regístrate hoy y obtén 30 días de prueba para experimentar todos los beneficios que tenemos para ti.
+                    </p>
+                    <a href="#funcionalidades" class="btn btn-primary">Descubrir</a>
+                </div>
+            </div>
+            <div class="perspective-phone">
+                <img src="{% static 'website/images/perspective.png' %}" alt="perspective phone" class="img-fluid">
+            </div>
+        </div>
+
+    </div>
+    <!-- // end .section -->
+
+
+    <div class="section light-bg" id="funcionalidades">
+        <div class="container">
+            <div class="section-title">
+                <small>Con nuestra plataforma</small>
+                <h3>Lleva tu negocio al siguiente nivel.</h3>
+            </div>
+
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#communication">Automitización</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#schedule">Acceso</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#messages">Ventas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#livechat">Pago en linea</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="communication">
+                    <div class="d-flex flex-column flex-lg-row">
+                        <img src="{% static 'website/images/graphic.png' %}" alt="graphic" class="img-fluid rounded align-self-start mr-lg-5 mb-5 mb-lg-0">
+                        <div>
+
+                            <h2>Automatización de procesos.</h2>
+                            <p class="lead"> Optimiza tu tiempo.</p>
+                            <p>Ahorra tiempo valioso al automatizar tus procesos. </p>
+                            <p>
+                                Deja que nuestra aplicación se encargue del trabajo duro, 
+                                permitiendo que tus empleados se enfoquen en ofrecer un servicio de calidad excepcional.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="schedule">
+                    <div class="d-flex flex-column flex-lg-row">
+                        <div>
+                            <h2>Control de <b>Acceso</b> Personalizado para tus Empleados</h2>
+                            <p class="lead">Gestiona las acciones de tus empleados a través de roles de acceso establecidos.</p>
+                            <p>Define y limita las funciones y la interacción de tus empleados con el sistema. Cada rol cuenta con características dinámicas y exclusivas, adaptadas a las necesidades específicas de cada usuario.</p>
+                            <p>Garantizamos que cada rol de acceso tenga únicamente acceso a la información y las funciones relevantes para su actividad en el sistema. Nuestro sistema se ajusta de manera flexible a cada rol, brindando una experiencia optimizada y segura para todos los usuarios.</p>
+                        </div>
+                        <img src="{% static 'website/images/graphic.png' %}" alt="graphic" class="img-fluid rounded align-self-start mr-lg-5 mb-5 mb-lg-0">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="messages">
+                    <div class="d-flex flex-column flex-lg-row">
+                        <img src="{% static 'website/images/graphic.png' %}" alt="graphic" class="img-fluid rounded align-self-start mr-lg-5 mb-5 mb-lg-0">
+                        <div>
+                            <h2>Registro de tus ventas Fácil y Completo</h2>
+                            <p class="lead">Registra, reportea y administra los pagos de tus órdenes de manera rapida y sencilla.</p>
+                            <p>Explora tu catálogo en un estilo eCommerce, donde encontrarás todos tus productos o servicios 
+                                organizados por categorías. Añade los productos deseados al carrito de forma sencilla, y revisa el resumen de 
+                                tu pedido con el monto total a pagar. Nuestro sistema de carrito te permite ajustar el pedido antes de confirmar tu orden. 
+                            </p>
+                            <p> Nuestro sistema de pago en línea, integrado con Mercado Libre, 
+                                ofrece una configuración flexible y personalizada para cada negocio. Permitiendote llegar a tus clientes de manera digital. 
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="livechat">
+                    <div class="d-flex flex-column flex-lg-row">
+                        <div>
+                            <h2>Pago en Línea para tus Clientes</h2>
+                            <p class="lead">Ofrece a tus clientes una forma cómoda y segura de realizar pagos en línea.</p>
+                            <p>Con nuestra sencilla y conveniente configuración, podrás brindar a tus clientes la opción de realizar pagos en 
+                                línea a través de MercadoPago.</p>
+                            <p>Permite que tus clientes accedan a tus productos y servicios utilizando la plataforma de MercadoPago. Bríndales 
+                                la oportunidad de aprovechar los beneficios que MercadoPago ofrece al realizar compras en línea. Automatiza el
+                                 proceso y deja que tus clientes realicen sus pedidos de forma rápida y sencilla.</p>
+                        </div>
+                        <img src="{% static 'website/images/graphic.png' %}" alt="graphic" class="img-fluid rounded align-self-start mr-lg-5 mb-5 mb-lg-0">
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <!-- // end .section -->
+
+    <div class="section">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{% static 'website/images/dualphone.png' %}" alt="dual phone" class="img-fluid">
+                </div>
+                <div class="col-md-6 d-flex align-items-center">
+                    <div>
+                        <div class="box-icon"><span class="ti-rocket gradient-fill ti-3x"></span></div>
+                        <h2>Digitaliza tus ventas y lleva tu negocio al siguiente nivel.</h2>
+                        <p class="mb-4"> Automatiza tus procesos y genera un valor excepcional para tus clientes.
+                            Proporcionamos un portal de ventas en internet con tu catálogo y opciones de pago en línea. Abre las puertas a nuevas oportunidades y sorprende a tus clientes con una experiencia de compra fluida.
+                            </p>
+                        <a href="{% url 'administracion:registro' %}" class="btn btn-primary">¡Únete a DOP y libera el poder innovador!</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <!-- // end .section -->
+
+
+    <div class="section light-bg">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 d-flex align-items-center">
+                    <ul class="list-unstyled ui-steps">
+                        <li class="media">
+                            <div class="circle-icon mr-4">1</div>
+                            <div class="media-body">
+                                <h5>¡Crea una cuenta GRATIS y descubre todo lo que podemos ofrecerte!</h5>
+                                <p>Regístrate hoy mismo y obtén 30 días de uso completamente gratuito. 
+                                    Sumérgete en los beneficios de nuestra plataforma y experimenta cómo 
+                                    transforma tu negocio, generando resultados visibles.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="media my-4">
+                            <div class="circle-icon mr-4">2</div>
+                            <div class="media-body">
+                                <h5>¡Configura y Registra tu Empresa para el Éxito!</h5>
+                                <p>Completa todos los datos necesarios y comienza a trabajar con tu
+                                     negocio de manera efectiva. Administra tus catálogos de productos, 
+                                     categorías y los datos clave de tu empresa.</p>
+                            </div>
+                        </li>
+                        <li class="media">
+                            <div class="circle-icon mr-4">3</div>
+                            <div class="media-body">
+                                <h5>¡Inscribe a tus Empleados y Desata su Potencial!</h5>
+                                <p>Es hora de poner manos a la obra y darles acceso a tus empleados. 
+                                    Asígnale a cada uno un rol específico que se ajuste a su función en el 
+                                    sistema. Genera usuarios para acceder a tu empresa y administra, 
+                                    de forma organizada, a tus empleados y los roles de acceso que les
+                                     permitirán cumplir con sus responsabilidades de manera eficiente.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <img src="{% static 'website/images/iphonex.png' %}" alt="iphone" class="img-fluid">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- // end .section -->
+
+    <div class="section light-bg" id="gallery">
+        <div class="container">
+            <div class="section-title">
+                <small>Nuestra plataforma</small>
+                <h3>Conoce nuestra app</h3>
+            </div>
+
+            <div class="img-gallery owl-carousel owl-theme">
+                <img src="{% static 'website/images/screen1.png' %}" alt="image">
+                <img src="{% static 'website/images/screen2.png' %}" alt="image">
+                <img src="{% static 'website/images/screen3.png' %}" alt="image">
+                <img src="{% static 'website/images/screen4.png' %}" alt="image">
+            </div>
+
+        </div>
+
+    </div>
+    <!-- // end .section -->
+
+
+
+
+
+    <div class="section" id="pricing">
+        <div class="container">
+            <div class="section-title">
+                <small>Precios</small>
+                <h3>Comienza la digitalización.</h3>
+            </div>
+
+            <div class="card-deck">
+                <div class="card pricing popular">
+                    <div class="card-head">
+                        <small class="text-primary">Empresarial</small>
+                        <span class="price">$2,000.00<sub>/m</sub></span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <div class="list-group-item">5 Empresas</div>
+                        <div class="list-group-item">Soporte Basico</div>
+                        <div class="list-group-item">2 GB de información en la Nube</div>
+                        <div class="list-group-item">Primer mes GRATIS</div>
+                        <div class="list-group-item"><del>Analitica y reportes</del></div>
+                    </ul>
+                    <div class="card-body">
+                        <a href="{% url 'administracion:registro' %}" class="btn btn-primary btn-lg btn-block">Elegir este Plan</a>
+                    </div>
+                </div>
+            </div>
+            <!-- // end .pricing -->
+
+
+        </div>
+
+    </div>
+    <!-- // end .section -->
+    <div class="light-bg py-5" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 text-center text-lg-left">
+                    <div class=" d-block d-sm-inline-block">
+                        <p class="mb-2">
+                            <span class="ti-email mr-2"></span> <a class="mr-4" href="mailto:support@dop.com">support@dop.com</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="social-icons">
+                        <a href="#"><span class="ti-facebook"></span></a>
+                        <a href="#"><span class="ti-twitter-alt"></span></a>
+                        <a href="#"><span class="ti-instagram"></span></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <!-- // end .section -->
+    <footer class="my-5 text-center">
+        <small>
+            <strong>
+                <a href="https://dop.centralsoft.com.mx/" target="_blank">
+                    <b>CI</b> - DOP
+                </a>
+                Copyright &copy; 2021-
+                <script>
+                    document.write(new Date().getFullYear())
+                </script>
+                , made by
+                <a href="https://www.linkedin.com/in/carlos-armando-iturrios-alcaraz-856969176" target="_blank">Carlos
+                    Iturrios</a>
+                for a better services in your business.
+            </strong>
+            All rights reserved.
+            <div class="d-none d-sm-inline-block">
+                <b>Version</b> 0.0.0.1
+            </div>
+        </small>
+    </footer>
+
+    <!-- jQuery and Bootstrap -->
+    <script src="{% static 'website/js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'website/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Plugins JS -->
+    <script src="{% static 'website/js/owl.carousel.min.js' %}"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'website/js/script.js' %}"></script>
+
+</body>
+
+</html>

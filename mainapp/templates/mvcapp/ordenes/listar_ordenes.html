@@ -5,6 +5,42 @@
 {% block navegacion %}Ordenes{% endblock %}
 
 {% block main %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-12">
+            <div class="card card-default collapsed-card">
+                <div class="card-header">
+                    <h3 class="card-title">Seleccionar rango de fechas</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="get" enctype="multipart/form-data" accept-charset="UTF-8">
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label for="date1">Fecha inicial</label>
+                                <input type="date" class="form-control" id="date1" name="date1" value="{{ request.GET.date1 }}">
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="date2">Fecha final</label>
+                                <input type="date" class="form-control" id="date2" name="date2" value="{{ request.GET.date2 }}">
+                            </div>
+                        </div>
+                        <div class="form-group" align="right">
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                        </div>
+                    </form>                    
+
+                </div>
+                <!-- /.card-body -->
+
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
@@ -22,6 +58,10 @@
                                        role="grid" aria-describedby="example1_info">
                                     <thead>
                                     <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
+                                            Orden
+                                        </th>
                                         <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
                                             colspan="1">
                                             Fecha creación
@@ -75,6 +115,7 @@
                                     <tbody>
                                     {% for orden in ordenes %}
                                         <tr class="odd">
+                                            <td class="dtr-control sorting_1"><a href="{% url 'mainapp:orden' orden.pk %}">Ver detalle</a></td>
                                             <td class="dtr-control sorting_1">{{ orden.fecha_de_creacion }}</td>
                                             <td class="dtr-control sorting_1">{{ orden.comments }}</td>
                                             <td class="dtr-control sorting_1">{{ orden.order_type.description }}</td>
@@ -115,8 +156,39 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 {% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        // Obtener los valores de los parámetros de consulta
+        const urlParams = new URLSearchParams(window.location.search);
+        const date1 = urlParams.get('date1');
+        const date2 = urlParams.get('date2');
+    
+        // Obtener los elementos de los campos de fecha
+        const date1Input = document.getElementById('date1');
+        const date2Input = document.getElementById('date2');
+    
+        // Establecer el valor predeterminado de los campos de fecha
+        if (date1) {
+            date1Input.value = date1;
+        }
+        if (date2) {
+            date2Input.value = date2;
+        }
+        
+        if (!date1) {
+            const today = new Date().toISOString().split('T')[0];
+            date1Input.value = today;
+        }
+        if (!date2) {
+            const today = new Date().toISOString().split('T')[0];
+            date2Input.value = today;
+        }
+        });
+    </script>
+  
     <script>
         $(function () {
             $("#example1").DataTable({

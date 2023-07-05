@@ -9,7 +9,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-round" href="{% url 'mainapp:crear_nueva_currency_view' %}">Agregar
+                    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                    <a class="btn btn-primary btn-round float-right" href="{% url 'mainapp:crear_nueva_currency_view' %}">Agregar
                         nueva Moneda</a>
                 </div>
                 <!-- /.card-header -->
@@ -27,13 +28,22 @@
                                             colspan="1">
                                             Descripción
                                         </th>
+                                        <th>Eliminar</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for moneda in monedas %}
                                         <tr class="odd">
-                                            <td class="dtr-control sorting_1">{{ moneda.symbol }}</td>
+                                            <td class="dtr-control sorting_1"><a href="{% url 'mainapp:modificar_currency_view' moneda.pk %}">{{ moneda.symbol }}</a></td>
                                             <td class="dtr-control sorting_1">{{ moneda.description }}</td>
+                                            <td class="dtr-control sorting_1">
+                                                <form method="post" action="{% url 'mainapp:eliminar_moneda_view' moneda.pk %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-link text-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta Moneda?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tfoot>

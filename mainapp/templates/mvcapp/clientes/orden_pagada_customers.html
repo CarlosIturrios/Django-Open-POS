@@ -1,0 +1,98 @@
+{% extends 'mvcapp/clientes/base_customers.html' %}
+ {% load humanize %} 
+ {% load static %} 
+ {% block titulo %} {{ cadena }} {% endblock %} 
+ {% block titulo_customer %} {{ cadena }} {% endblock %} 
+ 
+ {% block main %}
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-4 col-md-4"></div>
+      <div class="col-sm-4 col-md-4">
+        <a href="{% url 'mainapp:recibo' pk %}" target="_blank">
+          <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1">
+              <i class="fas fa-list"></i>
+              <!-- Usar un icono apropiado para categorías -->
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">Imprimir Ticket - Orden #{{ orden.pk }}</span>
+            </div>
+          </div>
+        </a>
+        <!-- /.info-box -->
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-1"></div>
+
+      <div class="col-lg-3 col-md-6">
+        <div 
+        {% if not orden.cocinado %}
+          class="small-box bg-info"
+        {% else %}
+          class="small-box bg-success"
+        {% endif %}
+        >
+          <div class="inner">
+            {% if not orden.cocinado %}
+              <h3>Haciendo magia</h3>
+              <b>Preparandolo todo <i class="fas fa-puzzle-piece"></i></b>
+            {% else %}
+              <h3>Todo listo</h3>
+              {% if orden.entregado %}
+                <b>Ya recibiste tu orden <i class="fas fa-check-circle"></i></b>
+              {% else %}
+                <b>En camino <i class="fas fa-rocket"></i></b>
+              {% endif %}
+            {% endif %}
+          </div>
+          <div class="icon">
+            <i class="fas fa-magic"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div 
+        {% if not orden.entregado %}
+          class="small-box bg-info"
+        {% else %}
+          class="small-box bg-success"
+        {% endif %}
+        >
+          <div class="inner">
+            {% if not orden.cocinado and not orden.entregado %}
+              <h3>Motores apagados</h3>
+              <b>Preparandolo todo <i class="fas fa-puzzle-piece"></i></b>
+            {% elif orden.cocinado and not orden.entregado %}
+              <h2>Motores encendidos</h3>
+              <b> En trayecto<i class="fas fa-rocket"></i></b>
+            {% endif %}
+            {% if orden.entregado %}
+              <h3>Motores apagados</h3>
+              <b>Ya recibiste tu orden <i class="fas fa-heart"></i></b>
+            {% endif %}
+          </div>
+          <div class="icon">
+            <i class="fas fa-shipping-fast"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>Total: $ {{ orden.amount|floatformat:2|intcomma }}</h3>
+            <b>Pagado <i class="fas fa-check-circle"></i></b>
+          </div>
+          <div class="icon">
+            <i class="far fa-money-bill-alt"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

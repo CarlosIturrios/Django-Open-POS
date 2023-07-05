@@ -9,7 +9,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-round" href="{% url 'mainapp:crear_nuevo_quantity_type_view' %}">Agregar
+                    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                    <a class="btn btn-primary btn-round float-right" href="{% url 'mainapp:crear_nuevo_quantity_type_view' %}">Agregar
                         nuevo Tipo de cantidad</a>
                 </div>
                 <!-- /.card-header -->
@@ -25,12 +26,21 @@
                                             colspan="1">
                                             Cantidad
                                         </th>
+                                        <th>Eliminar</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for cantidad in tipos_de_cantidades %}
                                         <tr class="odd">
-                                            <td class="dtr-control sorting_1">{{ cantidad.description }}</td>
+                                            <td class="dtr-control sorting_1"><a href="{% url 'mainapp:modificar_quantity_type_view' cantidad.pk %}">{{ cantidad.description }}</a></td>
+                                            <td class="dtr-control sorting_1">
+                                                <form method="post" action="{% url 'mainapp:eliminar_quantity_type_view' cantidad.pk %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-link text-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este Tipo de cantidad?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tfoot>

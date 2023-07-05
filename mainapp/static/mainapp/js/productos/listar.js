@@ -15,7 +15,6 @@ miapp.productos.listar = function (argument) {
             var item = "";
             prom.done(function (data) {
                 if (data.length === 0) {
-                    console.log("count 0" + data);
                     item = "<div class=\"card\">";
                     item += "<div class=\"card-header card-header-danger\">";
                     item += "<h4 class=\"card-title\">Lo sentimos</h4>";
@@ -48,7 +47,6 @@ miapp.productos.listar = function (argument) {
 
             });
             prom.fail(function (error) {
-                console.log(error);
                 alert("Lo siento hay un error intenta mas tarde");
             });
         };

@@ -1,0 +1,278 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>POS | {{ cadena }}</title>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+    />
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="{% static 'template/plugins/fontawesome-free/css/all.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'template/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'template/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}"
+    />
+    <!-- Theme style -->
+    <link
+      rel="stylesheet"
+      href="{% static 'template/dist/css/adminlte.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'template/plugins/toastr/toastr.min.css' %}"
+    />
+    {% block style %}{% endblock %}
+  </head>
+  <body class="hold-transition lockscreen">
+    <div class="lockscreen-wrapper" id="mensajeCarga" style="display: none">
+      <div class="lockscreen-logo">
+        <a
+          href="{% url 'mainapp:index_customers_view' request.resolver_match.kwargs.cadena %}"
+          ><b>Cargando</b></a>
+      </div>
+    </div>
+    <div class="lockscreen-wrapper" id="mensajeError" style="display: none">
+      <div class="lockscreen-logo">
+        <a
+          href="{% url 'mainapp:index_customers_view' request.resolver_match.kwargs.cadena %}"
+        >
+          <b id="mensajeDeError"></b
+        ></a>
+      </div>
+    </div>
+
+    <div class="container-fluid" id="contenidoPrincipal" style="display: none">
+      <br />
+      {% if 'cart' in request.session %}
+
+      <b>
+        <a
+          class="float-right"
+          href="{% url 'mainapp:carrito_customer_view' cadena %}"
+          >Pasar a pagar
+          <i class="fab fa-opencart"></i>
+        </a>
+      </b>
+      {% endif %}
+      <section class="content">
+        <b>
+          <a
+            class="float-left"
+            href="{% url 'mainapp:categorias_customer_view' request.resolver_match.kwargs.cadena %}">
+            Elegir de otra categoria
+            <i class="fas fa-arrow-alt-circle-left"></i>
+          </a>
+        </b>
+        <br>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-4 col-md-4">
+              <a 
+                href="{% url 'mainapp:categorias_customer_view' request.resolver_match.kwargs.cadena %}">
+                <img src="{{ empresa.logo.url }}" width="100px" height="100px" alt="empresa-logo" class="img-circle img-fluid small"/>
+              </a>  
+            </div>
+            <div class="col-sm-4 col-md-4">
+              <div class="lockscreen-logo">
+                <a
+                  href="{% url 'mainapp:index_customers_view' request.resolver_match.kwargs.cadena %}"
+                  ><b>{{ cadena|slice:":3"|upper }}</b>{{ cadena|slice:"3:" }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Main content -->
+      <section class="content">{% block main %}{% endblock %}</section>
+      <!-- /.content --><br /><br /><br />
+      <div
+        class="lockscreen-footer text-center"
+        style="bottom: 0; width: 100%; padding: 5px"
+      >
+        <br />
+        <strong>
+          <a href="https://dop.centralsoft.com.mx/" target="_blank">
+            <b>CI</b> - POS
+          </a>
+          Copyright &copy; 2021-
+          <script>
+            document.write(new Date().getFullYear());
+          </script>
+          , made by
+          <a
+            href="https://www.linkedin.com/in/carlos-armando-iturrios-alcaraz-856969176"
+            target="_blank"
+            >Carlos Iturrios</a
+          >
+          for a better services in your business.
+        </strong>
+        All rights reserved.
+        <div class="d-none d-sm-inline-block"><b>Version</b> 0.0.0.1</div>
+      </div>
+    </div>
+    <script src="{% static 'template/plugins/jquery/jquery.min.js' %}"></script>
+
+    <script src="{% static 'template/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'template/dist/js/adminlte.js' %}"></script>
+    <script src="{% static 'template/plugins/toastr/toastr.min.js' %}"></script>
+    <script>
+      window.direccion = "";
+    </script>
+    <script>
+      var cadena = "{{ request.resolver_match.kwargs.cadena }}";
+    </script>
+    <script>
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+
+    <script>
+      {% if messages %}
+          {% for message in messages %}
+              toastr.options.closeButton = true;
+              toastr.options.progressBar = true;
+              toastr.options.positionClass = "toast-bottom-right";
+              toastr.{{ message.tags }}("{{ message }}");
+          {% endfor %}
+      {% endif %}
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLrN2_odewMEHxUXX7CFM7PfO1R8V6Zu8&libraries=places"></script>
+    <script>
+      function obtenerUbicacion() {
+        if (navigator.geolocation) {
+          mostrarCarga(); // Mostrar mensaje de carga mientras se obtiene la ubicación
+          navigator.geolocation.getCurrentPosition(
+            mostrarUbicacion,
+            errorUbicacion
+          );
+        } else {
+          mostrarError("Geolocalización no es soportada por este navegador.");
+        }
+      }
+
+      function mostrarUbicacion(posicion) {
+        var latitud = posicion.coords.latitude;
+        var longitud = posicion.coords.longitude;
+
+        // Crear una instancia del geocodificador de Google Maps
+        var geocoder = new google.maps.Geocoder();
+
+        // Crear una objeto de tipo LatLng con las coordenadas
+        var latlng = new google.maps.LatLng(latitud, longitud);
+
+        // Realizar una solicitud de geocodificación inversa
+        geocoder.geocode({ location: latlng }, function (results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+            if (results[0]) {
+              var ciudad;
+              for (var i = 0; i < results[0].address_components.length; i++) {
+                var addressComponent = results[0].address_components[i];
+                if (addressComponent.types.includes("locality")) {
+                  ciudad = addressComponent.long_name;
+                  break;
+                }
+              }
+
+              window.direccion = results[0].formatted_address;
+
+              redireccionarCiudad(ciudad); // Llamar a la función de redireccionamiento
+            } else {
+              mostrarError("No se encontraron resultados de geocodificación.");
+            }
+          } else {
+            mostrarError("Error en la solicitud de geocodificación: " + status);
+          }
+        });
+      }
+
+      function errorUbicacion(error) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            mostrarError("El usuario denegó la solicitud de geolocalización.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            mostrarError("Información de ubicación no disponible.");
+            break;
+          case error.TIMEOUT:
+            mostrarError("Tiempo de espera agotado al obtener la ubicación.");
+            break;
+          default:
+            mostrarError("Error desconocido al obtener la ubicación.");
+        }
+      }
+
+      function redireccionarCiudad(ciudad) {
+        $.ajax({
+          url: "/api/empresa/" + cadena + "/",
+          success: function (respuesta) {
+            if (
+              Array.isArray(respuesta.ciudades_permitidas) &&
+              respuesta.ciudades_permitidas.length >= 1
+            ) {
+              var ciudades = respuesta.ciudades_permitidas;
+              var descripcionesCiudades = ciudades.map(function (ciudad) {
+                return ciudad.description;
+              });
+
+              if (descripcionesCiudades.includes(ciudad)) {
+                mostrarContenido();
+              } else {
+                mostrarError(
+                  "Acceso denegado. Debes estar en alguna de las zonas autorizadas para este establecimiento."
+                );
+              }
+            } else {
+              toastr.options.progressBar = true;
+              toastr.options.closeButton = true;
+              toastr.warning("No hay ciudades disponibles");
+            }
+          },
+          error: function () {
+            toastr.options.progressBar = true;
+            toastr.error("Ocurrió un proceso inesperado");
+          },
+        });
+      }
+
+      function mostrarCarga() {
+        // Ocultar el contenido principal de la página
+        document.getElementById("contenidoPrincipal").style.display = "none";
+        // Mostrar mensaje de carga
+        document.getElementById("mensajeCarga").style.display = "block";
+      }
+
+      function mostrarContenido() {
+        // Mostrar el contenido principal de la página
+        document.getElementById("contenidoPrincipal").style.display = "block";
+        // Ocultar mensaje de carga y mensaje de error
+        document.getElementById("mensajeCarga").style.display = "none";
+        document.getElementById("mensajeError").style.display = "none";
+      }
+
+      function mostrarError(mensaje) {
+        // Mostrar mensaje de error
+        document.getElementById("mensajeError").style.display = "block";
+        // Ocultar el contenido principal de la página y mensaje de carga
+        document.getElementById("contenidoPrincipal").style.display = "none";
+        document.getElementById("mensajeCarga").style.display = "none";
+        // Mostrar mensaje de error en el elemento correspondiente
+        document.getElementById("mensajeDeError").textContent = mensaje;
+      }
+
+      obtenerUbicacion();
+    </script>
+    {% block script %}{% endblock %}
+  </body>
+</html>

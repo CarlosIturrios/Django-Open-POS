@@ -1,0 +1,104 @@
+{% extends 'mvcapp/base.html' %}
+
+{% block titulo %}Modificar Usuario{% endblock %}
+{% load humanize %}
+{% block navegacion %}Modificar Usuario{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Modificar Usuario</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+                    {% csrf_token %}
+                    <div class="row card-body">
+                        <div class="form-group col-xl-12" data-validate="email requerido">
+                            {% if form.email.errors %}
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×
+                                    </button>
+                                    {{ form.email.errors }}</div>{% endif %}
+                            <label class="control-label" for="id_correo_electronico">Correo Electrónico</label>
+                            <input type="email" name="email" title="" required="" class="form-control"
+                                   id="id_correo_electronico"
+                                   placeholder="ej. correo@correo.com" value="{{ form.email.value|default:'' }}">
+                        </div>
+                        <div class="form-group col-xs-12 col-xl-6" data-validate="first_name requerido">
+                            {% if form.first_name.errors %}
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×
+                                    </button>
+                                    {{ form.first_name.errors }}</div>{% endif %}
+                            <label class="control-label" for="id_nombre">Nombres</label>
+                            <input type="text" name="first_name" title="" required="" id="id_nombre" maxlength="30"
+                                   class="form-control"
+                                   placeholder="{{ form.first_name.label }}"
+                                   value="{{ form.first_name.value|default:'' }}">
+                        </div>
+                        <div class="form-group col-xs-12 col-xl-6" data-validate="last_name requerido">
+                            {% if form.last_name.errors %}
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×
+                                    </button>
+                                    {{ form.last_name.errors }}</div>{% endif %}
+                            <label class="control-label" for="id_apellido">Apellidos</label>
+                            <input type="text" name="last_name" title="" required="" id="id_apellido" maxlength="30"
+                                   placeholder="{{ form.last_name.label }}"
+                                   value="{{ form.last_name.value|default:'' }}"
+                                   class="form-control">
+                        </div>
+                        <div class="form-group col-xs-12 col-xl-6">
+                            {% if form.password1.errors %}
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×
+                                    </button>
+                                    {{ form.password1.errors }}</div>{% endif %}
+                            <label class="control-label" for="id_contrasena1">Contraseña</label>
+                            <input type="password" name="password1" title="Ingrese una contraseña segura"
+                                   id="id_contrasena1" class="form-control" placeholder="{{ form.password1.label }}">
+
+                        </div>
+                        <div class="form-group col-xs-12 col-xl-6">
+                            {% if form.password2.errors %}
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×
+                                    </button>
+                                    {{ form.password2.errors }}</div>{% endif %}
+                            <label class="control-label" for="id_contrasena2">Repetir contraseña</label>
+                            <input type="password" name="password2" title="Ingrese nuevamente su contraseña"
+                                   id="id_contrasena2" onkeyup='check();' placeholder="{{ form.password2.label }}"
+                                   class="form-control">
+                            <div class="help-block" id="confirmacionPassword">Ingrese nuevamente su contraseña</div>
+                        </div>
+                        <div class="form-group col-xl-12">
+                            <label for="grupo">Rol al que se asocia el Usuario</label>
+                                {{ form.groups }}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
+                        <button type="submit" class="btn btn-primary float-right">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var check = function () {
+            if (document.getElementById('id_contrasena1').value ==
+                document.getElementById('id_contrasena2').value) {
+                document.getElementById('confirmacionPassword').innerHTML = '';
+            } else {
+                document.getElementById('confirmacionPassword').style.color = 'red';
+                document.getElementById('confirmacionPassword').innerHTML = 'Las contraseñas no coinciden. Inténtalo de nuevo.';
+            }
+        }
+    </script>
+{% endblock %}

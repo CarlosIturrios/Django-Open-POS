@@ -24,18 +24,18 @@
                 <div class="alert alert-danger alert-dismissible">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                     {{ form.first_name.errors }}</div>{% endif %}
-            <label class="control-label" for="id_nombre">{{ form.first_name.label }}</label>
+            <label class="control-label" for="id_nombre">Nombres</label>
             <input type="text" name="first_name" title="" required="" id="id_nombre" maxlength="30" class="form-control"
-                   placeholder="{{ form.first_name.label }}" value="{{ form.first_name.value|default:'' }}">
+                   placeholder="Ej. Luis Leocadio">
         </div>
         <div class="form-group" data-validate="last_name requerido">
             {% if form.last_name.errors %}
                 <div class="alert alert-danger alert-dismissible">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                     {{ form.last_name.errors }}</div>{% endif %}
-            <label class="control-label" for="id_apellido">{{ form.last_name.label }}</label>
+            <label class="control-label" for="id_apellido">Apellidos</label>
             <input type="text" name="last_name" title="" required="" id="id_apellido" maxlength="30"
-                   placeholder="{{ form.last_name.label }}" value="{{ form.last_name.value|default:'' }}"
+                   placeholder="Ej. Iturrios Medina"
                    class="form-control">
         </div>
         <div class="form-group" data-validate="password1 requerido">
@@ -45,7 +45,7 @@
                     {{ form.password1.errors }}</div>{% endif %}
             <label class="control-label" for="id_contrasena1">Contraseña</label>
             <input type="password" name="password1" title="Ingrese una contraseña segura" required=""
-                   id="id_contrasena1" class="form-control" placeholder="{{ form.password1.label }}">
+                   id="id_contrasena1" class="form-control" placeholder="Escriba su contraseña">
 
         </div>
         <div class="form-group" data-validate="password2 requerido">
@@ -55,7 +55,7 @@
                     {{ form.password2.errors }}</div>{% endif %}
             <label class="control-label" for="id_contrasena2">Repetir contraseña </label>
             <input type="password" name="password2" title="Ingrese nuevamente su contraseña" required=""
-                   id="id_contrasena2" placeholder="{{ form.password2.label }}" class="form-control">
+                   id="id_contrasena2" placeholder="Escriba de nuevo su contraseña" class="form-control">
             <div class="help-block">Ingrese nuevamente su contraseña</div>
         </div>
         <div class="form-group">

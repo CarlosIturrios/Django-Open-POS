@@ -1,0 +1,398 @@
+{% extends 'mvcapp/clientes/base_customers.html' %}
+
+{% load humanize %}
+{% load static %}
+{% block titulo %}Carrito{% endblock %}
+{% block navegacion %}Carrito{% endblock %}
+{% block main %}
+    {% if productos %}
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="invoice col-md-10" style="border-radius: 2%">
+                <!-- title row -->
+                <div class="col-sm-12"><br>
+                    <h2 align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <br>
+                        <form method="post" action="{% url 'mainapp:categorias_customer_view' request.resolver_match.kwargs.cadena %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                <i class="fas fa-plus"></i> Agregar otro producto
+                            </button>
+                        </form>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <br>
+                        <a data-toggle="modal" data-target="#modal-xl" id="continuarOrden">
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-cash-register"></i></span>
+                                <div class="info-box-content">
+                                    {% if 'nueva_orden' in request.session %}
+                                        <span class="info-box-text">Modificar Orden</span>
+                                    {% else %}
+                                        <span class="info-box-text">Confirmar datos</span>
+                                    {% endif %}
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                        </a>
+                    </div>
+            <!-- /.col -->
+                </div>
+                <!-- Table row --><br>
+                <div class="row">
+                    <div class="col-12 table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for producto in productos %}
+                                <tr>
+                                    <td>
+                                        <img alt="{{ producto.description }}" src="{{ producto.image }}"
+                                             style="width: 64px; height: 64px;"
+                                             class="img-fluid mb-2">
+                                    </td>
+                                    <td>{{ producto.name }}</td>
+                                    <td>{{ producto.quantity }}</td>
+                                    <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
+                                    <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
+                                    <td>
+                                        <form method="post" action="{% url 'mainapp:eliminar_del_carrito_customer_view' request.resolver_match.kwargs.cadena producto.pk %}">
+                                            {% csrf_token %}
+                                            <button type="submit" rel="tooltip" data-placement="left"
+                                                    title="Quitar producto"
+                                                    class="btn btn-simple">
+                                                <i class="fas fa-eraser" style="color: white;"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </div>
+            <section class="content">
+                <div class="modal fade" id="modal-xl">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Datos de la orden</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                                <form method="post" action="{% url 'mainapp:crear_nueva_orden_customer_view' request.resolver_match.kwargs.cadena %}" id="crearNuevaOrden">
+                                    {% csrf_token %}
+                                    <div class="modal-body">
+                                        <div class="col-md-12" id="">
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Ingrese los datos de la orden los datos de la
+                                                        orden</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <label for="tipoDeOrden">Tipo de orden</label>
+                                                        <select class="form-control" name="tipoDeOrden" id="tipoDeOrden">
+                                                            {% for tipo in tipos_de_orden %}
+                                                                <option id="tipo{{ tipo.id }}"
+                                                                        value="{{ tipo.id }}">
+                                                                    {{ tipo.description }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="place">Sucursal</label>
+                                                        <select class="form-control" name="place" id="place">
+                                                            {% for place in places %}
+                                                                <option id="place{{ place.id }}"
+                                                                        value="{{ place.id }}">
+                                                                    {{ place.description }} - {{ place.direction }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="comentario">Comentarios de la orden</label>
+                                                        <textarea class="form-control" rows="3" name="comentario"
+                                                                id="comentario"
+                                                                placeholder="Escriba algun comentario sobre la orden"
+                                                                required></textarea>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <a class="btn btn-app" onclick="agregarCliente()" id="aAgregarCliente">
+                                                            <i class="fas fa-plus-square"></i> Soy un nuevo cliente
+                                                        </a>
+                                                        <a class="btn btn-app" onclick="buscarCliente()" id="aBuscarCliente">
+                                                            <i class="fas fa-search"></i> Ya soy cliente
+                                                        </a>
+                                                    </div>
+                                                    <div class="row" id="datosDelCliente" hidden>
+                                                        <div class="col-sm-12">
+                                                            <div class="form-group">
+                                                                <label for="informacionDelCliente">Tus datos</label>
+                                                                <textarea class="form-control" rows="3"
+                                                                        name="informacionDelCliente"
+                                                                        id="informacionDelCliente" disabled>
+                                                            </textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" id="buscarCliente" hidden>
+                                                        <input class="form-control" type="text" name="idCliente"
+                                                            id="idCliente" hidden>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="buscarClienteCellphone">Numero de telefono</label>
+                                                                <input class="form-control" type="text"
+                                                                    name="buscarClienteCellphone"
+                                                                    id="buscarClienteCellphone"
+                                                                    placeholder="Telefono del cliente" maxlength="10">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="buscarClienteEmail">Email</label>
+                                                                <input class="form-control" type="text"
+                                                                    name="buscarClienteEmail"
+                                                                    id="buscarClienteEmail"
+                                                                    placeholder="Email del cliente">
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="btn btn-block btn-primary"
+                                                                id="btnBuscarCliente" onclick="fctBuscarCliente()">
+                                                            Buscar
+                                                        </button>
+                                                    </div>
+                                                    <div class="row" id="agregarCliente" hidden>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="clienteName">Nombre</label>
+                                                                <input class="form-control" type="text" name="clienteName"
+                                                                    id="clienteName"
+                                                                    placeholder="Nombre del cliente">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="clienteCellphone">Numero de telefono</label>
+                                                                <input class="form-control" type="text" name="clienteCellphone"
+                                                                    id="clienteCellphone"
+                                                                    placeholder="Telefono del cliente" maxlength="10">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="clienteDirection">Dirección</label>
+                                                                <input class="form-control" type="text" name="clienteDirection"
+                                                                    id="clienteDirection"
+                                                                    placeholder="Dirección del cliente">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="clienteEmail">Email</label>
+                                                                <input class="form-control" type="text" name="clienteEmail"
+                                                                    id="clienteEmail"
+                                                                    placeholder="Email del cliente">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6" hidden>
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" name="pago" id="pago">
+                                                                    <label class="form-check-label">Pagar Orden</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6" hidden>
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="number" name="payment_id" id="payment_id">
+                                                                    <label class="form-check-label">Pago id</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6" hidden>
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" name="confirmar_orden" id="confirmar_orden">
+                                                                    <label class="form-check-label">Confirmar Orden</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <!--<button type="button" name="submit2" class="btn btn-danger" 
+                                            onclick="handleButtonClick('submit2')">Pagar Orden</button>-->
+                                        <button type="button" name="submit1" class="btn btn-info" 
+                                            onclick="handleButtonClick('submit1')">Confirmar Orden</button>
+                                    </div>
+                                </form>
+                        </div>
+                        <!-- /.colsm-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+            </section>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col col-sm-8">
+                {% if empresa.sdk_public and empresa.sdk_private %}
+                        <span style="color: white">No existen productos registrados en la orden.</span>
+                    {% else %}
+                        <span style="color: red">No existen metodo de pago en linea configurados para este establecimiento, 
+                            favor de reportarle en sus medios de contacto.</span>
+                    {% endif %}
+                <button onclick="goBack()" class="btn btn-primary btn-round">regresar al
+                    menu anterior.
+                </button>
+            </div>
+        </div>
+    {% endif %}
+    {% if 'nueva_orden' in request.session %}
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                    {% if empresa.sdk_public and empresa.sdk_private %}
+                        <div id="wallet_container"></div>
+                    {% else %}
+                        <span style="color: red">No existen metodo de pago configurado para este establecimiento, favor de reportarle a sus medios de contacto.</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    {% if empresa.sdk_public and empresa.sdk_private %}
+        <script>
+            const mp = new MercadoPago("{{ empresa.sdk_public }}");
+            const bricksBuilder = mp.bricks();
+
+            mp.bricks().create("wallet", "wallet_container", {
+                initialization: {
+                    preferenceId: "{{ preference.id }}",
+                    redirectMode: "modal"
+                },
+                callbacks: {
+                    onReady: () => {},
+                    onSubmit: () => {},
+                    onError: (error) => console.error(error),
+                },
+            });
+
+        </script>
+    {% endif %}
+    
+    <script>
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        
+        if (params.has("status")) {
+            const status = params.get("status");
+            if (status === "approved"){
+                document.getElementById('pago').checked = true;
+                document.getElementById('payment_id').value = params.get("payment_id");
+                document.getElementById('confirmar_orden').checked = false;
+                // Envía el formulario manualmente
+                var textarea = document.getElementById('comentario');
+
+                textarea.value = '\n'+params;
+                document.getElementById('crearNuevaOrden').submit();
+            }
+        } 
+
+        function handleButtonClick(buttonName) {
+            if (buttonName === 'submit1') {
+                document.getElementById('confirmar_orden').checked = true;
+                document.getElementById('pago').checked = false;
+                document.getElementById('comentario').value += '\n' + window.direccion;
+            } 
+    
+            // Envía el formulario manualmente
+            document.getElementById('crearNuevaOrden').submit();
+        }
+    </script>
+    <script>
+        // Obtener referencia al elemento con ID "continuarOrden"
+        var btnContinuarOrden = document.getElementById("continuarOrden");
+        btnContinuarOrden.addEventListener("click", function() {
+          console.log(window.direccion);
+          var clienteDirection = document.getElementById("clienteDirection");
+          clienteDirection.value = window.direccion +"\n ";
+        });
+      </script>
+    <script>
+        function fctBuscarCliente() {
+            var empresa_pk = {{ empresa.pk }};
+            var email = $('#buscarClienteEmail').val();
+            var cellphone = $('#buscarClienteCellphone').val();
+            $.ajax({
+                url: '/api/customers/?empresa='+empresa_pk+'&email=' + email + '&cellphone=' + cellphone,
+                success: function (respuesta) {
+                    if (respuesta.length === 1) {
+                        $('#buscarCliente').attr("hidden", true);
+                        var datosDelCliente = "Nombre: " + respuesta[0].name + "\nDirección: "
+                            + respuesta[0].direction + "\nTelefono: " + respuesta[0].cellphone;
+                        $('#informacionDelCliente').val(datosDelCliente);
+                        $('#datosDelCliente').attr("hidden", false);
+                        $('#idCliente').val(respuesta[0].id)
+                    } else {
+                        toastr.options.progressBar = true;
+                        toastr.options.closeButton = true;
+                        toastr.warning("No se encontro el cliente");
+                    }
+                },
+                error: function () {
+                    toastr.options.progressBar = true;
+                    toastr.error("Ocurrio un proceso inesperado");
+                }
+            });
+        }
+
+        function agregarCliente() {
+            $('#agregarCliente').attr("hidden", false);
+            $('#aAgregarCliente').attr("hidden", true);
+            $('#aBuscarCliente').attr("hidden", false);
+            $('#datosDelCliente').attr("hidden", true);
+            $('#buscarCliente').attr("hidden", true);
+        }
+
+        function buscarCliente() {
+            $('#buscarCliente').attr("hidden", false);
+            $('#aBuscarCliente').attr("hidden", true);
+            $('#aAgregarCliente').attr("hidden", false);
+            $('#agregarCliente').attr("hidden", true);
+            $('#datosDelCliente').attr("hidden", true);
+        }
+    </script>
+{% endblock %}
+
+<!--
+
+-->
