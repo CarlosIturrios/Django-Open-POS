@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from datetime import datetime
+from django.utils import timezone
 
 from mainapp.models import Product
 from adminapp.models import Empresa
@@ -173,6 +175,14 @@ def eliminar_producto_view(request, pk=None):
 # sin auth para customer
 def productos_customer_view(request, cadena, pk):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
+    if empresa.horario_de_acceso:
+        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_inicio = empresa.horario_de_acceso.hora_inicio
+        hora_fin = empresa.horario_de_acceso.hora_fin
+        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
+            # Verificar también los minutos
+            messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
+            return redirect('website:website')
     if not empresa.vigente:
         messages.add_message(request, messages.WARNING,
                              'La empresa presenta adeudo y no tiene disponible la sección de pedidos')

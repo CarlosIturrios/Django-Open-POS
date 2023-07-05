@@ -16,6 +16,7 @@ router.register('products', views.ProductView)
 router.register('customers', views.CustomerView)
 router.register('tipos-de-ingredientes', views.QuantityTypeView)
 router.register('monedas', views.CurrencyView)
+router.register('horarios-de-acceso', views.HorariosDeAccesoView)
 urlpatterns = [
     path('', include(router.urls)),
     path('empresa/<str:cadena>/', views.EmpresaView.as_view(), name='empresa'),
