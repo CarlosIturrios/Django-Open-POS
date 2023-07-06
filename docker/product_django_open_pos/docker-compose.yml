@@ -8,12 +8,8 @@ services:
     tty: true
     environment:
       - DJANGO_DEBUG=FALSE
-      - NGINX_SSL_CERT=/etc/nginx/ssl/certificado.crt
-      - NGINX_SSL_KEY=/etc/nginx/ssl/llave_privada.key
     build:
       context: ../../
       dockerfile: docker/product_django_open_pos/Dockerfile_Web
     ports:
       - 8090:80
-    volumes:
-      - ./ssl:/etc/nginx/ssl
