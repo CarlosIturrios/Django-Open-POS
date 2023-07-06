@@ -85,7 +85,7 @@ def actualizar_empresa(request, empresa_id):
             form.save()
             messages.add_message(request, messages.SUCCESS,
                              'Empresa actualizada con exito')
-            return redirect('mainapp:dashboard')
+            return redirect('administracion:actualizar_empresa', empresa.pk)
     else:
         form = forms.EmpresaForm(instance=empresa)
         form.fields['nombre_para_pagos'].label = mark_safe(f'<a href="{request.scheme}://{request.get_host()}/app/{empresa.nombre_para_pagos}" target="_blank">Acceso para los clientes. Click Aquí.</a>')
