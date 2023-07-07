@@ -29,6 +29,10 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
 COPY docker/product_django_open_pos/nginx.conf /etc/nginx/sites-available/default
 
+COPY docker/product_django_open_pos/ssl/certificado.cert /etc/nginx/certs/cert.pem
+
+COPY docker/product_django_open_pos/ssl/llave_privada.key /etc/nginx/certs/key.pem
+
 COPY docker/product_django_open_pos/supervisor.conf /etc/supervisor/conf.d/
 
 RUN apt-get install -y python-m2crypto
