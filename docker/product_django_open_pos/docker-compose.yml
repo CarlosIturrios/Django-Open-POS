@@ -12,4 +12,8 @@ services:
       context: ../../
       dockerfile: docker/product_django_open_pos/Dockerfile_Web
     ports:
-      - 8090:80
+      - 80:80
+      - 443:443
+
+#ports:
+#      - 8090:80
