@@ -1,8 +1,8 @@
 {% extends 'mvcapp/base.html' %}
 
-{% block titulo %}Ingredientes{% endblock %}
+{% block titulo %}Insumos{% endblock %}
 {% load humanize %}
-{% block navegacion %}Ingredientes{% endblock %}
+{% block navegacion %}Insumos{% endblock %}
 
 {% block main %}
     <div class="row">
@@ -11,7 +11,7 @@
                 <div class="card-header">
                     <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
                     <a class="btn btn-primary btn-round float-right" href="{% url 'mainapp:crear_nuevo_ingredient_view' %}">Agregar
-                        nuevo Ingrediente</a>
+                        nuevo Insumo</a>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -24,7 +24,7 @@
                                     <tr role="row">
                                         <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
                                             colspan="1">
-                                            Ingrediente
+                                            Insumo
                                         </th>
                                         <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
                                             colspan="1">

@@ -30,25 +30,41 @@
                                 </div>
                             </div>
                                 <div class="card-footer">
-                                    <div class="text-right">
                                         <form 
                                         action="{% url 'mainapp:productos_customer_view' producto.empresa.nombre_para_pagos producto.category_id %}" 
                                         method="post">
                                             {% csrf_token %}
                                             <div class="row">
-                                                <input type="text" name="id_product" value="{{ producto.id }}"
+                                                <div class="col-md-12">
+                                                    <input type="text" name="id_product" value="{{ producto.id }}"
                                                     hidden>
-                                                <label for="cantidad">Cantidad</label>
-                                                <input class="form-control" type="number" id="cantidad"
-                                                    name="cantidad" value="1">
-                                                <br>
-                                                <br>
-                                                <button type="submit" class="btn btn-primary form-control">
-                                                    <i class="fas fa-plus"></i> Añadir a la orden
-                                                </button>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label for="observaciones">Observación sobre este pedido</label>
+                                                    <textarea class="form-control" rows="2" name="observaciones"
+                                                                id="observaciones-{{ producto.id }}"
+                                                                placeholder="Escriba algun comentario sobre este producto"
+                                                                required></textarea>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label for="cantidad">Cantidad</label>
+                                                    <input class="form-control" type="number" id="cantidad"
+                                                        name="cantidad" value="1">
+                                                        <br>
+                                                </div>
+                                                <div class="col-md-6" id="addDivbutton-{{ producto.id }}">
+                                                    <button type="submit" class="btn btn-primary form-control">
+                                                        <i class="fas fa-plus"></i> Añadir a la orden
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-6" id="addDivbuttonObser-{{ producto.id }}">
+                                                    <button type="button" class="btn btn-success form-control" 
+                                                    onclick="autofillObservations('{{ producto.id }}')">
+                                                        <i class="fas fa-laugh-beam"></i> Sin Observaciones
+                                                    </button>
+                                                </div>
                                             </div>
                                         </form>
-                                    </div>
                                 </div>
                         </div>
                     </div>
@@ -70,6 +86,18 @@
     <script>
         function goBack() {
             window.history.back();
+        }
+        function autofillObservations(observacionesId) {
+            const observationsField = document.getElementById('observaciones-'+observacionesId);
+            observationsField.value = 'Sin observaciones sobre este detalle de producto.';
+            observationsField.disabled = true;
+            observationsField.removeAttribute('required');
+            console.log('addDivbutton-'+observacionesId);
+            const addDivbutton = document.getElementById('addDivbutton-'+observacionesId);
+            const addDivbuttonObser = document.getElementById('addDivbuttonObser-'+observacionesId);
+            addDivbuttonObser.hidden = true;
+            addDivbutton.classList.remove('col-md-12');
+            addDivbutton.classList.add('col-md-12');
         }
     </script>
 {% endblock %}

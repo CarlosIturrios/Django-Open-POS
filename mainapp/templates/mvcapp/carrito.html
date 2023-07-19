@@ -3,6 +3,74 @@
 {% load static %}
 {% block titulo %}Carrito{% endblock %}
 {% block navegacion %}Carrito{% endblock %}
+{% block style %} 
+<style>
+    /* Calculator CSS styles */
+    #paymentModal.modal {
+        z-index: 9999; /* Set a high z-index value to ensure the paymentModal appears above other content */
+    }
+
+    #paymentModal .modal-dialog {
+        width: 90%; /* Set the modal width to 70% of the screen */
+        max-width: 100%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Add this style to hide the backdrop when the modal is not active */
+    #paymentModal.modal:not(.show) {
+        display: none;
+    }
+    .calculator {
+      width: 100%;
+      margin: 0 auto;
+    }
+  
+    .display {
+      padding: 10px;
+      background-color: #f5f5f5;
+      text-align: right;
+    }
+  
+    .display input {
+      width: 80%;
+      border: none;
+      font-size: 24px;
+      text-align: right;
+    }
+  
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      margin-top: 10px;
+    }
+  
+    .buttons .btn {
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-calculadora {
+        background-color: gainsboro;
+    }
+    .result {
+        margin-top: 10px;
+    }
+
+    .result p {
+        font-size: 28px;
+        text-align: right;
+    }
+    .result em{
+        font-size: 18px;
+    }
+</style>
+{% endblock %}
+
 {% block main %}
     {% if productos %}
         <div class="row">
@@ -104,6 +172,58 @@
                 </div>
             </div>
             <section class="content">
+                <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="close" id="paymentModalLabel">Total a Pagar: $ {{ total|floatformat:2|intcomma }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <!-- Calculator HTML -->
+                                <div class="calculator">
+                                    <!-- Calculator Display -->
+                                    <div class="display">
+                                    <input type="text" id="paymentAmount" oninput="calculateChange()" value="0" placeholder="Ingresa el monto recibido" />
+                                    <button class="btn" onclick="clearInput('paymentAmount')" id="btn-pay-clear"><i class="fas fa-eraser"></i></button>
+                                    </div>
+                                    <!-- Calculator Buttons -->
+                                    <div class="buttons">
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(1)" id="btn-pay-1">1</button>
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(2)" id="btn-pay-2">2</button>
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(5)" id="btn-pay-3">5</button>
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(10)" id="btn-pay-4">10</button>
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(20)" id="btn-pay-5">20</button>
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(50)" id="btn-pay-6">50</button>
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(100)" id="btn-pay-7">100</button>
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(200)" id="btn-pay-8">200</button>
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(500)" id="btn-pay-9">500</button>
+                                        <button class="btn btn-secondary calculadora" onclick="appendValue(1000)" id="btn-pay-0">1000</button>
+                                        <button class="btn btn-info" onclick="cambioDeMoneda()" id="btn-pay-change">Calculadora</button>
+                                        <!-- Add other numeric buttons -->
+                                        <!-- ... -->
+                                        <button type="button" name="submit2" class="btn btn-success" disabled id="btn-pago" hidden
+                                                        onclick="handleButtonClick('submit2')">Pagar Orden</button>
+                                        <button type="button" name="submit3" class="btn btn-success" disabled id="btn-pago-2" hidden
+                                                        onclick="handleButtonClick('submit3')">Pagar Orden</button>
+                                        <!-- Calculator Result -->
+                                    </div>  
+                                    <div class="result">
+                                        <p>
+                                            <strong>Cambio: $<span id="changeAmount">0.00</span></strong>
+                                            <br>
+                                            <em class="warning-message">Por favor, asegúrate de contar el efectivo correctamente antes de entregarlo.</em>
+                                        </p>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="content">
                 <div class="modal fade" id="modal-xl">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
@@ -120,8 +240,7 @@
                                         <div class="col-md-12" id="">
                                             <div class="card card-primary">
                                                 <div class="card-header">
-                                                    <h3 class="card-title">Ingrese los datos de la orden los datos de la
-                                                        orden</h3>
+                                                    <h3 class="card-title">Ingrese los datos de la orden</h3>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="form-group">
@@ -151,8 +270,7 @@
                                                         <textarea class="form-control" rows="3" name="comentario"
                                                                 id="comentario"
                                                                 placeholder="Escriba algun comentario sobre la orden"
-                                                                required>
-                                                        </textarea>
+                                                                required></textarea>
                                                     </div>
                                                     <div class="form-group">
                                                         <a class="btn btn-app" onclick="agregarCliente()" id="aAgregarCliente">
@@ -253,22 +371,33 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="modal-footer justify-content-between">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                        <button type="button" name="submit2" class="btn btn-danger" 
-                                            onclick="handleButtonClick('submit2')">Pagar Orden</button>
-                                        <button type="button" name="submit1" class="btn btn-info" 
-                                            onclick="handleButtonClick('submit1')">Confirmar Orden</button>
+                                    <div class="modal-footer justify-content-between row">
+                                        <div class="col-md-4">
+                                            <button type="button" class="btn btn-secondary form-control" data-dismiss="modal">
+                                                <i class="fas fa-backspace"></i> Cerrar</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-success form-control" id="btn-submit-2"
+                                            data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('submit2')">
+                                                <i class="fas fa-cash-register"></i>  Pagar
+                                              </button>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button type="button" name="submit1" class="btn btn-info form-control" 
+                                            onclick="handleButtonClick('submit1')">
+                                            <i class="fas fa-check"></i>  Confirmar Orden</button>
+                                        </div>
                                     </div>
                                 </form>
                             {% else %}
                                 <div class="col-sm-12 col-md-12">
                                     <div class="form-group">
-                                        <form method="post" action="{% url 'mainapp:cobrar' %}">
+                                        <form method="post" action="{% url 'mainapp:cobrar' %}" id="cobrarForm">
                                             {% csrf_token %}
-                                            <button type="submit" class="btn btn-primary form-control" style="width:100%">
-                                                <i class="fas fa-cash-register"></i> Esta seguro de realizar el cobro? 
-                                            </button>
+                                            <button type="button" class="btn btn-success form-control" id="btn-submit-3"
+                                             data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('submit3')">
+                                                <i class="fas fa-cash-register"></i>  Pagar
+                                              </button>
                                         </form>
                                     </div>
                                 <!-- /.form-group -->
@@ -298,8 +427,103 @@
         function goBack() {
             window.history.back();
         }
+        function clearInput(inputId){
+            inputToClear = document.getElementById(inputId);
+            inputToClear.value = 0;
+            calculateChange()
+        }
     </script>
-
+    <script>
+        // Array to hold the original values and texts of the buttons
+        const originalButtonValues = [
+          { id: 'btn-pay-1', value: 1, text: '1' },
+          { id: 'btn-pay-2', value: 2, text: '2' },
+          { id: 'btn-pay-3', value: 5, text: '5' },
+          { id: 'btn-pay-4', value: 10, text: '10' },
+          { id: 'btn-pay-5', value: 20, text: '20' },
+          { id: 'btn-pay-6', value: 50, text: '50' },
+          { id: 'btn-pay-7', value: 100, text: '100' },
+          { id: 'btn-pay-8', value: 200, text: '200' },
+          { id: 'btn-pay-9', value: 500, text: '500' },
+          { id: 'btn-pay-0', value: 1000, text: '1000' },
+          // Add the rest of the buttons with their respective values and texts
+        ];
+      
+        let isCurrencyMode = false;
+      
+        // Method to change the button values and texts
+        function cambioDeMoneda() {
+          const changeButton = document.getElementById("btn-pay-change");
+      
+          if (isCurrencyMode) {
+            // Restore the original values and texts of the buttons
+            for (const buttonData of originalButtonValues) {
+              const buttonElement = document.getElementById(buttonData.id);
+              buttonElement.setAttribute("onclick", `appendValue(${buttonData.value})`);
+              buttonElement.innerText = buttonData.text;
+            }
+            changeButton.innerText = "Calculadora";
+          } else {
+            // Set new values and texts for the buttons
+            const currencyValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            for (let i = 0; i < currencyValues.length; i++) {
+              const buttonElement = document.getElementById(`btn-pay-${i}`);
+              buttonElement.setAttribute("onclick", `appendValue(${currencyValues[i]})`);
+              buttonElement.innerText = currencyValues[i];
+            }
+            changeButton.innerText = "Efectivo";
+          }
+      
+          // Toggle the mode flag
+          isCurrencyMode = !isCurrencyMode;
+        }
+    </script>
+    <script>
+        // Handle appending values to the calculator display
+        function appendValue(value) {
+          const paymentAmount = document.getElementById("paymentAmount");
+          if (document.getElementById("btn-pay-change").innerText === "Efectivo"){
+            paymentAmount.value += value;
+          }
+          else{
+            paymentAmount.value = parseFloat(paymentAmount.value) + parseFloat(value);
+          }
+          calculateChange()
+        }
+        function formatNumberWithCommas(number) {
+            return number.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+        // Handle calculating the change
+        function calculateChange() {
+          const totalAmount = {{ total|floatformat:2 }};
+          const paymentAmount = parseFloat(document.getElementById("paymentAmount").value);
+          const changeAmount = paymentAmount - totalAmount;
+          document.getElementById("changeAmount").innerText = formatNumberWithCommas(changeAmount);
+          if(changeAmount < 0 ){
+            document.getElementById("btn-pago").disabled = true;
+            document.getElementById("btn-pago-2").disabled = true;
+          }
+          else{
+            document.getElementById("btn-pago").disabled = false;
+            document.getElementById("btn-pago-2").disabled = false;
+          }
+        }
+    </script>
+    <script>
+        function pagoButton(buttonName) {
+            if (buttonName === 'submit2') {
+                document.getElementById('btn-pago').hidden = false;
+                document.getElementById('btn-pago-2').hidden = true;
+            }
+            else if (buttonName === 'submit3') {
+                document.getElementById('btn-pago').hidden = true;
+                document.getElementById('btn-pago-2').hidden = false;
+            }
+        }
+    </script>
     <script>
         function handleButtonClick(buttonName) {
             if (buttonName === 'submit1') {
@@ -308,6 +532,10 @@
             } else if (buttonName === 'submit2') {
                 document.getElementById('pago').checked = true;
                 document.getElementById('confirmar_orden').checked = false;
+            }
+            else if (buttonName === 'submit3') {
+                document.getElementById('cobrarForm').submit();
+                return false
             }
     
             // Envía el formulario manualmente
