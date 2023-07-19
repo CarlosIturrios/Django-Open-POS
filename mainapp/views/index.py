@@ -485,6 +485,7 @@ def crear_nueva_orden_customer_view(request, cadena):
                 for producto in nueva_orden.relacion_Order_a_OrderDetail.all():
                     if producto.product_id == int(item['id_product']):
                         producto.quantity += int(item['cantidad'])
+                        producto.observaciones += item['observaciones']
                         producto.save()
                         bandera = False
                         total += (float(producto.product.price)
@@ -495,6 +496,7 @@ def crear_nueva_orden_customer_view(request, cadena):
                     detalle = OrderDetail()
                     detalle.product = producto
                     detalle.quantity = item['cantidad']
+                    detalle.observaciones = item['observaciones']
                     detalle.order = nueva_orden
                     detalle.empresa = empresa
                     detalle.save()
