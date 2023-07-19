@@ -111,6 +111,7 @@ class OrderDetail(DatosDeControlMixin):
     product = models.ForeignKey('mainapp.Product', on_delete=models.DO_NOTHING, null=True, blank=True,
                                 related_name='relacion_Product_a_OrderDetail',
                                 help_text='Fk a usuario para conocer el usuario que creo el registro')
+    observaciones = models.TextField(null=True, blank=True, help_text='Observaciones del producto', default=None)
     empresa = models.ForeignKey('adminapp.Empresa', null=False, blank=False, on_delete=models.DO_NOTHING)
 
     def __str__(self):

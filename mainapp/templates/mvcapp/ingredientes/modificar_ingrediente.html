@@ -1,14 +1,14 @@
 {% extends 'mvcapp/base.html' %} 
-{% block titulo %} Modificar Ingrediente
+{% block titulo %} Modificar Insumo
 {% endblock %} 
 {% load humanize %} 
-{% block navegacion %} Modificar Ingrediente {% endblock %} 
+{% block navegacion %} Modificar Insumo {% endblock %} 
 {% block main %}
     <div class="row">
         <div class="col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Agregar Ingrediente</h3>
+                    <h3 class="card-title">Agregar Insumo</h3>
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
@@ -19,25 +19,25 @@
                             <div class="col-md-6">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="{{ form.name.id_for_label }}">Nombre del ingrediente</label>
+                                        <label for="{{ form.name.id_for_label }}">Nombre del Insumo</label>
                                         {{ form.name }}
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="{{ form.clasification.id_for_label }}">Clasificación del ingrediente</label>
+                                        <label for="{{ form.clasification.id_for_label }}">Clasificación del Insumo</label>
                                         {{ form.clasification }}
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="{{ form.quantity.id_for_label }}">Cantidad en stock del ingrediente</label>
+                                        <label for="{{ form.quantity.id_for_label }}">Cantidad en stock del Insumo</label>
                                         {{ form.quantity }}
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="{{ form.quantity_type.id_for_label }}">Tipo de cantidad del ingrediente
+                                        <label for="{{ form.quantity_type.id_for_label }}">Tipo de cantidad del Insumo
                                             
                                             <a data-toggle="modal" data-target="#modal-xl" class="btn btn-block bg-gradient-info btn-xs"> 
                                                 Agregar nuevo
@@ -50,7 +50,7 @@
                             <div class="col-md-6">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="{{ form.description.id_for_label }}">Descripción del ingrediente</label>
+                                        <label for="{{ form.description.id_for_label }}">Descripción del Insumo</label>
                                         {{ form.description }}
                                     </div>
                                 </div>

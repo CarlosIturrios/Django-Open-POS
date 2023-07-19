@@ -98,6 +98,7 @@ def crear_nueva_orden(request):
                 for producto in nueva_orden.relacion_Order_a_OrderDetail.all():
                     if producto.product_id == int(item['id_product']):
                         producto.quantity += int(item['cantidad'])
+                        producto.observaciones += item['observaciones']
                         producto.save()
                         bandera = False
                         total += (float(producto.product.price)
@@ -108,6 +109,7 @@ def crear_nueva_orden(request):
                     detalle = OrderDetail()
                     detalle.product = producto
                     detalle.quantity = item['cantidad']
+                    detalle.observaciones = item['observaciones']
                     detalle.order = nueva_orden
                     detalle.empresa = empresa
                     detalle.save()
@@ -177,6 +179,7 @@ def detalle_de_la_orden(request):
                 for producto in orden.relacion_Order_a_OrderDetail.all():
                     if producto.product_id == int(item['id_product']):
                         producto.quantity += int(item['cantidad'])
+                        producto.observaciones += item['observaciones']
                         producto.save()
                         bandera = False
                         total += (float(producto.product.price)
@@ -187,6 +190,7 @@ def detalle_de_la_orden(request):
                     detalle = OrderDetail()
                     detalle.product = producto
                     detalle.quantity = item['cantidad']
+                    detalle.observaciones = item['observaciones']
                     detalle.order = orden
                     detalle.empresa = empresa
                     detalle.save()
@@ -266,6 +270,10 @@ def orden(request, pk):
     request.session['order'] = pk
     for product in orden.relacion_Order_a_OrderDetail.all():
         producto = product.product
+        lista_formateada = [elemento.strip().capitalize() if elemento is not None else "Con todo" for elemento in eval(product.observaciones)]
+
+        for elemento in lista_formateada:
+            print(f"- {elemento}")
         productos.append({
             'pk': producto.pk,
             'name': producto.name,
@@ -273,6 +281,7 @@ def orden(request, pk):
             'quantity': product.quantity,
             'image': producto.image.url,
             'price': float(producto.price),
+            'observaciones': '\n'.join([f"- {elemento}" for elemento in lista_formateada]),
             'total': float(producto.price) * product.quantity,
         })
         total += float(producto.price) * product.quantity

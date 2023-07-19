@@ -201,6 +201,7 @@ def productos_customer_view(request, cadena, pk):
 def append_product_to_cart(request, empresa, pk):
     id_product = request.POST.get('id_product', None)
     cantidad = request.POST.get('cantidad', None)
+    observaciones = request.POST.get('observaciones', None)
     try:
         producto = Product.objects.get(
             pk=id_product, eliminado=False, empresa=empresa)
@@ -209,17 +210,20 @@ def append_product_to_cart(request, empresa, pk):
                              'Producto no encontrado')
         return redirect('mainapp:productos', pk)
     if 'cart' not in request.session:
+        observacion = [observaciones]
         request.session['cart'] = [
-            {'id_product': id_product, 'cantidad': cantidad}]
+            {'id_product': id_product, 'cantidad': cantidad, 'observaciones': observacion}]
     else:
         cart = request.session['cart']
         if not any(pro['id_product'] == str(id_product) for pro in cart):
-            cart.append({'id_product': id_product, 'cantidad': cantidad})
+            observacion = [observaciones]
+            cart.append({'id_product': id_product, 'cantidad': cantidad, 'observaciones': observacion})
         else:
             for item in cart:
                 if item['id_product'] == id_product:
                     item['cantidad'] = int(
                         item['cantidad']) + int(cantidad)
+                    item['observaciones'].append(observaciones)
         request.session['cantidad'] = cart
     messages.add_message(request, messages.SUCCESS,
                          '{0} agregada a la orden'.format(producto.name))

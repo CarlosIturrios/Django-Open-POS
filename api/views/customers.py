@@ -34,6 +34,7 @@ class EmpresaView(APIView):
     def get(self, request, cadena):
         empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
         serializer = EmpresaSerializer(empresa)
+
         return Response(serializer.data)
 
 
