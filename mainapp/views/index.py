@@ -372,12 +372,16 @@ def consulta_carrito(request, empresa):
             del request.session['cart']
             messages.add_message(request, messages.WARNING, 'Sucedio algo extraño con su orden. Disculpanos vuelve a iniciar.')
             return productos, total, tipos_de_orden, redirect('mainapp:categorias_customer_view', empresa.nombre_para_pagos)
+        if producto.image:
+            image_url = producto.image.url
+        else:
+            image_url = "#"
         productos.append({
             'pk': producto.pk,
             'name': producto.name,
             'description': producto.description,
             'quantity': item['cantidad'],
-            'image': producto.image.url,
+            'image': image_url,
             'price': float(producto.price),
             'total': float(producto.price) * float(item['cantidad']),
         })
