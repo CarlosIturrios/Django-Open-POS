@@ -1,0 +1,17 @@
+{% extends 'adminapp/base.html' %}
+{% block title %}¡Todo listo!{% endblock %}
+{% block form %}
+<p class="login-box-msg">
+    <b>¡Registro exitoso!</b>
+    
+</p>
+
+<p>
+    ¡Todo listo!<br> Inicia sesión con tu correo: {{ correo_del_usuario }} <br> y la contraseña que definiste durante el registro.
+</p>
+
+<p>
+    <a href="{% url 'mainapp:login' %}">Iniciar sesión</a>
+</p>
+
+{% endblock %}

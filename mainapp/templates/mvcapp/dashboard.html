@@ -114,6 +114,7 @@
                 <!-- /.row -->
             {% endif %}
         {% endfor %}
+        
             <div class="row">
             {% for group in request.user.groups.all %}
                 {% if 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
@@ -166,8 +167,169 @@
                 <!-- /.info-box -->
             </div>
             <!-- /.col -->
-        </div>
-        <!-- /.row -->
+            </div>
+        {% for group in  request.user.groups.all %}
+            {% if 'ADMINISTRADOR' == group.name %}
+                <div class="row">
+                    {% if ingredientes == 0 %}
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>Insumos</h3>
+                                    <p>Registra todos los insumos necesarios.</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{% url 'mainapp:listar_ingredientes_view' %}" class="small-box-footer">Ir a configurar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    {% elif ingredientes.count > 0 %}
+                        <div class="col-lg-6 col-md-6">
+                            <div class="small-box">
+                                <div class="inner">
+                                    <h3>Insumos</h3>
+                                    <p>Parece que es momento de ir a ver el inventario.</p>
+                                </div>
+                                <table id="example1" class="table table-bordered table-striped dataTable dtr-inline"
+                                       role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
+                                            Insumo
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
+                                            Cantidad en stock
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for ingrediente in ingredientes %}
+                                        <tr class="odd">
+                                            <td class="dtr-control sorting_1">
+                                                <a href="{% url 'mainapp:modificar_ingredient_view' ingrediente.pk %}">{{ ingrediente.name }}</a></td>
+                                            <td class="dtr-control sorting_1">
+                                                {{ ingrediente.quantity }} {{ ingrediente.quantity_type.description }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if productos == 0 %}
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>Productos</h3>
+                                    <p>Registra todos los productos necesarios.</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{% url 'mainapp:listar_productos_view' %}" class="small-box-footer">Ir a ver el stock <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    {% elif productos.count > 0 %}
+                        <div class="col-lg-6 col-md-6">
+                            <div class="small-box">
+                                <div class="inner">
+                                    <h3>Productos</h3>
+                                    <p>Parece que es momento de ir a ver el inventario.</p>
+                                </div>
+                                <table id="example2" class="table table-bordered table-striped dataTable dtr-inline"
+                                    role="grid" aria-describedby="example1_info">
+                                <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1">
+                                            Codigo del producto
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1">
+                                            Nombre
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1">
+                                            Cantidad en Stock
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for producto in productos %}
+                                    <tr class="odd">
+                                        <td class="dtr-control sorting_1"><a href="{% url 'mainapp:modificar_producto_view' producto.pk %}">{{ producto.product_code }}</a></td>
+                                        <td class="dtr-control sorting_1">{{ producto.name }}</td>
+                                        <td class="dtr-control sorting_1">{{ producto.stock }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tfoot>
+                            </table>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if categorias == 0 %}
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>Categorias</h3>
+                                    <p>¡Registra una categoria ahora!</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{% url 'mainapp:listar_categorias_view' %}" class="small-box-footer">Ir a configurar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if places == 0 %}
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>Sucursales</h3>
+                                    <p>¡Registra tus sucursales ahora!</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{% url 'mainapp:listar_lugares_view' %}" class="small-box-footer">Ir a configurar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if quantity_types == 0 %}
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>Unidades de medida</h3>
+                                    <p>¡Personaliza tus unidades de medida ahora!</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{% url 'mainapp:listar_tipos_de_cantidades_view' %}" class="small-box-footer">Ir a configurar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if currencys == 0 %}
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>Monedas</h3>
+                                    <p>¡Configura tus monedas ahora!.</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{% url 'mainapp:listar_monedas_view' %}" class="small-box-footer">Ir a configurar <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
     </div>
 {% endblock %}
 
@@ -184,5 +346,27 @@
             $('#date1').val(today);
             $('#date2').val(today);
         })
+    </script>
+    <script>
+        $(function () {
+            $("#example2").DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": false,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+            $('#example1').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": false,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
     </script>
 {% endblock %}

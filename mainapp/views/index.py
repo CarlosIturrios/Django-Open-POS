@@ -4,7 +4,7 @@ import uuid
 from django.contrib.auth.models import Group
 import pdfkit
 import mercadopago
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 
 from django.shortcuts import get_object_or_404
@@ -18,11 +18,15 @@ from django.db.models import Sum
 from django.db.models import Q
 
 from mainapp.models import Product
+from mainapp.models import Category
+from mainapp.models import Ingredient
 from mainapp.models import Order
 from mainapp.models import OrderDetail
 from mainapp.models import OrderType
 from mainapp.models import Customer
 from mainapp.models import Place
+from mainapp.models import QuantityType
+from mainapp.models import Currency
 from adminapp.models import Empresa
 from adminapp.models import PaymentWithMercadoPago
 
@@ -34,6 +38,14 @@ class LoginView(views.LoginView):
 
 class LogoutView(views.LogoutView):
     pass
+
+
+def registro_con_exito(request, correo_del_usuario):
+    """ registro
+    Agregar un usuario totalmente nuevo
+    """
+    
+    return render(request, 'auth/post_registro.html', {'correo_del_usuario': correo_del_usuario})
 
 
 @login_required()
@@ -101,10 +113,24 @@ def dashboard(request):
     ordenes_pendientes = ordenes_pendientes.count()
 
     ventas_del_dia = 0 if ventas_del_dia == None else ventas_del_dia
+    productos = Product.objects.filter(eliminado=False, empresa=empresa)
+    ingredientes = Ingredient.objects.filter(eliminado=False, empresa=empresa)
+    productos = productos.filter(stock__lte=2) if productos.count() > 0 else productos.count()
+    ingredientes = ingredientes.filter(quantity__lte=2) if ingredientes.count() > 0 else ingredientes.count()
+    categorias = Category.objects.filter(eliminado=False, empresa=empresa).count()
+    currencys = Currency.objects.filter(eliminado=False, empresa=empresa).count()
+    places = Place.objects.filter(eliminado=False, empresa=empresa).count()
+    quantity_types = QuantityType.objects.filter(eliminado=False, empresa=empresa).count()
 
     return render(request, 'mvcapp/dashboard.html',
                   {'ventas_del_dia': ventas_del_dia, 'clientes_nuevos': clientes_nuevos,
                    'ordenes_pendientes': ordenes_pendientes,
+                   'ingredientes': ingredientes,
+                   'productos': productos,
+                   'categorias': categorias,
+                   'currencys': currencys,
+                   'places': places,
+                   'quantity_types': quantity_types,
                    'ordenes_vendidas': ordenes_vendidas, 'empresa_pk': empresa.pk})
 
 
@@ -164,6 +190,7 @@ def cobrar(request):
                 detalle = OrderDetail()
                 detalle.product = producto
                 detalle.quantity = item['cantidad']
+                detalle.observaciones = str(item['observaciones'])
                 detalle.order = orden
                 detalle.empresa = empresa
                 detalle.save()
@@ -221,8 +248,7 @@ def carrito_customer_view(request, cadena):
         hora_actual = timezone.localtime(timezone.now()).time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
-        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
-            # Verificar también los minutos
+        if not validar_horario(hora_inicio, hora_fin, hora_actual):    
             messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
             return redirect('website:website')
     if not empresa.vigente:
@@ -316,8 +342,7 @@ def eliminar_del_carrito_customer_view(request, pk, cadena):
         hora_actual = timezone.localtime(timezone.now()).time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
-        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
-            # Verificar también los minutos
+        if not validar_horario(hora_inicio, hora_fin, hora_actual):    
             messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
             return redirect('website:website')
     if not empresa.vigente:
@@ -410,10 +435,10 @@ def crear_nueva_orden_customer_view(request, cadena):
         hora_actual = timezone.localtime(timezone.now()).time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
-        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
-            # Verificar también los minutos
+        if not validar_horario(hora_inicio, hora_fin, hora_actual):    
             messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
             return redirect('website:website')
+        
     if not empresa.vigente:
         messages.add_message(request, messages.WARNING,
                              'La empresa presenta adeudo y no tiene disponible la sección de pedidos')
@@ -567,8 +592,7 @@ def index_customers_view(request, cadena):
         hora_actual = timezone.localtime(timezone.now()).time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
-        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
-            # Verificar también los minutos
+        if not validar_horario(hora_inicio, hora_fin, hora_actual):    
             messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
             return redirect('website:website')
     if not empresa.vigente:
@@ -588,3 +612,19 @@ def orden_pagada_customer_view(request, cadena, pk):
     orden = get_object_or_404(Order, pk=pk, empresa=empresa)
     
     return render(request, 'mvcapp/clientes/orden_pagada_customers.html', {'cadena': cadena, 'pk': pk, 'orden': orden, 'empresa': empresa})
+
+
+def obtener_minutos_desde_medianoche(hora):
+    return hora.hour * 60 + hora.minute
+
+def validar_horario(hora_inicio, hora_fin, hora_actual):
+    inicio_minutos = obtener_minutos_desde_medianoche(hora_inicio)
+    fin_minutos = obtener_minutos_desde_medianoche(hora_fin)
+    actual_minutos = obtener_minutos_desde_medianoche(hora_actual)
+
+    # Caso especial: si la hora de inicio es después de la hora de fin,
+    # esto significa que el horario abarca dos días diferentes.
+    if inicio_minutos > fin_minutos:
+        return actual_minutos >= inicio_minutos or actual_minutos < fin_minutos
+    else:
+        return inicio_minutos <= actual_minutos < fin_minutos

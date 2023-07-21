@@ -1,8 +1,8 @@
 {% extends 'mvcapp/base.html' %}
 
-{% block titulo %}Tipos de cantidades{% endblock %}
+{% block titulo %}Unidades de medida{% endblock %}
 {% load humanize %}
-{% block navegacion %}Tipos de cantidades{% endblock %}
+{% block navegacion %}Unidades de medida{% endblock %}
 
 {% block main %}
     <div class="row">
@@ -11,7 +11,7 @@
                 <div class="card-header">
                     <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
                     <a class="btn btn-primary btn-round float-right" href="{% url 'mainapp:crear_nuevo_quantity_type_view' %}">Agregar
-                        nuevo Tipo de cantidad</a>
+                        nueva Unidad de Medida</a>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -36,7 +36,7 @@
                                             <td class="dtr-control sorting_1">
                                                 <form method="post" action="{% url 'mainapp:eliminar_quantity_type_view' cantidad.pk %}">
                                                     {% csrf_token %}
-                                                    <button type="submit" class="btn btn-link text-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este Tipo de cantidad?')">
+                                                    <button type="submit" class="btn btn-link text-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta Unidad de medida?')">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>

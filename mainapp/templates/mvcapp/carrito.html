@@ -431,7 +431,7 @@
     {% else %}
         <div class="row">
             <div class="col col-sm-8">
-                <span style="color: white">No existen productos registrados en la orden.</span>
+                <span>No existen productos registrados en la orden.</span>
                 <button onclick="goBack()" class="btn btn-primary btn-round">regresar al
                     menu anterior.
                 </button>
@@ -532,6 +532,8 @@
     </script>
     <script>
         function pagoButton(buttonName) {
+            document.getElementById('paymentAmount').focus();
+            
             if (buttonName === 'submit2') {
                 document.getElementById('btn-pago').hidden = false;
                 document.getElementById('btn-pago-2').hidden = true;

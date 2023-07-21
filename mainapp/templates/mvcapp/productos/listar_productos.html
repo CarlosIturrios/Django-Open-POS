@@ -41,6 +41,10 @@
                                         </th>
                                         <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
                                             colspan="1">
+                                            Cantidad en Stock
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
+                                            colspan="1">
                                             Categoria
                                         </th>
                                         <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1"
@@ -56,10 +60,19 @@
                                             <td class="dtr-control sorting_1"><a href="{% url 'mainapp:modificar_producto_view' producto.pk %}">{{ producto.product_code }}</a></td>
                                                 
                                             <td class="dtr-control sorting_1">
-                                                <img src="{{ producto.image.url }}" width="60px" height="60px">
+                                                {% if producto.image %}
+                                                    <img 
+                                                    {% if producto.image %}
+                                                        src="{{ producto.image.url }}"
+                                                    {% endif %}
+                                                    width="60px" height="60px">
+                                                {% else %}
+                                                    {{ producto.name }}_sin_imagen
+                                                {% endif %}
                                             </td>
                                             <td class="dtr-control sorting_1">{{ producto.name }}</td>
                                             <td class="dtr-control sorting_1">{{ producto.description }}</td>
+                                            <td class="dtr-control sorting_1">{{ producto.stock }}</td>
                                             <td class="dtr-control sorting_1">{{ producto.category.description }}</td>
                                             <td class="dtr-control sorting_1">
                                                 {{ producto.currency.symbol }}

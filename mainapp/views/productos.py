@@ -9,7 +9,7 @@ from django.utils import timezone
 from mainapp.models import Product
 from adminapp.models import Empresa
 from mainapp import forms
-
+from .index import validar_horario
 
 @login_required()
 def productos_view(request, pk):
@@ -179,8 +179,7 @@ def productos_customer_view(request, cadena, pk):
         hora_actual = timezone.localtime(timezone.now()).time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
-        if hora_inicio <= hora_actual and hora_actual >= hora_fin:
-            # Verificar también los minutos
+        if not validar_horario(hora_inicio, hora_fin, hora_actual):    
             messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
             return redirect('website:website')
     if not empresa.vigente:

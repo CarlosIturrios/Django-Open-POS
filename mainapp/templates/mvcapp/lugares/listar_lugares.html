@@ -1,8 +1,8 @@
 {% extends 'mvcapp/base.html' %}
 
-{% block titulo %}Lugares{% endblock %}
+{% block titulo %}Sucursales{% endblock %}
 {% load humanize %}
-{% block navegacion %}Lugares{% endblock %}
+{% block navegacion %}Sucursales{% endblock %}
 
 {% block main %}
     <div class="row">
@@ -11,7 +11,7 @@
                 <div class="card-header">
                     <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Regresar</a>
                     <a class="btn btn-primary btn-round float-right" href="{% url 'mainapp:crear_nuevo_place_view' %}">Agregar
-                        nuevo Lugar</a>
+                        nueva Sucursal</a>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -42,7 +42,7 @@
                                             <td class="dtr-control sorting_1">
                                                 <form method="post" action="{% url 'mainapp:eliminar_place_view' lugar.pk %}">
                                                     {% csrf_token %}
-                                                    <button type="submit" class="btn btn-link text-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este Lugar?')">
+                                                    <button type="submit" class="btn btn-link text-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta sucursal?')">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>

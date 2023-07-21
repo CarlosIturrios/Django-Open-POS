@@ -21,7 +21,8 @@ urlpatterns = [
          views.eliminar_del_carrito_customer_view, name='eliminar_del_carrito_customer_view'),
     path('<str:cadena>/nueva-orden-customer/',
          views.crear_nueva_orden_customer_view, name='crear_nueva_orden_customer_view'),
-         
+     path('registro-con-exito/<str:correo_del_usuario>/', views.registro_con_exito, name='registro_con_exito'),
+
     # auth
     path('login/', views.LoginView.as_view(), name='login'),
     path('loutin/', views.LogoutView.as_view(), name='logout'),

@@ -98,7 +98,7 @@ def crear_nueva_orden(request):
                 for producto in nueva_orden.relacion_Order_a_OrderDetail.all():
                     if producto.product_id == int(item['id_product']):
                         producto.quantity += int(item['cantidad'])
-                        producto.observaciones += item['observaciones']
+                        producto.observaciones += str(item['observaciones'])
                         producto.save()
                         bandera = False
                         total += (float(producto.product.price)
@@ -109,7 +109,7 @@ def crear_nueva_orden(request):
                     detalle = OrderDetail()
                     detalle.product = producto
                     detalle.quantity = item['cantidad']
-                    detalle.observaciones = item['observaciones']
+                    detalle.observaciones = str(item['observaciones'])
                     detalle.order = nueva_orden
                     detalle.empresa = empresa
                     detalle.save()
@@ -179,7 +179,7 @@ def detalle_de_la_orden(request):
                 for producto in orden.relacion_Order_a_OrderDetail.all():
                     if producto.product_id == int(item['id_product']):
                         producto.quantity += int(item['cantidad'])
-                        producto.observaciones += item['observaciones']
+                        producto.observaciones += str(item['observaciones'])
                         producto.save()
                         bandera = False
                         total += (float(producto.product.price)
@@ -190,7 +190,7 @@ def detalle_de_la_orden(request):
                     detalle = OrderDetail()
                     detalle.product = producto
                     detalle.quantity = item['cantidad']
-                    detalle.observaciones = item['observaciones']
+                    detalle.observaciones = str(item['observaciones'])
                     detalle.order = orden
                     detalle.empresa = empresa
                     detalle.save()
@@ -311,6 +311,13 @@ def orden_lista_para_entrega(request, pk):
 
     orden = Order.objects.get(pk=pk, eliminado=False, empresa=empresa)
     orden.cocinado = True
+    for detalle in orden.relacion_Order_a_OrderDetail.all():
+        producto = detalle.product
+        producto.stock -= detalle.quantity
+        producto.save()
+        for ingrediente in producto.ingredients.all():
+            ingrediente.quantity -= detalle.quantity
+            ingrediente.save()
     orden.cook = request.user
     orden.status_id = 3
     orden.save()
