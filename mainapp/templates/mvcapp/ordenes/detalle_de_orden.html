@@ -238,7 +238,7 @@
                             <div class="calculator">
                                 <!-- Calculator Display -->
                                 <div class="display">
-                                <input type="text" id="paymentAmount" oninput="calculateChange()" value="0" placeholder="Ingresa el monto recibido" />
+                                <input type="number" id="paymentAmount" oninput="calculateChange()" value="0" placeholder="Ingresa el monto recibido" />
                                 <button class="btn" onclick="clearInput('paymentAmount')" id="btn-pay-clear"><i class="fas fa-eraser"></i></button>
                                 </div>
                                 <!-- Calculator Buttons -->
@@ -253,7 +253,7 @@
                                     <button class="btn btn-secondary calculadora" onclick="appendValue(200)" id="btn-pay-8">200</button>
                                     <button class="btn btn-secondary calculadora" onclick="appendValue(500)" id="btn-pay-9">500</button>
                                     <button class="btn btn-secondary calculadora" onclick="appendValue(1000)" id="btn-pay-0">1000</button>
-                                    <button class="btn btn-info" onclick="cambioDeMoneda()" id="btn-pay-change">Calculadora</button>
+                                    <button class="btn btn-info" onclick="cambioDeMoneda()" id="btn-pay-change">Numerico</button>
                                     <!-- Add other numeric buttons -->
                                     <!-- ... -->
                                     
@@ -328,7 +328,7 @@
               buttonElement.setAttribute("onclick", `appendValue(${buttonData.value})`);
               buttonElement.innerText = buttonData.text;
             }
-            changeButton.innerText = "Calculadora";
+            changeButton.innerText = "Numerico";
           } else {
             // Set new values and texts for the buttons
             const currencyValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
