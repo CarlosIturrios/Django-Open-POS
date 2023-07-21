@@ -38,7 +38,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="{{ form.quantity_type.id_for_label }}">Tipo de cantidad del Insumo
+                                        <label for="{{ form.quantity_type.id_for_label }}">Unidad de medida del Insumo
                                             
                                             <a data-toggle="modal" data-target="#modal-xl" class="btn btn-block bg-gradient-info btn-xs"> 
                                                 Agregar nuevo
@@ -72,7 +72,7 @@
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title">Agregar Tipo de cantidad</h4>
+                            <h4 class="modal-title">Agregar Unidad de medida</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -81,11 +81,11 @@
                             <div class="col-md-12" id="">
                                 <div class="card card-primary">
                                     <div class="card-header">
-                                        <h3 class="card-title">Ingrese los datos del nuevo tipo de cantidad</h3>
+                                        <h3 class="card-title">Ingrese los datos de la nueva unidad de medida</h3>
                                     </div>
                                         <div class="card-body">
                                             <div class="form-group">
-                                                <label for="description">Tipo de cantidad</label>
+                                                <label for="description">Unidad de medida</label>
                                                 <input type="text" class="form-control" id="description" name="description"
                                                         placeholder="Pieza" required>
                                                 <small id="description-error" class="text-danger" style="display: none;">El campo de descripción es obligatorio.</small>
@@ -141,7 +141,7 @@
                 // El nuevo tipo de cantidad se agregó correctamente
                 // Aquí puedes realizar cualquier acción adicional necesaria, como mostrar un mensaje de éxito
                 toastr.options.progressBar = true;
-                toastr.success("Nuevo tipo de cantidad agregado correctamente");
+                toastr.success("Nueva unidad de medida agregado correctamente");
                 const modalElement = document.getElementById('modal-xl');
 
                 // Cerrar el modal utilizando el método modal('hide') de Bootstrap
@@ -174,7 +174,7 @@
                 // Hubo un error al agregar el nuevo tipo de cantidad
                 // Aquí puedes manejar el error de acuerdo a tus necesidades
                 toastr.options.progressBar = true;
-                toastr.error("Ocurrio un proceso inesperado al agregar el nuevo tipo de cantidad");
+                toastr.error("Ocurrio un proceso inesperado al agregar la nueva unidad de medida");
             }
         })
         .catch(error => {

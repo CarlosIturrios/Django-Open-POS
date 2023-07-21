@@ -57,11 +57,9 @@
       {% if 'cart' in request.session %}
 
       <b>
-        <a
-          class="float-right"
-          href="{% url 'mainapp:carrito_customer_view' cadena %}"
-          >Pasar a pagar
-          <i class="fab fa-opencart"></i>
+        <a class="float-right"
+          href="{% url 'mainapp:carrito_customer_view' cadena %}" style="font-size: 25px;">
+          Pasar a pagar <i class="fab fa-opencart" style="color: #7a0c0c;"></i>
         </a>
       </b>
       {% endif %}
@@ -95,30 +93,20 @@
       </section>
       <!-- Main content -->
       <section class="content">{% block main %}{% endblock %}</section>
-      <!-- /.content --><br /><br /><br />
-      <div
-        class="lockscreen-footer text-center"
-        style="bottom: 0; width: 100%; padding: 5px"
-      >
-        <br />
+      <!--  /.content -->
+      <div class="lockscreen-footer text-center" style="bottom: 0%; width: 100%; padding: 5px">
         <strong>
           <a href="https://dopshopping.com/" target="_blank">
             <b>DOP</b>SHOPPING
-          </a>
-          Copyright &copy; 2021-
-          <script>
-            document.write(new Date().getFullYear());
-          </script>
-          , made by
-          <a
-            href="https://www.linkedin.com/in/carlos-armando-iturrios-alcaraz-856969176"
-            target="_blank"
-            >Carlos Iturrios</a
-          >
-          for a better services in your business.
-        </strong>
+        </a>
+        Copyright &copy; 2021-
+        <script>
+            document.write(new Date().getFullYear())
+        </script>
         All rights reserved.
-        <div class="d-none d-sm-inline-block"><b>Version</b> 0.0.0.1</div>
+        <div class="float-right d-none d-sm-inline-block">
+            <b>Version</b> 0.0.0.1
+        </div>
       </div>
     </div>
     <script src="{% static 'template/plugins/jquery/jquery.min.js' %}"></script>

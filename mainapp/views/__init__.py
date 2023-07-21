@@ -54,3 +54,5 @@ from .index import eliminar_del_carrito_customer_view
 from .index import crear_nueva_orden_customer_view
 from .index import index_customers_view
 from .index import orden_pagada_customer_view
+from .index import validar_horario
+from .index import registro_con_exito
