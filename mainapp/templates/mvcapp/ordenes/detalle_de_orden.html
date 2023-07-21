@@ -132,7 +132,7 @@
                                     <form method="post" action="{% url 'mainapp:cobrar' %}" id="cobrarForm">
                                         {% csrf_token %}
                                         <button type="button" class="btn btn-success form-control" id="btn-submit-3"
-                                             data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('submit3')">
+                                             data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('paymentAmount')">
                                                 <i class="fas fa-cash-register"></i>  Cobrar
                                         </button>
                                     </form>
@@ -277,7 +277,7 @@
     {% else %}
         <div class="row">
             <div class="col col-sm-8">
-                <span style="color: white">No existen productos registrados con esa categoria.</span>
+                <span>No existen productos registrados con esa categoria.</span>
                 <a href="{% url 'mainapp:categorias' %}" class="btn btn-primary btn-round">regresar al
                     menu anterior.
                 </a>
@@ -297,6 +297,11 @@
             inputToClear = document.getElementById(inputId);
             inputToClear.value = 0;
             calculateChange()
+        }
+    </script>
+    <script>
+        function pagoButton(inputId) {
+            document.getElementById(inputId).focus();
         }
     </script>
     <script>

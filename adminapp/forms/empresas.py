@@ -75,18 +75,12 @@ class EmpresaForm(forms.ModelForm):
             'horario_de_acceso',
             'ciudades_permitidas',
             'usuarios',
-            'cer',
-            'key',
-            'contrasena',
             ]
 
         widgets = {            
             'razon_social': forms.TextInput(attrs={'class': 'form-control'}),
             'nombre_comercial': forms.TextInput(attrs={'class': 'form-control'}),
             'rfc': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'XAXX010101000'}),
-            'cer': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'key': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'contrasena': forms.PasswordInput(attrs={'class': 'form-control'}),
             'correo_electronico': forms.EmailInput(attrs={'class': 'form-control'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'ciudades_permitidas': forms.SelectMultiple(attrs={'class': 'form-control'}),

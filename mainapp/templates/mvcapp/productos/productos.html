@@ -22,7 +22,10 @@
                                         {{ producto.description }}
                                     </div>
                                     <div class="col-5 text-center">
-                                        <img alt="{{ producto.description }}" src="{{ producto.image.url }}"
+                                        <img alt="{{ producto.description }}" 
+                                        {% if producto.image %}
+                                            src="{{ producto.image.url }}"
+                                        {% endif %}
                                              style="width: 128px; height: 128px;"
                                              class="img-fluid mb-2">
                                     </div>
@@ -48,21 +51,30 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <label for="cantidad">Cantidad</label>
-                                                    <input class="form-control" type="number" id="cantidad"
-                                                        name="cantidad" value="1">
+                                                    <input class="form-control" type="number" id="cantidad" oninput="validateInput(this)"
+                                                    min="0" max="{{ producto.stock }}" step="1" name="cantidad" value="1">
                                                         <br>
                                                 </div>
-                                                <div class="col-md-6" id="addDivbutton-{{ producto.id }}">
-                                                    <button type="submit" class="btn btn-primary form-control">
-                                                        <i class="fas fa-plus"></i> Añadir a la orden
-                                                    </button>
-                                                </div>
-                                                <div class="col-md-6" id="addDivbuttonObser-{{ producto.id }}">
-                                                    <button type="button" class="btn btn-success form-control" 
-                                                    onclick="autofillObservations('{{ producto.id }}')">
-                                                        <i class="fas fa-laugh-beam"></i> Sin Observaciones
-                                                    </button>
-                                                </div>
+                                                {% if producto.stock < 3 %}
+                                                    <div class="col-md-12">
+                                                        <div class="alert alert-danger alert-dismissible">
+                                                            <h5><i class="icon fas fa-ban"></i> ¡Agotado!</h5>
+                                                            Reabastece el stock. Actúa rápido. ¡Gracias por tu colaboración!
+                                                            </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="col-md-6" id="addDivbutton-{{ producto.id }}">
+                                                        <button type="submit" class="btn btn-primary form-control">
+                                                            <i class="fas fa-plus"></i> Añadir a la orden
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-6" id="addDivbuttonObser-{{ producto.id }}">
+                                                        <button type="button" class="btn btn-success form-control" 
+                                                        onclick="autofillObservations('{{ producto.id }}')">
+                                                            <i class="fas fa-laugh-beam"></i> Sin Observaciones
+                                                        </button>
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </form>
                                     
@@ -76,7 +88,7 @@
                 {% endfor %}
             {% else %}
                 <div class="col-12 col-sm-6 col-md-6 d-flex align-items-stretch flex-column">
-                    <span style="color: white">No existen productos registrados con esa categoria.</span>
+                    <span>No existen productos registrados con esa categoria.</span>
                     <a href="{% url 'mainapp:categorias' %}" class="btn btn-primary btn-round">regresar al
                         menu anterior.
                     </a>
@@ -102,6 +114,14 @@
             addDivbuttonObser.hidden = true;
             addDivbutton.classList.remove('col-md-12');
             addDivbutton.classList.add('col-md-12');
+        }
+    </script>
+    <script>
+        function validateInput(inputElement) {
+            const max = parseFloat(inputElement.getAttribute('max'));
+            if (inputElement.value > max) {
+                inputElement.value = max;
+            }
         }
     </script>
 {% endblock %}
