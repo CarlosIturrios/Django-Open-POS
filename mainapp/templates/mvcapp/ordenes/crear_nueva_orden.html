@@ -123,10 +123,28 @@
                                                                placeholder="Email del cliente">
                                                     </div>
                                                 </div>
+                                                <div class="col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="buscarClienteNombre">Nombre</label>
+                                                        <input class="form-control" type="text"
+                                                            name="buscarClienteNombre"
+                                                            id="buscarClienteNombre"
+                                                            placeholder="Nombre del cliente. Ej. Luis Leocadio Iturrios Medina">
+                                                    </div>
+                                                </div>
                                                 <button type="button" class="btn btn-block btn-primary"
                                                         id="btnBuscarCliente" onclick="fctBuscarCliente()">
                                                     Buscar
                                                 </button>
+                                            </div>
+                                            <div class="row" id="seleccionarCliente" hidden>
+                                                <input class="form-control" type="text" name="idCliente"
+                                                       id="idCliente" hidden>
+                                                <div class="col-sm-12 col-md-12">
+                                                    <div class="form-group"  id="seleccionarClienteTable">
+                                                        
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="row" id="agregarCliente" hidden>
                                                 <div class="col-sm-12 col-md-6">
@@ -193,10 +211,12 @@
         function fctBuscarCliente() {
             var empresa_pk = {{ empresa_pk }};
             var email = $('#buscarClienteEmail').val();
+            var nombre = $('#buscarClienteNombre').val();
             var cellphone = $('#buscarClienteCellphone').val();
             $.ajax({
-                url: '/api/customers/?empresa='+empresa_pk+'&email=' + email + '&cellphone=' + cellphone,
+                url: '/api/customers/?empresa='+empresa_pk+'&email=' + email + '&cellphone=' + cellphone+'&name='+nombre,
                 success: function (respuesta) {
+                    console.log(respuesta)
                     if (respuesta.length === 1) {
                         $('#buscarCliente').attr("hidden", true);
                         var datosDelCliente = "Nombre: " + respuesta[0].name + "\nDirección: "
@@ -204,6 +224,28 @@
                         $('#informacionDelCliente').val(datosDelCliente);
                         $('#datosDelCliente').attr("hidden", false);
                         $('#idCliente').val(respuesta[0].id)
+                    } else if (respuesta.length > 1) {
+                        $('#buscarCliente').attr("hidden", true);
+                        $('#seleccionarCliente').attr("hidden", false);
+
+                        // Creamos la tabla para mostrar los clientes
+                        var tableHTML = '<table class="table table-bordered">';
+                        tableHTML += '<thead><tr><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Seleccionar</th></tr></thead><tbody>';
+                        
+                        for (var i = 0; i < respuesta.length; i++) {
+                            var cliente = respuesta[i];
+                            tableHTML += '<tr>';
+                            tableHTML += '<td>' + cliente.name + '</td>';
+                            tableHTML += '<td>' + cliente.direction + '</td>';
+                            tableHTML += '<td>' + cliente.cellphone + '</td>';
+                            tableHTML += '<td><button class="btn btn-primary" onclick="seleccionarCliente(\'' + encodeURIComponent(JSON.stringify(cliente)) + '\')">Seleccionar</button></td>';
+                            tableHTML += '</tr>';
+                        }
+                        
+                        tableHTML += '</tbody></table>';
+                        
+                        // Agregamos la tabla al div correspondiente
+                        $('#seleccionarClienteTable').html(tableHTML);
                     } else {
                         toastr.options.progressBar = true;
                         toastr.options.closeButton = true;
@@ -231,6 +273,20 @@
             $('#aAgregarCliente').attr("hidden", false);
             $('#agregarCliente').attr("hidden", true);
             $('#datosDelCliente').attr("hidden", true);
+        }
+        function seleccionarCliente(clienteEncoded) {
+            var clienteString = decodeURIComponent(clienteEncoded);
+            var cliente = JSON.parse(clienteString);
+            // Ahora 'cliente' contiene el objeto cliente completo
+            // Puedes usar sus propiedades como cliente.id, cliente.name, cliente.cellphone, etc.
+            // Continúa con el resto de tu lógica aquí
+            $('#seleccionarClienteTable').empty();
+            $('#seleccionarCliente').attr("hidden", true);
+            $('#buscarCliente').attr("hidden", true);
+            var datosDelCliente = "Nombre: " + cliente.name + "\nDirección: " + cliente.direction + "\nTelefono: " + cliente.cellphone;
+            $('#informacionDelCliente').val(datosDelCliente);
+            $('#datosDelCliente').attr("hidden", false);
+            $('#idCliente').val(cliente.id);
         }
     </script>
 {% endblock %}

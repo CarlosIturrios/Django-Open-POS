@@ -1,4 +1,4 @@
-from django_filters import FilterSet
+from django_filters import FilterSet, CharFilter
 
 from mainapp.models import Customer
 from mainapp.models import QuantityType
@@ -6,10 +6,13 @@ from mainapp.models import Currency
 from adminapp.models import HorarioAcceso
 
 class CustomerFilter(FilterSet):
+    name = CharFilter(lookup_expr='icontains')
+
     class Meta:
         model = Customer
         fields = (
             'id',
+            'name',
             'cellphone',
             'email',
             'empresa',

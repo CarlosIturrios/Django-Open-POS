@@ -271,7 +271,7 @@ def orden(request, pk):
     for product in orden.relacion_Order_a_OrderDetail.all():
         producto = product.product
         if product.observaciones:
-            lista_formateada = [elemento.strip().capitalize() if elemento is not None else "Con todo" for elemento in eval(product.observaciones)]
+            lista_formateada = [elemento.strip().capitalize() if elemento is not None else "Todo incluido" for elemento in eval(product.observaciones)]
         else:
             lista_formateada = ''
         for elemento in lista_formateada:
