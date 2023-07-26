@@ -63,21 +63,19 @@ def carrito_view(request):
     total = 0
     tipos_de_orden = None
     places = None
+    productos_busqueda = None
     if request.method == "POST":
-        print(request.POST.get('q', None))
         search_content = request.POST.get('q', None)
         cantidad = 1
         if '*' in search_content:
             search_content = search_content.split('*')
             cantidad, search_content = search_content[0], search_content[1]
-        
-        productos = Product.objects.filter(Q(product_code=search_content) | Q(name=search_content) | Q(barcode=search_content), empresa=empresa)
+        productos = Product.objects.filter(Q(barcode=search_content) | Q(name=search_content) | Q(product_code=search_content), empresa=empresa)
 
         if productos.count() == 1:
             id_product = productos.first().pk
             cantidad = cantidad
-            observaciones = "Producto agregado por metodo directo"
-
+            observaciones = None
             # Crear un nuevo diccionario para inyectar valores en el request.POST
             updated_post_data = request.POST.copy()
             updated_post_data['id_product'] = id_product
@@ -85,22 +83,16 @@ def carrito_view(request):
             updated_post_data['observaciones'] = observaciones
             # Actualizar el request.POST con el nuevo diccionario
             request.POST = updated_post_data
-            print('linea 88 id prodcut: ', request.POST.get('id_product', None))
-            print('linea 89 cantidad: ',request.POST.get('cantidad', None))
             append_product_to_cart(request, empresa, productos.first().category.pk)
 
-        for producto in productos:
-            print("Producto ID:", producto.pk)
-            print("Nombre:", producto.name)
-            print("Codigo de producto:", producto.product_code)
-            print("Co   digo de barras:", producto.barcode)
-            # Imprimir otros campos relevantes del producto si los tienes
-            print("-" * 30)
-    
+        else: 
+            messages.add_message(request, messages.WARNING,
+                             'El producto no pudo ser encontrado.')
     if 'cart' in request.session:
         productos, total, tipos_de_orden, places = consulta_carrito(request, empresa)
     return render(request, 'mvcapp/carrito.html',
-                    {'productos': productos, 'total': total, 'tipos_de_orden': tipos_de_orden, 'places': places,'empresa_pk': empresa.pk})
+                    {'productos': productos, 'total': total, 'tipos_de_orden': tipos_de_orden,
+                      'places': places,'empresa_pk': empresa.pk, 'productos_busqueda': productos_busqueda})
 
 
 @login_required()
