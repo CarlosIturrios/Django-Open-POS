@@ -13,6 +13,7 @@ from mainapp.models import OrderType
 from mainapp.models import Customer
 from mainapp.models import Place
 from adminapp.models import Empresa
+from .index import append_product_to_cart
 
 
 @login_required()
@@ -294,6 +295,30 @@ def orden(request, pk):
             messages.add_message(request, messages.WARNING,
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
+    if request.method == "POST":
+        search_content = request.POST.get('q', None)
+        cantidad = 1
+        if '*' in search_content:
+            search_content = search_content.split('*')
+            cantidad, search_content = search_content[0], search_content[1]
+        productos = Product.objects.filter(Q(barcode=search_content) | Q(name=search_content) | Q(product_code=search_content), empresa=empresa)
+
+        if productos.count() == 1:
+            id_product = productos.first().pk
+            cantidad = cantidad
+            observaciones = None
+            # Crear un nuevo diccionario para inyectar valores en el request.POST
+            updated_post_data = request.POST.copy()
+            updated_post_data['id_product'] = id_product
+            updated_post_data['cantidad'] = int(cantidad)
+            updated_post_data['observaciones'] = observaciones
+            # Actualizar el request.POST con el nuevo diccionario
+            request.POST = updated_post_data
+            append_product_to_cart(request, empresa, productos.first().category.pk)
+            return redirect('mainapp:carrito')
+        else: 
+            messages.add_message(request, messages.WARNING,
+                             'El producto no pudo ser encontrado.')
     orden = Order.objects.get(pk=pk, eliminado=False, empresa=empresa)
     productos = []
     total = float(0)
