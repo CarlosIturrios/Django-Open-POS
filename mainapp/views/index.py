@@ -30,7 +30,6 @@ from mainapp.models import Currency
 from adminapp.models import Empresa
 from adminapp.models import PaymentWithMercadoPago
 
-
 class LoginView(views.LoginView):
     redirect_authenticated_user = True
     template_name = 'auth/login.html'
@@ -60,14 +59,48 @@ def carrito_view(request):
             messages.add_message(request, messages.WARNING,
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
-    if 'cart' not in request.session:
-        messages.add_message(request, messages.ERROR,
-                             'La orden se encuentra vacia, por favor selecciona algunos productos')
-        return redirect('mainapp:categorias')
-    else:
+    productos = None
+    total = 0
+    tipos_de_orden = None
+    places = None
+    if request.method == "POST":
+        print(request.POST.get('q', None))
+        search_content = request.POST.get('q', None)
+        cantidad = 1
+        if '*' in search_content:
+            search_content = search_content.split('*')
+            cantidad, search_content = search_content[0], search_content[1]
+        
+        productos = Product.objects.filter(Q(product_code=search_content) | Q(name=search_content) | Q(barcode=search_content), empresa=empresa)
+
+        if productos.count() == 1:
+            id_product = productos.first().pk
+            cantidad = cantidad
+            observaciones = "Producto agregado por metodo directo"
+
+            # Crear un nuevo diccionario para inyectar valores en el request.POST
+            updated_post_data = request.POST.copy()
+            updated_post_data['id_product'] = id_product
+            updated_post_data['cantidad'] = int(cantidad)
+            updated_post_data['observaciones'] = observaciones
+            # Actualizar el request.POST con el nuevo diccionario
+            request.POST = updated_post_data
+            print('linea 88 id prodcut: ', request.POST.get('id_product', None))
+            print('linea 89 cantidad: ',request.POST.get('cantidad', None))
+            append_product_to_cart(request, empresa, productos.first().category.pk)
+
+        for producto in productos:
+            print("Producto ID:", producto.pk)
+            print("Nombre:", producto.name)
+            print("Codigo de producto:", producto.product_code)
+            print("Co   digo de barras:", producto.barcode)
+            # Imprimir otros campos relevantes del producto si los tienes
+            print("-" * 30)
+    
+    if 'cart' in request.session:
         productos, total, tipos_de_orden, places = consulta_carrito(request, empresa)
-        return render(request, 'mvcapp/carrito.html',
-                      {'productos': productos, 'total': total, 'tipos_de_orden': tipos_de_orden, 'places': places,'empresa_pk': empresa.pk})
+    return render(request, 'mvcapp/carrito.html',
+                    {'productos': productos, 'total': total, 'tipos_de_orden': tipos_de_orden, 'places': places,'empresa_pk': empresa.pk})
 
 
 @login_required()
@@ -131,7 +164,7 @@ def dashboard(request):
                    'currencys': currencys,
                    'places': places,
                    'quantity_types': quantity_types,
-                   'ordenes_vendidas': ordenes_vendidas, 'empresa_pk': empresa.pk})
+                   'ordenes_vendidas': ordenes_vendidas, 'empresa_pk': empresa.pk, 'nombre_para_pagos': empresa.nombre_para_pagos})
 
 
 @login_required()
@@ -632,3 +665,40 @@ def validar_horario(hora_inicio, hora_fin, hora_actual):
         return actual_minutos >= inicio_minutos or actual_minutos < fin_minutos
     else:
         return inicio_minutos <= actual_minutos < fin_minutos
+    
+def append_product_to_cart(request, empresa, pk):
+    id_product = request.POST.get('id_product', None)
+    print('id_product linea 671: ',id_product)
+    cantidad = request.POST.get('cantidad', None)
+    observaciones = request.POST.get('observaciones', None)
+    try:
+        producto = Product.objects.get(
+            pk=id_product, eliminado=False, empresa=empresa)
+    except:
+        messages.add_message(request, messages.WARNING,
+                             'Producto no encontrado')
+        return redirect('mainapp:productos', pk)
+    if 'cart' not in request.session:
+        observacion = [observaciones] if observaciones else []
+        request.session['cart'] = [
+            {'id_product': int(id_product), 'cantidad': cantidad, 'observaciones': observacion}
+        ]
+    else:
+        cart = request.session['cart']
+        product_found = False
+        for item in cart:
+            if item['id_product'] == int(id_product):
+                item['cantidad'] = int(item['cantidad']) + int(cantidad)
+                if observaciones:
+                    item['observaciones'].append(observaciones)
+                product_found = True
+                break
+
+        if not product_found:
+            observacion = [observaciones] if observaciones else []
+            cart.append({'id_product': int(id_product), 'cantidad': cantidad, 'observaciones': observacion})
+
+        request.session['cart'] = cart
+
+    messages.add_message(request, messages.SUCCESS, '{0} agregada a la orden'.format(producto.name))
+    return redirect('mainapp:productos', pk)

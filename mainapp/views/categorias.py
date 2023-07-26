@@ -6,6 +6,7 @@ from datetime import datetime
 from django.utils import timezone
 
 from mainapp.models import Category
+from mainapp.models import Product
 from adminapp.models import Empresa
 from mainapp import views
 from .index import validar_horario
@@ -41,7 +42,6 @@ def categorias_view(request):
             messages.add_message(request, messages.WARNING,
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
-
     categorias = Category.objects.filter(eliminado=False, empresa=empresa)
     return render(request, 'mvcapp/categorias/categorias.html',
                   {'categorias': categorias, 'empresa_pk': empresa.pk})

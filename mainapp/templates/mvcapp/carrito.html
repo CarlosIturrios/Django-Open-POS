@@ -72,46 +72,402 @@
 {% endblock %}
 
 {% block main %}
-    {% if productos %}
+<div class="row">
+    <div class="col-sm-12 col-md-9 d-flex align-items-stretch flex-column">
         <div class="row">
-            <div class="col-md-1"></div>
-            <div class="invoice col-md-10" style="border-radius: 2%">
-                <!-- title row -->
-                <div class="col-sm-12"><br>
-                    <h2 align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
+            <div class="col-12 col-md-12 d-flex align-items-stretch flex-column">
+                <div class="card bg-light d-flex flex-fill">
+                    <div class="card-header text-muted border-bottom-0">
+                        <span>Busqueda directa de productos. (Utiliza numeros y '*' para multiplicar la cantidad de productos a agregrar. ej 2*)</span>
+                    </div>
+                    <div class="card-footer"> 
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" id="q" name="q" required
+                                    placeholder="Busqueda exacta por clave, codigo de barra o nombre de productos">
+                                        <br>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-primary form-control">
+                                        <i class="fas fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>    
                 </div>
-                {% for group in  request.user.groups.all %}
-                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name and 'order' in request.session %}
-                        <div class="col-6">
-                            <br>
-                            <form method="post" action="{% url 'mainapp:detalle_de_la_orden' %}" class="float-left">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary form-control">
-                                    <i class="fas fa-check-circle"></i> Confirmar orden
-                                </button>
-                            </form>
-
+            </div>
+        </div>
+        {% if productos %}
+            <div class="row">
+                <div class="col-12 col-md-12 d-flex align-items-stretch flex-column">
+                    <div class="invoice col-md-12" style="border-radius: 2%">
+                        <div class="row">
+                            <div class="col-12 table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                        <th>Total</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for producto in productos %}
+                                        <tr>
+                                            <td>
+                                                <img alt="{{ producto.description }}" src="{{ producto.image }}"
+                                                    style="width: 64px; height: 64px;"
+                                                    class="img-fluid mb-2">
+                                            </td>
+                                            <td>{{ producto.name }}</td>
+                                            <td>{{ producto.quantity }}</td>
+                                            <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
+                                            <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
+                                            <td>
+                                                <form method="post" action="{% url 'mainapp:eliminar_del_carrito_view' producto.pk %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" rel="tooltip" data-placement="left"
+                                                            title="Quitar producto"
+                                                            class="btn btn-simple">
+                                                        <i class="fas fa-eraser"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.col -->
                         </div>
+                    </div>
+                    <section class="content">
+                        <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="close" id="paymentModalLabel">Total a Pagar: $ {{ total|floatformat:2|intcomma }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div class="modal-body">
+                                    <!-- Calculator HTML -->
+                                        <div class="calculator">
+                                            <!-- Calculator Display -->
+                                            <div class="display">
+                                            <input type="number" id="paymentAmount" oninput="calculateChange()" value="0" placeholder="Ingresa el monto recibido" />
+                                            <button class="btn" onclick="clearInput('paymentAmount')" id="btn-pay-clear"><i class="fas fa-eraser"></i></button>
+                                            </div>
+                                            <!-- Calculator Buttons -->
+                                            <div class="buttons">
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(1)" id="btn-pay-1">$1.00</button>
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(2)" id="btn-pay-2">$2.00</button>
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(5)" id="btn-pay-3">$5.00</button>
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(10)" id="btn-pay-4">$10.00</button>
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(20)" id="btn-pay-5">$20.00</button>
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(50)" id="btn-pay-6">$50.00</button>
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(100)" id="btn-pay-7">$100.00</button>
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(200)" id="btn-pay-8">$200.00</button>
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(500)" id="btn-pay-9">$500.00</button>
+                                                <button class="btn btn-secondary calculadora" onclick="appendValue(1000)" id="btn-pay-0">$1,000.00</button>
+                                                <button class="btn btn-info" onclick="cambioDeMoneda()" id="btn-pay-change">Numerico</button>
+                                                <!-- Add other numeric buttons -->
+                                                <!-- ... -->
+                                                <button type="button" name="submit2" class="btn btn-success" disabled id="btn-pago" hidden
+                                                                onclick="handleButtonClick('submit2')">Pagar Orden</button>
+                                                <button type="button" name="submit3" class="btn btn-success" disabled id="btn-pago-2" hidden
+                                                                onclick="handleButtonClick('submit3')">Pagar Orden</button>
+                                                <!-- Calculator Result -->
+                                            </div>  
+                                            <div class="result">
+                                                <p>
+                                                    <strong>Cambio: $<span id="changeAmount">0.00</span></strong>
+                                                    <br>
+                                                    <em class="warning-message">Por favor, asegúrate de contar el efectivo correctamente antes de entregarlo.</em>
+                                                </p>
+                                            </div>                                    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="content">
+                        <div class="modal fade" id="modal-xl">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Datos de la orden</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    {% if 'order' not in request.session %}
+                                        <form method="post" action="{% url 'mainapp:crear_nueva_orden' %}" id="crearNuevaOrden">
+                                            {% csrf_token %}
+                                            <div class="modal-body">
+                                                <div class="col-md-12" id="">
+                                                    <div class="card card-primary">
+                                                        <div class="card-header">
+                                                            <h3 class="card-title">Ingrese los datos de la orden</h3>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="form-group">
+                                                                <label for="tipoDeOrden">Tipo de orden</label>
+                                                                <select class="form-control" name="tipoDeOrden" id="tipoDeOrden">
+                                                                    {% for tipo in tipos_de_orden %}
+                                                                        <option id="tipo{{ tipo.id }}"
+                                                                                value="{{ tipo.id }}">
+                                                                            {{ tipo.description }}
+                                                                        </option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="place">Sucursal</label>
+                                                                <select class="form-control" name="place" id="place">
+                                                                    {% for place in places %}
+                                                                        <option id="place{{ place.id }}"
+                                                                                value="{{ place.id }}">
+                                                                            {{ place.description }} - {{ place.direction }}
+                                                                        </option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="comentario">Comentarios de la orden</label>
+                                                                <textarea class="form-control" rows="3" name="comentario"
+                                                                        id="comentario"
+                                                                        placeholder="Escriba algun comentario sobre la orden"
+                                                                        required></textarea>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <a class="btn btn-app" onclick="agregarCliente()" id="aAgregarCliente">
+                                                                    <i class="fas fa-plus-square"></i> Agregar nuevo cliente
+                                                                </a>
+                                                                <a class="btn btn-app" onclick="buscarCliente()" id="aBuscarCliente">
+                                                                    <i class="fas fa-search"></i> Buscar cliente
+                                                                </a>
+                                                            </div>
+                                                            <div class="row" id="datosDelCliente" hidden>
+                                                                <div class="col-sm-12">
+                                                                    <div class="form-group">
+                                                                        <label for="informacionDelCliente">Datos del cliente</label>
+                                                                        <textarea class="form-control" rows="3"
+                                                                                name="informacionDelCliente"
+                                                                                id="informacionDelCliente" disabled>
+                                                                    </textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row" id="buscarCliente" hidden>
+                                                                <input class="form-control" type="text" name="idCliente"
+                                                                    id="idCliente" hidden>
+                                                                <div class="col-sm-12 col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="buscarClienteCellphone">Numero de telefono</label>
+                                                                        <input class="form-control" type="text"
+                                                                            name="buscarClienteCellphone"
+                                                                            id="buscarClienteCellphone"
+                                                                            placeholder="Telefono del cliente" maxlength="10">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="buscarClienteEmail">Email</label>
+                                                                        <input class="form-control" type="text"
+                                                                            name="buscarClienteEmail"
+                                                                            id="buscarClienteEmail"
+                                                                            placeholder="Email del cliente">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12">
+                                                                    <div class="form-group">
+                                                                        <label for="buscarClienteNombre">Nombre</label>
+                                                                        <input class="form-control" type="text"
+                                                                            name="buscarClienteNombre"
+                                                                            id="buscarClienteNombre"
+                                                                            placeholder="Nombre del cliente. Ej. Luis Leocadio Iturrios Medina">
+                                                                    </div>
+                                                                </div>
+                                                                <button type="button" class="btn btn-block btn-primary"
+                                                                        id="btnBuscarCliente" onclick="fctBuscarCliente()">
+                                                                    Buscar
+                                                                </button>
+                                                            </div>
+                                                            <div class="row" id="seleccionarCliente" hidden>
+                                                                <input class="form-control" type="text" name="idCliente"
+                                                                    id="idCliente" hidden>
+                                                                <div class="col-sm-12 col-md-12">
+                                                                    <div class="form-group"  id="seleccionarClienteTable">
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row" id="agregarCliente" hidden>
+                                                                <div class="col-sm-12 col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="clienteName">Nombre</label>
+                                                                        <input class="form-control" type="text" name="clienteName"
+                                                                            id="clienteName"
+                                                                            placeholder="Nombre del cliente">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="clienteCellphone">Numero de telefono</label>
+                                                                        <input class="form-control" type="text" name="clienteCellphone"
+                                                                            id="clienteCellphone"
+                                                                            placeholder="Telefono del cliente" maxlength="10">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="clienteDirection">Dirección</label>
+                                                                        <input class="form-control" type="text" name="clienteDirection"
+                                                                            id="clienteDirection"
+                                                                            placeholder="Dirección del cliente">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="clienteEmail">Email</label>
+                                                                        <input class="form-control" type="text" name="clienteEmail"
+                                                                            id="clienteEmail"
+                                                                            placeholder="Email del cliente">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6" hidden>
+                                                                    <div class="form-group">
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input" type="checkbox" name="pago" id="pago">
+                                                                            <label class="form-check-label">Pagar Orden</label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6" hidden>
+                                                                    <div class="form-group">
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input" type="checkbox" name="confirmar_orden" id="confirmar_orden">
+                                                                            <label class="form-check-label">Confirmar Orden</label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer justify-content-between row">
+                                                <div class="col-md-4">
+                                                    <button type="button" class="btn btn-secondary form-control" data-dismiss="modal">
+                                                        <i class="fas fa-backspace"></i> Cerrar</button>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-success form-control" id="btn-submit-2"
+                                                    data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('submit2')">
+                                                        <i class="fas fa-cash-register"></i>  Pagar
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <button type="button" name="submit1" class="btn btn-info form-control" 
+                                                    onclick="handleButtonClick('submit1')">
+                                                    <i class="fas fa-check"></i>  Confirmar Orden</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    {% else %}
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <form method="post" action="{% url 'mainapp:cobrar' %}" id="cobrarForm">
+                                                    {% csrf_token %}
+                                                    <button type="button" class="btn btn-success form-control" id="btn-submit-3"
+                                                    data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('submit3')">
+                                                        <i class="fas fa-cash-register"></i>  Pagar
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        <!-- /.form-group -->
+                                        </div>
+                                        {% for group in  request.user.groups.all %}
+                                            {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name and 'order' in request.session %}
+                                            <div class="col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <form method="post" action="{% url 'mainapp:detalle_de_la_orden' %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-primary form-control">
+                                                            <i class="fas fa-check-circle"></i> Confirmar orden
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <!-- /.colsm-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                    </section>
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-12 col-md-12 d-flex align-items-stretch flex-column">
+                    <div class="card bg-light d-flex flex-fill">
+                        <div class="card-header text-muted border-bottom-0">
+                            <span>No hay productos o servicios agregados al carrito.</span>
+                            <a href="{% url 'mainapp:categorias' %}" class="btn btn-primary btn-round">
+                                Buscar por categorias.
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-sm-12 col-md-3 d-flex align-items-stretch flex-column">
+        <div class="invoice col-md-12" style="border-radius: 2%">
+            <!-- title row -->
+            <div class="col-sm-12"><br>
+                <h2 align="center"> Total: $ 
+                    {% if total %}
+                        {{ total|floatformat:2|intcomma }}
+                    {% else %}
+                         0.00
                     {% endif %}
-                {% endfor %}
-                <div class="row">
-                    {% for group in  request.user.groups.all %}
-                        {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
-                            <div class="col-sm-6">
-                                <br>
+                </h2>
+            </div>
+            <br>
+            <div class="row">
+                {% for group in  request.user.groups.all %}
+                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                        <div class="col-sm-12">
+                            <div class="form-group">
                                 <form method="post" action="{% url 'mainapp:categorias' %}">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-primary form-control" style="width:100%">
-                                        <i class="fas fa-plus"></i> Agregar otro producto
+                                        <i class="fas fa-plus"></i> Añadir desde Categorias
                                     </button>
                                 </form>
-
                             </div>
-                        {% endif %}
-                    {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <br>
+                {% if productos %}
                     {% for group in  request.user.groups.all %}
                         {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name %}
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <br>
                                 <a data-toggle="modal" data-target="#modal-xl">
                                     <div class="info-box mb-3">
@@ -125,323 +481,18 @@
                             </div>
                         {% endif %}
                     {% endfor %}
-                    <!-- /.col -->
-                </div>
-                <!-- Table row --><br>
-                <div class="row">
-                    <div class="col-12 table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>Producto</th>
-                                <th>Cantidad</th>
-                                <th>Precio</th>
-                                <th>Total</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for producto in productos %}
-                                <tr>
-                                    <td>
-                                        <img alt="{{ producto.description }}" src="{{ producto.image }}"
-                                             style="width: 64px; height: 64px;"
-                                             class="img-fluid mb-2">
-                                    </td>
-                                    <td>{{ producto.name }}</td>
-                                    <td>{{ producto.quantity }}</td>
-                                    <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
-                                    <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
-                                    <td>
-                                        <form method="post" action="{% url 'mainapp:eliminar_del_carrito_view' producto.pk %}">
-                                            {% csrf_token %}
-                                            <button type="submit" rel="tooltip" data-placement="left"
-                                                    title="Quitar producto"
-                                                    class="btn btn-simple">
-                                                <i class="fas fa-eraser" style="color: white;"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.col -->
-                </div>
-            </div>
-            <section class="content">
-                <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h5 class="close" id="paymentModalLabel">Total a Pagar: $ {{ total|floatformat:2|intcomma }}</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                            <!-- Calculator HTML -->
-                                <div class="calculator">
-                                    <!-- Calculator Display -->
-                                    <div class="display">
-                                    <input type="number" id="paymentAmount" oninput="calculateChange()" value="0" placeholder="Ingresa el monto recibido" />
-                                    <button class="btn" onclick="clearInput('paymentAmount')" id="btn-pay-clear"><i class="fas fa-eraser"></i></button>
-                                    </div>
-                                    <!-- Calculator Buttons -->
-                                    <div class="buttons">
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(1)" id="btn-pay-1">1</button>
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(2)" id="btn-pay-2">2</button>
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(5)" id="btn-pay-3">5</button>
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(10)" id="btn-pay-4">10</button>
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(20)" id="btn-pay-5">20</button>
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(50)" id="btn-pay-6">50</button>
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(100)" id="btn-pay-7">100</button>
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(200)" id="btn-pay-8">200</button>
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(500)" id="btn-pay-9">500</button>
-                                        <button class="btn btn-secondary calculadora" onclick="appendValue(1000)" id="btn-pay-0">1000</button>
-                                        <button class="btn btn-info" onclick="cambioDeMoneda()" id="btn-pay-change">Numerico</button>
-                                        <!-- Add other numeric buttons -->
-                                        <!-- ... -->
-                                        <button type="button" name="submit2" class="btn btn-success" disabled id="btn-pago" hidden
-                                                        onclick="handleButtonClick('submit2')">Pagar Orden</button>
-                                        <button type="button" name="submit3" class="btn btn-success" disabled id="btn-pago-2" hidden
-                                                        onclick="handleButtonClick('submit3')">Pagar Orden</button>
-                                        <!-- Calculator Result -->
-                                    </div>  
-                                    <div class="result">
-                                        <p>
-                                            <strong>Cambio: $<span id="changeAmount">0.00</span></strong>
-                                            <br>
-                                            <em class="warning-message">Por favor, asegúrate de contar el efectivo correctamente antes de entregarlo.</em>
-                                        </p>
-                                    </div>                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section class="content">
-                <div class="modal fade" id="modal-xl">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Datos de la orden</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            {% if 'order' not in request.session %}
-                                <form method="post" action="{% url 'mainapp:crear_nueva_orden' %}" id="crearNuevaOrden">
-                                    {% csrf_token %}
-                                    <div class="modal-body">
-                                        <div class="col-md-12" id="">
-                                            <div class="card card-primary">
-                                                <div class="card-header">
-                                                    <h3 class="card-title">Ingrese los datos de la orden</h3>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label for="tipoDeOrden">Tipo de orden</label>
-                                                        <select class="form-control" name="tipoDeOrden" id="tipoDeOrden">
-                                                            {% for tipo in tipos_de_orden %}
-                                                                <option id="tipo{{ tipo.id }}"
-                                                                        value="{{ tipo.id }}">
-                                                                    {{ tipo.description }}
-                                                                </option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="place">Sucursal</label>
-                                                        <select class="form-control" name="place" id="place">
-                                                            {% for place in places %}
-                                                                <option id="place{{ place.id }}"
-                                                                        value="{{ place.id }}">
-                                                                    {{ place.description }} - {{ place.direction }}
-                                                                </option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="comentario">Comentarios de la orden</label>
-                                                        <textarea class="form-control" rows="3" name="comentario"
-                                                                id="comentario"
-                                                                placeholder="Escriba algun comentario sobre la orden"
-                                                                required></textarea>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <a class="btn btn-app" onclick="agregarCliente()" id="aAgregarCliente">
-                                                            <i class="fas fa-plus-square"></i> Agregar nuevo cliente
-                                                        </a>
-                                                        <a class="btn btn-app" onclick="buscarCliente()" id="aBuscarCliente">
-                                                            <i class="fas fa-search"></i> Buscar cliente
-                                                        </a>
-                                                    </div>
-                                                    <div class="row" id="datosDelCliente" hidden>
-                                                        <div class="col-sm-12">
-                                                            <div class="form-group">
-                                                                <label for="informacionDelCliente">Datos del cliente</label>
-                                                                <textarea class="form-control" rows="3"
-                                                                        name="informacionDelCliente"
-                                                                        id="informacionDelCliente" disabled>
-                                                            </textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row" id="buscarCliente" hidden>
-                                                        <input class="form-control" type="text" name="idCliente"
-                                                            id="idCliente" hidden>
-                                                        <div class="col-sm-12 col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="buscarClienteCellphone">Numero de telefono</label>
-                                                                <input class="form-control" type="text"
-                                                                    name="buscarClienteCellphone"
-                                                                    id="buscarClienteCellphone"
-                                                                    placeholder="Telefono del cliente" maxlength="10">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12 col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="buscarClienteEmail">Email</label>
-                                                                <input class="form-control" type="text"
-                                                                    name="buscarClienteEmail"
-                                                                    id="buscarClienteEmail"
-                                                                    placeholder="Email del cliente">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12 col-md-12">
-                                                            <div class="form-group">
-                                                                <label for="buscarClienteNombre">Nombre</label>
-                                                                <input class="form-control" type="text"
-                                                                    name="buscarClienteNombre"
-                                                                    id="buscarClienteNombre"
-                                                                    placeholder="Nombre del cliente. Ej. Luis Leocadio Iturrios Medina">
-                                                            </div>
-                                                        </div>
-                                                        <button type="button" class="btn btn-block btn-primary"
-                                                                id="btnBuscarCliente" onclick="fctBuscarCliente()">
-                                                            Buscar
-                                                        </button>
-                                                    </div>
-                                                    <div class="row" id="seleccionarCliente" hidden>
-                                                        <input class="form-control" type="text" name="idCliente"
-                                                               id="idCliente" hidden>
-                                                        <div class="col-sm-12 col-md-12">
-                                                            <div class="form-group"  id="seleccionarClienteTable">
-                                                                
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row" id="agregarCliente" hidden>
-                                                        <div class="col-sm-12 col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="clienteName">Nombre</label>
-                                                                <input class="form-control" type="text" name="clienteName"
-                                                                    id="clienteName"
-                                                                    placeholder="Nombre del cliente">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12 col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="clienteCellphone">Numero de telefono</label>
-                                                                <input class="form-control" type="text" name="clienteCellphone"
-                                                                    id="clienteCellphone"
-                                                                    placeholder="Telefono del cliente" maxlength="10">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12 col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="clienteDirection">Dirección</label>
-                                                                <input class="form-control" type="text" name="clienteDirection"
-                                                                    id="clienteDirection"
-                                                                    placeholder="Dirección del cliente">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12 col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="clienteEmail">Email</label>
-                                                                <input class="form-control" type="text" name="clienteEmail"
-                                                                    id="clienteEmail"
-                                                                    placeholder="Email del cliente">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12 col-md-6" hidden>
-                                                            <div class="form-group">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox" name="pago" id="pago">
-                                                                    <label class="form-check-label">Pagar Orden</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-12 col-md-6" hidden>
-                                                            <div class="form-group">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox" name="confirmar_orden" id="confirmar_orden">
-                                                                    <label class="form-check-label">Confirmar Orden</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer justify-content-between row">
-                                        <div class="col-md-4">
-                                            <button type="button" class="btn btn-secondary form-control" data-dismiss="modal">
-                                                <i class="fas fa-backspace"></i> Cerrar</button>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-success form-control" id="btn-submit-2"
-                                            data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('submit2')">
-                                                <i class="fas fa-cash-register"></i>  Pagar
-                                              </button>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button type="button" name="submit1" class="btn btn-info form-control" 
-                                            onclick="handleButtonClick('submit1')">
-                                            <i class="fas fa-check"></i>  Confirmar Orden</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            {% else %}
-                                <div class="col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <form method="post" action="{% url 'mainapp:cobrar' %}" id="cobrarForm">
-                                            {% csrf_token %}
-                                            <button type="button" class="btn btn-success form-control" id="btn-submit-3"
-                                             data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('submit3')">
-                                                <i class="fas fa-cash-register"></i>  Pagar
-                                              </button>
-                                        </form>
-                                    </div>
-                                <!-- /.form-group -->
-                                </div>
-                            {% endif %}
-                        </div>
-                        <!-- /.colsm-content -->
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-            </section>
-        </div>
-    {% else %}
-        <div class="row">
-            <div class="col col-sm-8">
-                <span>No existen productos registrados en la orden.</span>
-                <button onclick="goBack()" class="btn btn-primary btn-round">regresar al
-                    menu anterior.
-                </button>
+                {% endif %}
             </div>
         </div>
-    {% endif %}
+    </div>
+</div>
 {% endblock %}
 
 {% block script %}
     <script>
+        window.onload = function() {
+            document.getElementById("q").focus();
+        }
         function goBack() {
             window.history.back();
         }
@@ -454,16 +505,16 @@
     <script>
         // Array to hold the original values and texts of the buttons
         const originalButtonValues = [
-          { id: 'btn-pay-1', value: 1, text: '1' },
-          { id: 'btn-pay-2', value: 2, text: '2' },
-          { id: 'btn-pay-3', value: 5, text: '5' },
-          { id: 'btn-pay-4', value: 10, text: '10' },
-          { id: 'btn-pay-5', value: 20, text: '20' },
-          { id: 'btn-pay-6', value: 50, text: '50' },
-          { id: 'btn-pay-7', value: 100, text: '100' },
-          { id: 'btn-pay-8', value: 200, text: '200' },
-          { id: 'btn-pay-9', value: 500, text: '500' },
-          { id: 'btn-pay-0', value: 1000, text: '1000' },
+        { id: 'btn-pay-1', value: 1, text: '$1.00' },
+          { id: 'btn-pay-2', value: 2, text: '$2.00' },
+          { id: 'btn-pay-3', value: 5, text: '$5.00' },
+          { id: 'btn-pay-4', value: 10, text: '$10.00' },
+          { id: 'btn-pay-5', value: 20, text: '$20.00' },
+          { id: 'btn-pay-6', value: 50, text: '$50.00' },
+          { id: 'btn-pay-7', value: 100, text: '$100.00' },
+          { id: 'btn-pay-8', value: 200, text: '$200.00' },
+          { id: 'btn-pay-9', value: 500, text: '$500.00' },
+          { id: 'btn-pay-0', value: 1000, text: '$1,000.00' },
           // Add the rest of the buttons with their respective values and texts
         ];
       
