@@ -10,6 +10,7 @@ from mainapp.models import Product
 from adminapp.models import Empresa
 from mainapp import forms
 from .index import validar_horario
+from .index import append_product_to_cart
 
 @login_required()
 def productos_view(request, pk):
@@ -25,8 +26,7 @@ def productos_view(request, pk):
             return redirect('administracion:listar_empresas')
 
     if request.method == "POST":
-        if request.method == "POST":
-            append_product_to_cart(request, empresa, pk)
+        append_product_to_cart(request, empresa, pk)
     productos = Product.objects.filter(
         category_id=pk, eliminado=False, empresa=empresa)
     return render(request, 'mvcapp/productos/productos.html',
@@ -196,34 +196,3 @@ def productos_customer_view(request, cadena, pk):
     return render(request, 'mvcapp/productos/productos_costumers.html',
                   {'productos': productos, 'cadena': cadena, 'empresa_pk': empresa.pk, 'empresa': empresa})
 
-
-def append_product_to_cart(request, empresa, pk):
-    id_product = request.POST.get('id_product', None)
-    cantidad = request.POST.get('cantidad', None)
-    observaciones = request.POST.get('observaciones', None)
-    try:
-        producto = Product.objects.get(
-            pk=id_product, eliminado=False, empresa=empresa)
-    except:
-        messages.add_message(request, messages.WARNING,
-                             'Producto no encontrado')
-        return redirect('mainapp:productos', pk)
-    if 'cart' not in request.session:
-        observacion = [observaciones]
-        request.session['cart'] = [
-            {'id_product': id_product, 'cantidad': cantidad, 'observaciones': observacion}]
-    else:
-        cart = request.session['cart']
-        if not any(pro['id_product'] == str(id_product) for pro in cart):
-            observacion = [observaciones]
-            cart.append({'id_product': id_product, 'cantidad': cantidad, 'observaciones': observacion})
-        else:
-            for item in cart:
-                if item['id_product'] == id_product:
-                    item['cantidad'] = int(
-                        item['cantidad']) + int(cantidad)
-                    item['observaciones'].append(observaciones)
-        request.session['cantidad'] = cart
-    messages.add_message(request, messages.SUCCESS,
-                         '{0} agregada a la orden'.format(producto.name))
-    return redirect('mainapp:productos', pk)

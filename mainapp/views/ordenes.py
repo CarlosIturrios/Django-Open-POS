@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.utils import timezone
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.core import serializers
 
 from mainapp.models import Product
 from mainapp.models import Order
@@ -244,6 +246,41 @@ def mis_ordenes(request):
 
     return render(request, 'mvcapp/ordenes/mis_ordenes.html', {'ordenes': ordenes, 'empresa_pk': empresa.pk})
 
+@login_required()
+def mis_ordenes_json(request):
+    if not 'empresa' in request.session:
+        messages.add_message(request, messages.ERROR,
+                             'Tiene que acceder con una empresa.')
+        return redirect('administracion:listar_empresas')
+    else:
+        empresa = Empresa.objects.get(pk=request.session['empresa'])
+        if not empresa.vigente:
+            messages.add_message(request, messages.WARNING,
+                                 'La empresa presenta un adeudo, comuniquese con el administrador del portal')
+            return redirect('administracion:listar_empresas')
+    if 'order' in request.session:
+        del request.session['order']
+    if request.user.groups.filter(name='CAJERO').exists():
+        ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=4), pagado=False,
+                                       eliminado=False, empresa=empresa)
+
+    elif request.user.groups.filter(name='COCINERO').exists():
+        ordenes = Order.objects.filter(~Q(status_id=5) & ~Q(status_id=4), Q(cook=None) | Q(cook=request.user),
+                                       cocinado=False, eliminado=False, empresa=empresa)
+    elif request.user.groups.filter(name='REPARTIDOR').exists():
+        ordenes = Order.objects.filter(~Q(status_id=5) & ~Q(status_id=4), Q(dealer=None) | Q(dealer=request.user),
+                                       entregado=False, cocinado=True, eliminado=False, empresa=empresa)
+    elif request.user.groups.filter(name='MESERO').exists():
+        ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=5) & ~Q(status_id=4), pagado=False,
+                                       waiter=request.user, eliminado=False, empresa=empresa)
+    else:
+        ordenes = Order.objects.filter(eliminado=False, empresa=empresa)
+
+    # Serializar las órdenes en formato JSON
+    serialized_ordenes = serializers.serialize('json', ordenes)
+
+    # Devolver la respuesta JSON
+    return JsonResponse({'ordenes': serialized_ordenes}, safe=False)
 
 @login_required()
 def orden(request, pk):

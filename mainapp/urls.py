@@ -68,6 +68,7 @@ urlpatterns = [
     path('detalle-de-la-orden/', views.detalle_de_la_orden,
          name='detalle_de_la_orden'),
     path('mis-ordenes/', views.mis_ordenes, name='mis_ordenes'),
+    path('mis-ordenes-json/', views.mis_ordenes_json, name='mis_ordenes_json'),
     path('orden/<int:pk>', views.orden, name='orden'),
     path('orden-lista-para-entrega/<int:pk>',
          views.orden_lista_para_entrega, name='orden_lista_para_entrega'),
