@@ -74,22 +74,40 @@
 {% block main %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-11"></div>
-        <div class="col-md-1">
-            <a href="{% url 'mainapp:recibo' orden.pk %}" id="imprimirReciboId" target="_blank">
-                <button type="button" class="btn btn-block btn-info btn-xs">Imprimir Comanda</button>
-            </a>
-        </div>
-    </div>
+        <div class="col-sm-12 col-md-9 d-flex align-items-stretch flex-column">
+            {% if orden.pagado == False %}    
+                <div class="row">
+                    <div class="col-12 col-md-12 d-flex align-items-stretch flex-column">
+                        <div class="card bg-light d-flex flex-fill">
+                            <div class="card-header text-muted border-bottom-0">
+                                <span>Busqueda directa de productos. (Utiliza numeros y '*' para multiplicar la cantidad de productos a agregrar. ej 2*)</span>
+                            </div>
+                            <div class="card-footer"> 
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <input class="form-control" type="text" id="q" name="q" required
+                                            placeholder="Busqueda exacta por clave, codigo de barra o nombre de productos">
+                                                <br>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button type="submit" class="btn btn-primary form-control">
+                                                <i class="fas fa-search"></i> Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>    
+                        </div>
+                    </div>
+                </div>
+            {% endif %}    
     {% if productos %}
         <div class="row">
-            <div class="col-md-1"></div>
-            <div class="invoice col-md-10" style="border-radius: 2%">
+            <div class="invoice col-md-12" style="border-radius: 2%">
                 <!-- title row -->
                 <div class="row">
-                    <div class="col-sm-12"><br>
-                        <h2 align="center"> Total: $ {{ total|floatformat:2|intcomma }}</h2>
-                    </div>
                     <div class="col-sm-6">
                         <h3>
                             <p>
@@ -110,67 +128,6 @@
                             </p>
                         </h3>
                     </div>
-                    {% if orden.pagado == False %}
-                        {% for group in  request.user.groups.all %}
-                            {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
-                                <div class="col-sm-6">
-                                    <br>
-                                    <form method="post" action="{% url 'mainapp:categorias' %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-primary form-control" style="width:100%">
-                                            <i class="fas fa-plus"></i> Agregar otro producto
-                                        </button>
-                                    </form>
-
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                        {% for group in  request.user.groups.all %}
-                            {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name and orden.pagado == False %}
-                                <div class="col-sm-6">
-                                    <br>
-                                    <form method="post" action="{% url 'mainapp:cobrar' %}" id="cobrarForm">
-                                        {% csrf_token %}
-                                        <button type="button" class="btn btn-success form-control" id="btn-submit-3"
-                                             data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('paymentAmount')">
-                                                <i class="fas fa-cash-register"></i>  Cobrar
-                                        </button>
-                                    </form>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    {% if pago %}
-                        <div class="col-sm-12">
-                            <p style="word-break: break-all;"><b style="color: yellowgreen;">Pago en MercadoPago</b>: collection_id{{ pago }}</p>
-                        </div>            
-                    {% endif %}
-                    {% for group in  request.user.groups.all %}
-                        {% if 'COCINERO' == group.name or 'ADMINISTRADOR' == group.name and orden.cocinado == False %}
-                            <div class="col-sm-6">
-                                <br>
-                                <form method="post" action="{% url 'mainapp:orden_lista_para_entrega' orden.pk %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
-                                        <i class="fas fa-check-double"></i> Orden lista para entrega
-                                    </button>
-                                </form>
-                            </div>{% endif %}
-                    {% endfor %}
-                    {% for group in  request.user.groups.all %}
-                        {% if 'REPARTIDOR' == group.name or 'ADMINISTRADOR' == group.name and orden.entregado == False %}
-                            <div class="col-sm-6">
-                                <br>
-                                <form method="post" action="{% url 'mainapp:orden_entregada' orden.pk %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
-                                        <i class="fas fa-shipping-fast"></i> Orden entregada
-                                    </button>
-                                </form>
-
-                            </div>
-                        {% endif %}
-                    {% endfor %}
                     <!-- /.col -->
                 </div>
                 <!-- Table row --><br>
@@ -208,7 +165,7 @@
                                                 <button type="submit" rel="tooltip" data-placement="left"
                                                         title="Quitar producto"
                                                         class="btn btn-simple">
-                                                    <i class="fas fa-eraser" style="color: white;"></i>
+                                                    <i class="fas fa-eraser"></i>
                                                 </button>
                                             {% endif %}
                                         </form>
@@ -243,16 +200,16 @@
                                 </div>
                                 <!-- Calculator Buttons -->
                                 <div class="buttons">
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(1)" id="btn-pay-1">1</button>
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(2)" id="btn-pay-2">2</button>
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(5)" id="btn-pay-3">5</button>
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(10)" id="btn-pay-4">10</button>
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(20)" id="btn-pay-5">20</button>
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(50)" id="btn-pay-6">50</button>
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(100)" id="btn-pay-7">100</button>
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(200)" id="btn-pay-8">200</button>
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(500)" id="btn-pay-9">500</button>
-                                    <button class="btn btn-secondary calculadora" onclick="appendValue(1000)" id="btn-pay-0">1000</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(1)" id="btn-pay-1">$1.00</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(2)" id="btn-pay-2">$2.00</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(5)" id="btn-pay-3">$5.00</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(10)" id="btn-pay-4">$10.00</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(20)" id="btn-pay-5">$20.00</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(50)" id="btn-pay-6">$50.00</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(100)" id="btn-pay-7">$100.00</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(200)" id="btn-pay-8">$200.00</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(500)" id="btn-pay-9">$500.00</button>
+                                    <button class="btn btn-secondary calculadora" onclick="appendValue(1000)" id="btn-pay-0">$1,000.00</button>
                                     <button class="btn btn-info" onclick="cambioDeMoneda()" id="btn-pay-change">Numerico</button>
                                     <!-- Add other numeric buttons -->
                                     <!-- ... -->
@@ -276,15 +233,103 @@
         </section>
     {% else %}
         <div class="row">
-            <div class="col col-sm-8">
-                <span>No existen productos registrados con esa categoria.</span>
-                <a href="{% url 'mainapp:categorias' %}" class="btn btn-primary btn-round">regresar al
-                    menu anterior.
-                </a>
+            <div class="col-12 col-md-12 d-flex align-items-stretch flex-column">
+                <div class="card bg-light d-flex flex-fill">
+                    <div class="card-header text-muted border-bottom-0">
+                        <span>No hay productos o servicios agregados al carrito.</span>
+                        <a href="{% url 'mainapp:categorias' %}" class="btn btn-primary btn-round">
+                            Buscar por categorias.
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-        <br>
     {% endif %}
+
+</div>
+<div class="col-sm-12 col-md-3 d-flex align-items-stretch flex-column">
+    <div class="invoice col-md-12" style="border-radius: 2%">
+        <!-- title row -->
+        <div class="col-sm-12"><br>
+            <h2 align="center"> Total: $ 
+                {% if total %}
+                    {{ total|floatformat:2|intcomma }}
+                {% else %}
+                     0.00
+                {% endif %}
+            </h2>
+        </div>
+        <br>
+        <div class="row">
+            {% if orden.pagado == False %}
+                {% for group in  request.user.groups.all %}
+                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <form method="post" action="{% url 'mainapp:categorias' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                        <i class="fas fa-plus"></i> Agregar otro producto
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name and orden.pagado == False and productos %}
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <form method="post" action="{% url 'mainapp:cobrar' %}" id="cobrarForm">
+                                    {% csrf_token %}
+                                    <button type="button" class="btn btn-success form-control" id="btn-submit-3"
+                                            data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('paymentAmount')">
+                                            <i class="fas fa-cash-register"></i>  Cobrar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if productos %}
+                {% for group in  request.user.groups.all %}
+                    {% if 'COCINERO' == group.name or 'ADMINISTRADOR' == group.name and orden.cocinado == False %}
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <form method="post" action="{% url 'mainapp:orden_lista_para_entrega' orden.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                        <i class="fas fa-check-double"></i> Orden lista para entrega
+                                    </button>
+                                </form>
+                            </div>    
+                        </div>
+                    {% endif %}
+                    {% if 'REPARTIDOR' == group.name or 'ADMINISTRADOR' == group.name and orden.entregado == False %}
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <form method="post" action="{% url 'mainapp:orden_entregada' orden.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary form-control" style="width:100%">
+                                        <i class="fas fa-shipping-fast"></i> Orden entregada
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <a href="{% url 'mainapp:recibo' orden.pk %}" id="imprimirReciboId" target="_blank">
+                            <button type="button" class="btn btn-success form-control">
+                                <i class="fas fa-print"></i>Imprimir Comanda
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}    
+        </div>
+    </div>
+</div>
 </div>
 {% endblock %}
 
@@ -307,16 +352,16 @@
     <script>
         // Array to hold the original values and texts of the buttons
         const originalButtonValues = [
-          { id: 'btn-pay-1', value: 1, text: '1' },
-          { id: 'btn-pay-2', value: 2, text: '2' },
-          { id: 'btn-pay-3', value: 5, text: '5' },
-          { id: 'btn-pay-4', value: 10, text: '10' },
-          { id: 'btn-pay-5', value: 20, text: '20' },
-          { id: 'btn-pay-6', value: 50, text: '50' },
-          { id: 'btn-pay-7', value: 100, text: '100' },
-          { id: 'btn-pay-8', value: 200, text: '200' },
-          { id: 'btn-pay-9', value: 500, text: '500' },
-          { id: 'btn-pay-0', value: 1000, text: '1000' },
+          { id: 'btn-pay-1', value: 1, text: '$1.00' },
+          { id: 'btn-pay-2', value: 2, text: '$2.00' },
+          { id: 'btn-pay-3', value: 5, text: '$5.00' },
+          { id: 'btn-pay-4', value: 10, text: '$10.00' },
+          { id: 'btn-pay-5', value: 20, text: '$20.00' },
+          { id: 'btn-pay-6', value: 50, text: '$50.00' },
+          { id: 'btn-pay-7', value: 100, text: '$100.00' },
+          { id: 'btn-pay-8', value: 200, text: '$200.00' },
+          { id: 'btn-pay-9', value: 500, text: '$500.00' },
+          { id: 'btn-pay-0', value: 1000, text: '$1,000.00' },
           // Add the rest of the buttons with their respective values and texts
         ];
       

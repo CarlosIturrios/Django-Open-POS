@@ -3,49 +3,62 @@
 {% load humanize %}
 {% block titulo %}Mis Ordenes{% endblock %}
 {% block navegacion %}Mis Ordenes{% endblock %}
+
+{% block style %}
+<style>
+    .info-box-content {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%; /* Ajusta el ancho máximo según tus necesidades */
+    }
+</style>
+{% endblock %}
 {% block main %}
     <div class="container-fluid">
         <!-- Info boxes -->
         <div class="row">
-            {% for orden in ordenes %}
-                <div class="col-12">
-                    <a href="{% url 'mainapp:orden' orden.pk %}">
-                        <div class="info-box">
-                            <span class="info-box-icon bg-info elevation-1">#{{ orden.pk }}</span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">
-                                    Detalle de la Orden
-                                    {% if orden.comments %}
-                                        - comentarios: {{ orden.comments }}
-                                    {% endif %}
-                                    {% if orden.customer %}
-                                        - {{ orden.customer.name }}
-                                    {% endif %}
-                                    {% if orden.order_type %}
-                                        - {{ orden.order_type.description }}
-                                    {% endif %}
-                                    - {{ orden.status.description }}
-                                    {% if orden.pagado %}
-                                        |Pagado|
-                                    {% else %}
-                                        |Pendiente de pago|
-                                    {% endif %}
-                                    {% if orden.cocinado == False %}
-                                        |Pendiente en cocina|
-                                    {% endif %}
-                                    {% if orden.entregado %}
-                                        |Entregado|
-                                    {% else %}
-                                        |Pendiente de entrega|
-                                    {% endif %}
-                                        <!-- /.info-box -->
-                                </span>
+            <div class="col-lg-12" id="divListOrders">
+                {% for orden in ordenes %}
+                    <div class="col-12">
+                        <a href="{% url 'mainapp:orden' orden.pk %}">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon bg-info elevation-1">#{{ orden.pk }}</span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">
+                                        Detalle de la Orden
+                                        {% if orden.comments %}
+                                            - comentarios: {{ orden.comments }}
+                                        {% endif %}
+                                        {% if orden.customer %}
+                                            - {{ orden.customer.name }}
+                                        {% endif %}
+                                        {% if orden.order_type %}
+                                            - {{ orden.order_type.description }}
+                                        {% endif %}
+                                        - {{ orden.status.description }}
+                                        {% if orden.pagado %}
+                                            |Pagado|
+                                        {% else %}
+                                            |Pendiente de pago|
+                                        {% endif %}
+                                        {% if orden.cocinado == False %}
+                                            |Pendiente en cocina|
+                                        {% endif %}
+                                        {% if orden.entregado %}
+                                            |Entregado|
+                                        {% else %}
+                                            |Pendiente de entrega|
+                                        {% endif %}
+                                            <!-- /.info-box -->
+                                    </span>
+                                </div>
+                                <!-- /.info-box-content -->
                             </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                    </a>
-                </div>
-            {% endfor %}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
         <!-- /.row -->
 
@@ -53,13 +66,53 @@
     </div>
 {% endblock %}
 {% block script %}
-    <script type="text/javascript">
-        function autoRefreshPage() {
-            window.location = window.location.href;
-        }
+<script type="text/javascript">
 
-        $(function () {
-            setInterval('autoRefreshPage()', 10000);
-        });
-    </script>
+    // Función para cargar las órdenes y generar los elementos HTML
+    // $(function () {
+    //     $.ajax({
+    //         url: '/app/mis-ordenes-json/',
+    //         method: 'GET',
+    //         dataType: 'json',
+    //         success: function (data) {
+    //             // Limpiar el contenedor antes de agregar las nuevas órdenes
+    //             $('#divListOrders').empty();
+
+    //             // Parse the JSON data
+    //             var orders = JSON.parse(data.ordenes);
+    //             console.log(orders)
+    //             orders.forEach(function (order) {
+    //                 var html = `<a href="/app/orden/${order.pk}">
+    //                                 <div class="col-lg-12">
+    //                                     <div class="info-box col-mb-3 bg-warning">
+    //                                         <div class="info-box-content">
+    //                                             <span class="info-box-text">
+    //                                                 Detalle de la Orden #${order.pk}
+    //                                                 ${order.comments ? `- comentarios: ${order.comments}` : ''}
+    //                                                 ${order.customer ? `- ${order.customer}` : ''}
+    //                                                 ${order.order_type ? `- ${order.order_type}` : ''}
+    //                                                 ${order.status ? `- ${order.status}` : ''}
+    //                                                 ${order.pagado ? '|Pagado|' : '|Pendiente de pago|'}
+    //                                                 ${!order.cocinado ? '|Pendiente en cocina|' : ''}
+    //                                                 ${order.entregado ? '|Entregado|' : '|Pendiente de entrega|'}
+    //                                             </span>
+    //                                         </div>
+    //                                     </div>
+    //                                 </div>
+    //                             </a>`;
+    //                 $('#divListOrders').append(html);
+    //             });
+    //         }
+    //     });
+    // });
+
+    function autoRefreshPage() {
+        window.location = window.location.href;
+    }
+
+    $(function () {
+       setInterval('autoRefreshPage()', 10000);
+    });
+</script>
+
 {% endblock %}

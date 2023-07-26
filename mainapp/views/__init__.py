@@ -18,6 +18,7 @@ from .ordenes import orden_cobrada
 from .ordenes import crear_nueva_orden
 from .ordenes import detalle_de_la_orden
 from .ordenes import mis_ordenes
+from .ordenes import mis_ordenes_json
 from .ordenes import orden
 from .ordenes import orden_entregada
 from .ordenes import orden_lista_para_entrega
