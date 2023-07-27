@@ -78,7 +78,11 @@
             <div class="col-sm-4 col-md-4">
               <a 
                 href="{% url 'mainapp:categorias_customer_view' request.resolver_match.kwargs.cadena %}">
-                <img src="{{ empresa.logo.url }}" width="100px" height="100px" alt="empresa-logo" class="img-circle img-fluid small"/>
+                <img 
+                {% if empresa.logo %}
+                  src="{{ empresa.logo.url }}" 
+                {% endif %}
+                width="100px" height="100px" alt="empresa-logo" class="img-circle img-fluid small"/>
               </a>  
             </div>
             <div class="col-sm-4 col-md-4">
