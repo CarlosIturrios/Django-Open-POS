@@ -229,6 +229,9 @@ def mis_ordenes(request):
             return redirect('administracion:listar_empresas')
     if 'order' in request.session:
         del request.session['order']
+    if request.user.groups.filter(name='VENDEDOR').exists():
+        ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=4), pagado=False,
+                                       eliminado=False, empresa=empresa)
     if request.user.groups.filter(name='CAJERO').exists():
         ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=4), pagado=False,
                                        eliminado=False, empresa=empresa)
@@ -261,6 +264,9 @@ def mis_ordenes_json(request):
             return redirect('administracion:listar_empresas')
     if 'order' in request.session:
         del request.session['order']
+    if request.user.groups.filter(name='VENDEDOR').exists():
+        ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=4), pagado=False,
+                                       eliminado=False, empresa=empresa)
     if request.user.groups.filter(name='CAJERO').exists():
         ordenes = Order.objects.filter(~Q(status_id=6) & ~Q(status_id=4), pagado=False,
                                        eliminado=False, empresa=empresa)

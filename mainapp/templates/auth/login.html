@@ -26,28 +26,9 @@
             <input type="password" name="password" title="" required="" id="id_password"
                    placeholder="Escriba su Contraseña" class="form-control">
         </div>
+        {{ form.non_field_errors }}
         <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
     </form>
     <br>
     <a href="{% url 'administracion:registro' %}">Registrarme </a><br>
-    <div class="modal modal-danger fade in" id="modal-danger" style="padding-right: 16px;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span>Error</span>
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <h4 class="modal-title">Verifique su usario y/o contraseña</h4>
-                </div>
-                <div class="modal-body">
-                    <p>{{ form.non_field_errors }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="btn-okay" class="btn btn-outline" data-dismiss="modal">Okay</button>
-                </div>
-            </div>
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
 {% endblock %}

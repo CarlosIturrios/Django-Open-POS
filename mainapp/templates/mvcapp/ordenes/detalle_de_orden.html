@@ -263,7 +263,7 @@
         <div class="row">
             {% if orden.pagado == False %}
                 {% for group in  request.user.groups.all %}
-                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name or 'VENDEDOR' == group.name or 'ENCARGADO' == group.name or 'ASISTENTE' == group.name %}
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <form method="post" action="{% url 'mainapp:categorias' %}">
@@ -275,7 +275,7 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name and orden.pagado == False and productos %}
+                    {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name or 'VENDEDOR' == group.name and orden.pagado == False and productos %}
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <form method="post" action="{% url 'mainapp:cobrar' %}" id="cobrarForm">
@@ -292,7 +292,7 @@
             {% endif %}
             {% if productos %}
                 {% for group in  request.user.groups.all %}
-                    {% if 'COCINERO' == group.name or 'ADMINISTRADOR' == group.name and orden.cocinado == False %}
+                    {% if 'COCINERO' == group.name or 'EMPACADOR' == group.name or 'ADMINISTRADOR' == group.name and orden.cocinado == False or 'ENCARGADO' == group.name or 'ASISTENTE' == group.name %}
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <form method="post" action="{% url 'mainapp:orden_lista_para_entrega' orden.pk %}">
@@ -304,7 +304,7 @@
                             </div>    
                         </div>
                     {% endif %}
-                    {% if 'REPARTIDOR' == group.name or 'ADMINISTRADOR' == group.name and orden.entregado == False %}
+                    {% if 'REPARTIDOR' == group.name or 'MOSTRADOR' == group.name or 'ADMINISTRADOR' == group.name and orden.entregado == False or 'ENCARGADO' == group.name or 'ASISTENTE' == group.name %}
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <form method="post" action="{% url 'mainapp:orden_entregada' orden.pk %}">
