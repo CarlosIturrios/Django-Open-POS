@@ -113,7 +113,7 @@ def dashboard(request):
             messages.add_message(request, messages.WARNING,
                                  'La empresa presenta un adeudo, comuniquese con el administrador del portal')
             return redirect('administracion:listar_empresas')
-
+    
     if request.method == "POST":
         fecha_inicial = request.POST.get('date1', None)
         fecha_final = request.POST.get('date2', None)
@@ -130,13 +130,17 @@ def dashboard(request):
                                                       fecha_inicial, fecha_final],
                                                   eliminado=False, empresa=empresa)
     else:
-        ventas_del_dia = Order.objects.filter(
+        fecha_inicial = timezone.localtime(timezone.now())
+        fecha_final = timezone.localtime(timezone.now())
+
+        ventas_del_dia = Order.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final],
             pagado=True, eliminado=False, empresa=empresa).aggregate(Sum('amount'))
-        clientes_nuevos = Customer.objects.filter(
+        clientes_nuevos = Customer.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final],
             eliminado=False, empresa=empresa)
-        ordenes_vendidas = Order.objects.filter(
+        ordenes_vendidas = Order.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final],
             pagado=True, eliminado=False, empresa=empresa)
-        ordenes_pendientes = Order.objects.filter(Q(pagado=False) | Q(cocinado=False) | Q(entregado=False),
+        ordenes_pendientes = Order.objects.filter(Q(pagado=False) | Q(cocinado=False) | Q(entregado=False), 
+                                                  fecha_de_creacion__range=[fecha_inicial, fecha_final],
                                                   eliminado=False, empresa=empresa)
     ventas_del_dia = ventas_del_dia['amount__sum']
     clientes_nuevos = clientes_nuevos.count()
@@ -246,12 +250,13 @@ def GeneratePDF(request, pk):
     total = float(0)
     for item in detalle:
         producto = item.product
+        image_url = producto.image.url if producto.image else None
         productos.append({
             'pk': producto.pk,
             'name': producto.name,
             'description': producto.description,
             'quantity': item.quantity,
-            'image': producto.image.url,
+            'image': image_url,
             'price': float(producto.price),
             'total': float(producto.price) * float(item.quantity),
         })
@@ -439,8 +444,7 @@ def eliminar_del_carrito(request, pk, empresa, cadena=None):
         messages.add_message(request, messages.ERROR,
                              'La orden se encuentra vacia, por favor selecciona algunos productos')
         return redirect('mainapp:categorias')
-
-    if 'order' in request.session:
+    elif 'order' in request.session:
         order = Order.objects.get(pk=pk, eliminado=False, empresa=empresa)
         if order.status.pk <= 3:
             detalle = order.relacion_Order_a_OrderDetail.get(
@@ -450,7 +454,7 @@ def eliminar_del_carrito(request, pk, empresa, cadena=None):
                                  'Producto eliminado con exito')
     else:
         for i in range(len(request.session['cart'])):
-            if request.session['cart'][i]['id_product'] == str(pk):
+            if request.session['cart'][i]['id_product'] == int(pk):
                 del request.session['cart'][i]
                 break
         request.session['cart'] = request.session['cart']

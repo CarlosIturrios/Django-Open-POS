@@ -28,7 +28,7 @@ def productos_view(request, pk):
     if request.method == "POST":
         append_product_to_cart(request, empresa, pk)
     productos = Product.objects.filter(
-        category_id=pk, eliminado=False, empresa=empresa)
+        category_id=pk, eliminado=False, empresa=empresa).order_by('-stock')
     return render(request, 'mvcapp/productos/productos.html',
                   {'productos': productos, 'empresa_pk': empresa.pk})
 
@@ -191,7 +191,7 @@ def productos_customer_view(request, cadena, pk):
         append_product_to_cart(request, empresa, pk)
 
     productos = Product.objects.filter(
-        category_id=pk, eliminado=False, empresa=empresa)
+        category_id=pk, eliminado=False, empresa=empresa).order_by('-stock')
 
     return render(request, 'mvcapp/productos/productos_costumers.html',
                   {'productos': productos, 'cadena': cadena, 'empresa_pk': empresa.pk, 'empresa': empresa})

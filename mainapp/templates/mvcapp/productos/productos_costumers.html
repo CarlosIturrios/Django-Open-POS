@@ -58,9 +58,10 @@
                                                 {% if producto.stock < 3 %}
                                                     <div class="col-md-12">
                                                         <div class="alert alert-info alert-dismissible">
-                                                            <h5><i class="icon fas fa-ban"></i> ¡Agotado!</h5>
-                                                            Reabasteciendo. Paciencia, terminaremos pronto. ¡Gracias!
+                                                            <h5><i class="icon fas fa-ban"></i> ¡Ooops!</h5>
+                                                            Estamos trabajando en reabastecer "{{ producto.name }}". Terminaremos pronto. ¡Gracias por tu paciencia!
                                                             </div>
+                                                            
                                                     </div>
                                                 {% else %}
                                                     <div class="col-md-6" id="addDivbutton-{{ producto.id }}">
