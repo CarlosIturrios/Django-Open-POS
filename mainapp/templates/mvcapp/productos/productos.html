@@ -32,7 +32,7 @@
                                 </div>
                             </div>
                             {% for group in request.user.groups.all %}
-                                {% if 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                                {% if 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name or 'VENDEDOR' == group.name or 'ENCARGADO' == group.name or 'ASISTENTE' == group.name %}
                                 <div class="card-footer">
                                     
                                         <form action="{% url 'mainapp:productos' producto.category_id %}" method="post">

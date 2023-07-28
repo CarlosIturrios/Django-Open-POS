@@ -119,5 +119,65 @@
         69
       ]
     }
+  },
+  {
+    "model": "auth.group",
+    "pk": 6,
+    "fields": {
+      "name": "VENDEDOR",
+      "permissions": [
+        69
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 7,
+    "fields": {
+      "name": "ASISTENTE",
+      "permissions": [
+        69
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 8,
+    "fields": {
+      "name": "ALMACENISTA",
+      "permissions": [
+        69
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 9,
+    "fields": {
+      "name": "EMPACADOR",
+      "permissions": [
+        69
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 10,
+    "fields": {
+      "name": "MOSTRADOR",
+      "permissions": [
+        69
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 11,
+    "fields": {
+      "name": "ENCARGADO",
+      "permissions": [
+        69
+      ]
+    }
   }
 ]
