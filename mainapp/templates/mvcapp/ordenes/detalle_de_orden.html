@@ -6,6 +6,11 @@
 {% block style %} 
 <style>
     /* Calculator CSS styles */
+
+    p {
+        word-wrap: break-word;
+    }
+
     #paymentModal.modal {
         z-index: 9999; /* Set a high z-index value to ensure the paymentModal appears above other content */
     }
@@ -108,11 +113,20 @@
             <div class="invoice col-md-12" style="border-radius: 2%">
                 <!-- title row -->
                 <div class="row">
+                    <div class="col-sm-12">
+                        {% if pago %}
+                            <p>
+                                <b>Pago en linea:</b> collection_id{{ pago }}
+                            </p>
+                        {% endif %}
+                    </div>
                     <div class="col-sm-6">
                         <h3>
-                            <p>
-                                {{ comentarios }}
-                            </p>
+                            {% if not comentarios.isspace %}
+                                <p>
+                                    Comentarios: {{ comentarios }}
+                                </p>
+                            {% endif %}
                         </h3>
                     </div>
                     <div class="col-sm-6">
@@ -321,7 +335,7 @@
                     <div class="form-group">
                         <a href="{% url 'mainapp:recibo' orden.pk %}" id="imprimirReciboId" target="_blank">
                             <button type="button" class="btn btn-success form-control">
-                                <i class="fas fa-print"></i>Imprimir Comanda
+                                <i class="fas fa-print"></i> Imprimir Orden
                             </button>
                         </a>
                     </div>
