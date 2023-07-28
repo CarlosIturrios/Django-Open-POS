@@ -30,10 +30,16 @@ from mainapp.models import Currency
 from adminapp.models import Empresa
 from adminapp.models import PaymentWithMercadoPago
 
+
 class LoginView(views.LoginView):
     redirect_authenticated_user = True
     template_name = 'auth/login.html'
 
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 class LogoutView(views.LogoutView):
     pass

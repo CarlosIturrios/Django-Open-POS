@@ -450,7 +450,7 @@
             <br>
             <div class="row">
                 {% for group in  request.user.groups.all %}
-                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                    {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name or 'VENDEDOR' == group.name %}
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <form method="post" action="{% url 'mainapp:categorias' %}">
@@ -466,7 +466,7 @@
                 <br>
                 {% if productos %}
                     {% for group in  request.user.groups.all %}
-                        {% if 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name %}
+                        {% if 'CAJERO' == group.name or 'VENDEDOR' == group.name or 'ADMINISTRADOR' == group.name %}
                             <div class="col-sm-12">
                                 <br>
                                 <a data-toggle="modal" data-target="#modal-xl">

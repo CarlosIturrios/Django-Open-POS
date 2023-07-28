@@ -36,7 +36,7 @@
                             <i class="ion ion-bag"></i>
                         </div>
                         {% for group in  request.user.groups.all %}
-                            {% if 'ADMINISTRADOR' == group.name %}
+                            {% if 'ADMINISTRADOR' == group.name or 'ENCARGADO' == group.name or 'ASISTENTE' == group.name or 'ALMACENISTA' == group.name %}
                             <a href="{% url 'mainapp:listar_categorias_view' %}" class="small-box-footer">Ir a configurar <i class="fas fa-arrow-circle-right"></i></a>
                             {% endif %}
                         {% endfor %}

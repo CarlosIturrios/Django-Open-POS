@@ -12,7 +12,7 @@
     <div class="container-fluid">
         <!-- Info boxes -->
         {% for group in  request.user.groups.all %}
-            {% if 'ADMINISTRADOR' == group.name %}
+            {% if 'ADMINISTRADOR' == group.name or 'ENCARGADO' == group.name or 'ASISTENTE' == group.name %}
                 <div class="row">
                     <div class="col-12 col-sm-12 col-md-12">
                         <div class="card card-default collapsed-card">
@@ -117,7 +117,7 @@
         
             <div class="row">
             {% for group in request.user.groups.all %}
-                {% if 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name %}
+                {% if 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name or 'VENDEDOR' == group.name or 'ENCARGADO' == group.name or 'ASISTENTE' == group.name %}
                     <div class="col-12 col-sm-6 col-md-4">
                         <a href="{% url "mainapp:crear_nueva_orden" %}">
                             <div class="info-box mb-3">
@@ -183,7 +183,7 @@
             <!-- /.col -->
             </div>
         {% for group in  request.user.groups.all %}
-            {% if 'ADMINISTRADOR' == group.name %}
+            {% if 'ADMINISTRADOR' == group.name or 'ENCARGADO' == group.name or 'ASISTENTE' == group.name or 'ALMACENISTA' == group.name %}
                 <div class="row">
                     {% if ingredientes == 0 %}
                         <div class="col-lg-3 col-md-6">
