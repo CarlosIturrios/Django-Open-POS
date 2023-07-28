@@ -384,18 +384,7 @@
                                             </div>
                                         </form>
                                     {% else %}
-                                        <div class="col-sm-12 col-md-12">
-                                            <div class="form-group">
-                                                <form method="post" action="{% url 'mainapp:cobrar' %}" id="cobrarForm">
-                                                    {% csrf_token %}
-                                                    <button type="button" class="btn btn-success form-control" id="btn-submit-3"
-                                                    data-toggle="modal" data-target="#paymentModal" onclick="pagoButton('submit3')">
-                                                        <i class="fas fa-cash-register"></i>  Pagar
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        <!-- /.form-group -->
-                                        </div>
+                                        
                                         {% for group in  request.user.groups.all %}
                                             {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name and 'order' in request.session %}
                                             <div class="col-sm-12 col-md-12">

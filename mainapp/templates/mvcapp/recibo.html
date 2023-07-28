@@ -3,15 +3,14 @@
 <html>
 <head>
     <style>
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         table.container {
             width: 100%;
             border-collapse: collapse;
-        }
-
-        td.left-column {
-            width: 30%;
-            vertical-align: top;
-            padding-right: 10px;
         }
 
         td.right-column {
@@ -58,7 +57,10 @@
 <body>
     <table class="container">
         <tr>
-            <td class="left-column">
+            <td class="right-column">
+                <div class="header">
+                    <h2>Recibo de compra</h2>
+                </div>
                 <ul class="order-details">
                     <li><strong>Orden numero:</strong> #{{ order.pk }}</li>
                     <li><strong>Total:</strong> ${{ order.amount|floatformat:2|intcomma }}</li>
@@ -72,12 +74,12 @@
                             PM
                         {% endif %}
                     </li>                        
-                    <li><strong>{{ order.order_type.description }}</strong></li>
-                    <li><strong>Cajero:</strong> {{ order.cashier.get_full_name }}</li>
+                    <li><strong>Tipo de orden: {{ order.order_type.description }}</strong></li>
+                    <li><strong>Cajero/Vendedor:</strong> {{ order.cashier.get_full_name }}</li>
                     <li><strong>Mesero:</strong> {{ order.waiter.get_full_name }}</li>
-                    <li><strong>Cocinero:</strong> {{ order.cook.get_full_name }}</li>
-                    <li><strong>Repartidor:</strong> {{ order.dealer.get_full_name }}</li>
-                    <li> Cocinado:
+                    <li><strong>Cocinero/Empacador:</strong> {{ order.cook.get_full_name }}</li>
+                    <li><strong>Repartidor/Mostrador:</strong> {{ order.dealer.get_full_name }}</li>
+                    <li> Cocinado/Listo para entrega:
                         {% if order.cocinado %}
                             <span class="check-icon">&#x2713;</span>
                         {% else %}
@@ -101,30 +103,97 @@
                     {% if orden.customer %}
                         <li><strong>Cliente:</strong> {{ order.customer.name }}</li>
                     {% endif %}
+                    <br>
+                        <table>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Total</th>
+                            </tr>
+                            {% for producto in productos %}
+                                <tr>
+                                    <td>{{ producto.name }}</td>
+                                    <td>{{ producto.quantity }}</td>
+                                    <td>{{ producto.price }}</td>
+                                    <td>{{ producto.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="2" style="text-align: right;"><strong>Total de la orden:</strong></td>
+                                <td colspan="2" style="text-align: right;">$ {{ total|floatformat:2|intcomma }}</td>
+                            </tr>
+                        </table>
                 </ul>
             </td>
-            
             <td class="right-column">
-                <table>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
-                        <th>Total</th>
-                    </tr>
-                    {% for producto in productos %}
-                        <tr>
-                            <td>{{ producto.name }}</td>
-                            <td>{{ producto.quantity }}</td>
-                            <td>{{ producto.price }}</td>
-                            <td>{{ producto.total }}</td>
-                        </tr>
-                    {% endfor %}
-                    <tr>
-                        <td colspan="2" style="text-align: right;"><strong>Total de la orden:</strong></td>
-                        <td colspan="2" style="text-align: right;">$ {{ total|floatformat:2|intcomma }}</td>
-                    </tr>
-                </table>
+                <div class="header">
+                    <h2>Recibo de compra</h2>
+                </div>
+                <ul class="order-details">
+                    <li><strong>Orden numero:</strong> #{{ order.pk }}</li>
+                    <li><strong>Total:</strong> ${{ order.amount|floatformat:2|intcomma }}</li>
+                    <li>
+                        <strong>Fecha:</strong>
+                        {{ order.fecha_de_creacion|date:'d/m/Y' }}
+                        {{ order.fecha_de_creacion|time:'h:i' }}
+                        {% if order.fecha_de_creacion|timeuntil:order.fecha_de_creacion|time:'H:i' < '12:00' %}
+                            AM
+                        {% else %}
+                            PM
+                        {% endif %}
+                    </li>                        
+                    <li><strong>Tipo de orden: {{ order.order_type.description }}</strong></li>
+                    <li><strong>Cajero/Vendedor:</strong> {{ order.cashier.get_full_name }}</li>
+                    <li><strong>Mesero:</strong> {{ order.waiter.get_full_name }}</li>
+                    <li><strong>Cocinero/Empacador:</strong> {{ order.cook.get_full_name }}</li>
+                    <li><strong>Repartidor/Mostrador:</strong> {{ order.dealer.get_full_name }}</li>
+                    <li> Cocinado/Listo para entrega:
+                        {% if order.cocinado %}
+                            <span class="check-icon">&#x2713;</span>
+                        {% else %}
+                            <span class="cross-icon">&#x2717;</span>
+                        {% endif %}
+                    </li>  
+                    <li> Entregado:
+                        {% if order.entregado %}
+                            <span class="check-icon">&#x2713;</span>
+                        {% else %}
+                            <span class="cross-icon">&#x2717;</span>
+                        {% endif %}
+                    </li>  
+                    <li> Pagado:
+                        {% if order.pagado %}
+                            <span class="check-icon">&#x2713;</span>
+                        {% else %}
+                            <span class="cross-icon">&#x2717;</span>
+                        {% endif %}
+                    </li>                        
+                    {% if orden.customer %}
+                        <li><strong>Cliente:</strong> {{ order.customer.name }}</li>
+                    {% endif %}
+                    <br>
+                        <table>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Total</th>
+                            </tr>
+                            {% for producto in productos %}
+                                <tr>
+                                    <td>{{ producto.name }}</td>
+                                    <td>{{ producto.quantity }}</td>
+                                    <td>{{ producto.price }}</td>
+                                    <td>{{ producto.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="2" style="text-align: right;"><strong>Total de la orden:</strong></td>
+                                <td colspan="2" style="text-align: right;">$ {{ total|floatformat:2|intcomma }}</td>
+                            </tr>
+                        </table>
+                </ul>
             </td>
         </tr>
     </table>

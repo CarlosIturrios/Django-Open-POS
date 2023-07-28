@@ -28,9 +28,9 @@ def listar_clientes_view(request):
 
     # Establecer el valor predeterminado de los campos de fecha
     if not date1:
-        date1 = timezone.now().date()
+        date1 = timezone.localtime(timezone.now())
     if not date2:
-        date2 = timezone.now().date()
+        date2 = timezone.localtime(timezone.now())
 
     # Filtrar por rango de fechas si se proporcionan los parámetros de consulta
     if date1 and date2:

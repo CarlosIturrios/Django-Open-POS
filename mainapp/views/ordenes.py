@@ -332,24 +332,25 @@ def orden(request, pk):
     if "collection_id" in orden.comments:
         texto_dividido = orden.comments.split("collection_id")
         comentarios = texto_dividido[0]
+        print('comentarios: ', len(comentarios))
         pago = texto_dividido[1]
     else:
         comentarios = orden.comments
     request.session['order'] = pk
     for product in orden.relacion_Order_a_OrderDetail.all():
         producto = product.product
-        if product.observaciones:
+        if product.observaciones and product.observaciones !='[][]':
+            print(product.observaciones)
             lista_formateada = [elemento.strip().capitalize() if elemento is not None else "Todo incluido" for elemento in eval(product.observaciones)]
         else:
             lista_formateada = ''
-        for elemento in lista_formateada:
-            print(f"- {elemento}")
+        image_url = producto.image.url if producto.image else None
         productos.append({
             'pk': producto.pk,
             'name': producto.name,
             'description': producto.description,
             'quantity': product.quantity,
-            'image': producto.image.url,
+            'image': image_url,
             'price': float(producto.price),
             'observaciones': '\n'.join([f"- {elemento}" for elemento in lista_formateada]),
             'total': float(producto.price) * product.quantity,
@@ -442,9 +443,9 @@ def listar_ordenes_view(request):
 
     # Establecer el valor predeterminado de los campos de fecha
     if not date1:
-        date1 = timezone.now().date()
+        date1 = timezone.localtime(timezone.now())
     if not date2:
-        date2 = timezone.now().date()
+        date2 = timezone.localtime(timezone.now())
 
     # Filtrar por rango de fechas si se proporcionan los parámetros de consulta
     if date1 and date2:
