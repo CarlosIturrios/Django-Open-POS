@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import unicodedata
 from django.core.validators import MinValueValidator
 
 from django import forms
@@ -34,6 +35,14 @@ class form_agregar_categoria(forms.ModelForm):
             'clave',
             'image',
         ]
+
+    def clean_description(self):
+        description = self.cleaned_data['description']
+
+        # Normalize and encode the description to remove non-ASCII characters
+        sanitized_description = unicodedata.normalize('NFKD', description).encode('ascii', 'ignore').decode('ascii')
+
+        return sanitized_description
 
 
 class form_modificar_categoria(forms.ModelForm):
@@ -194,6 +203,11 @@ class form_agregar_product(forms.ModelForm):
                                                      eliminado=False),
                                                  widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
 
+    def clean_description(self):
+        description = self.cleaned_data['description']
+        # Normalizar y codificar la descripción para evitar problemas de codificación
+        return unicodedata.normalize('NFKD', description).encode('ascii', 'ignore').decode('utf-8')
+    
     class Meta:
         model = Product
         exclude = ('empresa',)

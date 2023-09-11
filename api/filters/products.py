@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django_filters import FilterSet
 
 from mainapp.models import Category

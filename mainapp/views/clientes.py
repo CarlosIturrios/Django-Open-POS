@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
