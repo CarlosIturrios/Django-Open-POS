@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from django.utils.crypto import get_random_string
 from django.db.models import UniqueConstraint

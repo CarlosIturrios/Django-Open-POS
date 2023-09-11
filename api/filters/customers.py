@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django_filters import FilterSet, CharFilter
 
 from mainapp.models import Customer
