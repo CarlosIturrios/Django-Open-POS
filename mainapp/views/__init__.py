@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from .index import LoginView
 from .index import LogoutView
 from .index import eliminar_del_carrito_view

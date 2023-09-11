@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .mixins import *
 from .receipt import *
 from .customers import *

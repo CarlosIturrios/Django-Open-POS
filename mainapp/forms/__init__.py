@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .categorias import form_agregar_categoria
 from .categorias import form_modificar_categoria
 from .categorias import form_agregar_currency
