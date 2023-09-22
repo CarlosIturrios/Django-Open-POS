@@ -305,7 +305,7 @@ def carrito_customer_view(request, cadena):
         places = None
         if empresa.sdk_public and empresa.sdk_private:
             sdk = mercadopago.SDK(empresa.sdk_private)
-            productos, total, tipos_de_orden, places = consulta_carrito(request, empresa)
+            productos, total, tipos_de_orden, places = consulta_carrito(request, empresa, en_linea=True)
             # Crea un ítem en la preferencia
             items = []
             #webhook = f'{request.scheme}://{request.get_host()}/api/webhooks/mercado-pago'
@@ -395,8 +395,11 @@ def eliminar_del_carrito_customer_view(request, pk, cadena):
         return redirect('mainapp:categorias_customer_view', cadena)
 
 
-def consulta_carrito(request, empresa):
-    tipos_de_orden = OrderType.objects.all()
+def consulta_carrito(request, empresa, en_linea=False):
+    if en_linea:
+        tipos_de_orden = OrderType.objects.filter(pk=2)
+    else:    
+        tipos_de_orden = OrderType.objects.all()
     places = Place.objects.filter(empresa=empresa)
     productos = []
     total = float(0)
@@ -518,19 +521,22 @@ def crear_nueva_orden_customer_view(request, cadena):
                     'cliente_direction', None)
                 cliente_email = nueva_orden_data["cliente"].get(
                     'cliente_email', None)
-                if cliente_name and cliente_cellphone:
+                if cliente_cellphone:
                     cliente = Customer()
-                    cliente.name = cliente_name
+                    if cliente_name:
+                        cliente.name = cliente_name
+                    else:
+                        cliente.name = "cliente: " + cliente_direction
                     cliente.cellphone = cliente_cellphone
                     cliente.direction = cliente_direction
                     cliente.email = cliente_email
                     cliente.empresa = empresa
-                    try:
-                        cliente.save()
-                    except Exception as e:
-                        messages.add_message(request, messages.ERROR,
-                                                'Existe un problema con el cliente {0}'.format(e))
-                        return redirect('mainapp:carrito_customer_view', cadena)
+                    # try:
+                    cliente.save()
+                    # except Exception as e:
+                    #     messages.add_message(request, messages.ERROR,
+                    #                             'Existe un problema con el cliente {0}'.format(e))
+                    #     return redirect('mainapp:carrito_customer_view', cadena)
             else:
                 cliente = Customer.objects.get(
                     pk=id_cliente, eliminado=False, empresa=empresa)
@@ -538,11 +544,9 @@ def crear_nueva_orden_customer_view(request, cadena):
             nueva_orden.manager_id = nueva_orden_data.get('waiter', None)
             nueva_orden.comments = comentario
             nueva_orden.customer = cliente
-            nueva_orden.save()
+            nueva_orden.save()  
 
-# Resto de tu código
 
-        # has esta logica y saca toda la info de request.session['client'] en lugar de el form post
             total = float(0)
             for item in request.session['cart']:
                 bandera = True

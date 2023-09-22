@@ -346,6 +346,15 @@
                     alert('El campo de comentario es requerido.');
                     return;
                 }
+
+                console.log("Valor de clienteCellphone: ", $('#clienteCellphone').val());
+                console.log("Valor de clienteCellphone: ", $('#clienteCellphone').val().trim());
+
+                if ($('#idCliente').val().trim() === '' && $('#clienteCellphone').val().trim() === '' ) {
+                    alert('El cliente es requerido, favor de almenos dejar su numero de celular.');
+                    return;
+                }
+                
                 document.getElementById('comentario').value += '\n' + window.direccion;
             } 
     
