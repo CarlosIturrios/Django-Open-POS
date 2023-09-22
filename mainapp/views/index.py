@@ -425,6 +425,18 @@ def consulta_carrito(request, empresa, en_linea=False):
             'total': float(producto.price) * float(item['cantidad']),
         })
         total += float(producto.price) * float(item['cantidad'])
+    if en_linea: 
+        comision = float(15) + (float(total) *  float(0.10))
+        productos.append({
+            'pk': '900001',
+            'name': 'Extra pago en linea',
+            'description': 'Extra com. pago en linea',
+            'quantity': 1,
+            'image': 'https://imgs.search.brave.com/hfRJZK5bXoJEBCMlCTa86J31pWinBo6dKwzmoNHcw7E/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudmV4ZWxzLmNv/bS9tZWRpYS91c2Vy/cy8zLzE1NzQ2NC9p/c29sYXRlZC9wcmV2/aWV3LzcxNmQyOWEw/N2M1M2Y0MjEzOTA1/ZTEyNTdjOTU4OGE3/LWljb25vLWRlLXBh/Z28tbW92aWwtYmxh/bmNvLXktbmVncm8u/cG5n',
+            'price': comision,
+            'total': comision,
+        })
+        total += comision
     return productos, total, tipos_de_orden, places
 
 
@@ -531,12 +543,12 @@ def crear_nueva_orden_customer_view(request, cadena):
                     cliente.direction = cliente_direction
                     cliente.email = cliente_email
                     cliente.empresa = empresa
-                    # try:
-                    cliente.save()
-                    # except Exception as e:
-                    #     messages.add_message(request, messages.ERROR,
-                    #                             'Existe un problema con el cliente {0}'.format(e))
-                    #     return redirect('mainapp:carrito_customer_view', cadena)
+                    try:
+                        cliente.save()
+                    except Exception as e:
+                        messages.add_message(request, messages.ERROR,
+                                                'Existe un problema con el cliente {0}'.format(e))
+                        return redirect('mainapp:carrito_customer_view', cadena)
             else:
                 cliente = Customer.objects.get(
                     pk=id_cliente, eliminado=False, empresa=empresa)
