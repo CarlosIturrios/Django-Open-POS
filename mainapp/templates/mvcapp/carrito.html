@@ -386,7 +386,7 @@
                                     {% else %}
                                         
                                         {% for group in  request.user.groups.all %}
-                                            {% if 'MESERO' == group.name or 'ADMINISTRADOR' == group.name and 'order' in request.session %}
+                                            {% if 'MESERO' == group.name or 'CAJERO' == group.name or 'ADMINISTRADOR' == group.name and 'order' in request.session %}
                                             <div class="col-sm-12 col-md-12">
                                                 <div class="form-group">
                                                     <form method="post" action="{% url 'mainapp:detalle_de_la_orden' %}">
