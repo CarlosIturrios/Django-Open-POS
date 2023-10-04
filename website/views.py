@@ -2,6 +2,8 @@
 
 from django.shortcuts import render
 from django.utils import timezone
+from datetime import datetime, timedelta
+
 from adminapp.models import Empresa
 # Create your views here.
 def website(request):
@@ -9,7 +11,9 @@ def website(request):
 
 def fuera_de_horario(request, pk):
     empresa = Empresa.objects.get(pk=pk)
-    hora_actual = timezone.localtime(timezone.now()).time()
+    hora_actual = timezone.now()
+    hora_actual_hermosillo = hora_actual - timedelta(hours=7)
+    hora_actual = hora_actual_hermosillo.time()
     hora_inicio = empresa.horario_de_acceso.hora_inicio
     hora_fin = empresa.horario_de_acceso.hora_fin
     nombre_comercial = empresa.nombre_comercial
