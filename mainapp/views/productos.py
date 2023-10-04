@@ -177,7 +177,9 @@ def eliminar_producto_view(request, pk=None):
 def productos_customer_view(request, cadena, pk):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
     if empresa.horario_de_acceso:
-        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_actual = timezone.now()
+        hora_actual_hermosillo = hora_actual - timedelta(hours=7)
+        hora_actual = hora_actual_hermosillo.time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
         if not validar_horario(hora_inicio, hora_fin, hora_actual):    

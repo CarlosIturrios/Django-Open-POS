@@ -314,7 +314,9 @@ def GeneratePDF(request, pk):
 def carrito_customer_view(request, cadena):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
     if empresa.horario_de_acceso:
-        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_actual = timezone.now()
+        hora_actual_hermosillo = hora_actual - timedelta(hours=7)
+        hora_actual = hora_actual_hermosillo.time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
         if not validar_horario(hora_inicio, hora_fin, hora_actual):    
@@ -408,7 +410,9 @@ def carrito_customer_view(request, cadena):
 def eliminar_del_carrito_customer_view(request, pk, cadena):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
     if empresa.horario_de_acceso:
-        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_actual = timezone.now()
+        hora_actual_hermosillo = hora_actual - timedelta(hours=7)
+        hora_actual = hora_actual_hermosillo.time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
         if not validar_horario(hora_inicio, hora_fin, hora_actual):    
@@ -519,7 +523,9 @@ def eliminar_del_carrito(request, pk, empresa, cadena=None):
 def crear_nueva_orden_customer_view(request, cadena):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
     if empresa.horario_de_acceso:
-        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_actual = timezone.now()
+        hora_actual_hermosillo = hora_actual - timedelta(hours=7)
+        hora_actual = hora_actual_hermosillo.time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
         if not validar_horario(hora_inicio, hora_fin, hora_actual):    
@@ -677,7 +683,9 @@ def crear_nueva_orden_customer_view(request, cadena):
 def index_customers_view(request, cadena):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
     if empresa.horario_de_acceso:
-        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_actual = timezone.now()
+        hora_actual_hermosillo = hora_actual - timedelta(hours=7)
+        hora_actual = hora_actual_hermosillo.time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
         if not validar_horario(hora_inicio, hora_fin, hora_actual):    
