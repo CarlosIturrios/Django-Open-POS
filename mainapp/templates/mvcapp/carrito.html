@@ -69,6 +69,17 @@
         font-size: 18px;
     }
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,600">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<link rel="stylesheet" href="'{% static 'assets_carrousel_carrousel/css/animate.css' %}">
+<link rel="stylesheet" href="{% static 'assets_carrousel/css/media-queries.css' %}">
+<link rel="stylesheet" href="{% static 'assets_carrousel/css/carousel.css' %}">
+
+<!-- Favicon and touch icons -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static 'assets_carrousel/ico/apple-touch-icon-144-precomposed.png' %}">
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static 'assets_carrousel/ico/apple-touch-icon-114-precomposed.png' %}">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static 'assets_carrousel/ico/apple-touch-icon-72-precomposed.png' %}">
+<link rel="apple-touch-icon-precomposed" href="{% static 'assets_carrousel/ico/apple-touch-icon-57-precomposed.png' %}">
 {% endblock %}
 
 {% block main %}
@@ -475,9 +486,112 @@
         </div>
     </div>
 </div>
+<div class="container-fluid">
+    <div id="carousel-example" class="carousel slide" data-ride="carousel">
+        <br>
+        <div class="carousel-inner row w-100 mx-auto" role="listbox">
+            {% for producto in articulos %}
+                <div class="carousel-item col-12 col-sm-6 col-md-4  {% if forloop.first %}active{% endif %}">
+                    <div class="card bg-light d-flex flex-fill">
+                        <div class="card-header text-muted border-bottom-0">
+
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h4><b>{{ producto.name }}</b></h4>
+                                    <h2><b>$ {{ producto.price |floatformat:2|intcomma }}</b></h2>
+                                    {{ producto.description }}
+                                </div>
+                                <div class="col-5 text-center">
+                                    <img alt="{{ producto.description }}" 
+                                    {% if producto.image %}
+                                        src="{{ producto.image.url }}"
+                                    {% endif %}
+                                         style="width: 128px; height: 128px;"
+                                         class="img-fluid mb-2">
+                                </div>
+                            </div>
+                        </div>
+                        {% for group in request.user.groups.all %}
+                            {% if 'ADMINISTRADOR' == group.name or 'CAJERO' == group.name or 'VENDEDOR' == group.name or 'ENCARGADO' == group.name or 'ASISTENTE' == group.name %}
+                            <div class="card-footer">
+                                
+                                    <form action="{% url 'mainapp:productos' producto.category_id %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <input type="text" name="id_product" value="{{ producto.id }}"
+                                                hidden>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <input type="text" name="carrito" value="carrito"
+                                                hidden>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label for="observaciones">Observación sobre este pedido</label>
+                                                <textarea class="form-control" rows="2" name="observaciones"
+                                                            id="observaciones-{{ producto.id }}"
+                                                            placeholder="Escriba algun comentario sobre este producto"
+                                                            required></textarea>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label for="cantidad">Cantidad</label>
+                                                <input class="form-control" type="number" id="cantidad" oninput="validateInput(this)"
+                                                min="0" max="{{ producto.stock }}" step="1" name="cantidad" value="1">
+                                                    <br>
+                                            </div>
+                                            {% if producto.stock < 1 %}
+                                                <div class="col-md-12">
+                                                    <div class="alert alert-danger alert-dismissible">
+                                                        <h5><i class="icon fas fa-ban"></i> ¡Agotado!</h5>
+                                                        Reabastece el stock. Actúa rápido. ¡Gracias por tu colaboración!
+                                                        </div>
+                                                </div>
+                                            {% else %}
+                                                <div class="col-md-6" id="addDivbutton-{{ producto.id }}">
+                                                    <button type="submit" class="btn btn-primary form-control">
+                                                        <i class="fas fa-plus"></i> Añadir a la orden
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-6" id="addDivbuttonObser-{{ producto.id }}">
+                                                    <button type="button" class="btn btn-success form-control" 
+                                                    onclick="autofillObservations('{{ producto.id }}')">
+                                                        <i class="fas fa-laugh-beam"></i> Sin Observaciones
+                                                    </button>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </form>
+                                
+                                
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                
+                    </div>
+                </div>
+            {% endfor %} 
+        </div>
+        <a class="carousel-control-prev" href="#carousel-example" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carousel-example" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+</div>
 {% endblock %}
 
 {% block script %}
+    <script src="{% static 'assets_carrousel/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'assets_carrousel/js/jquery-migrate-3.0.0.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="{% static 'assets_carrousel/js/jquery.backstretch.min.js' %}"></script>
+    <script src="{% static 'assets_carrousel/js/wow.min.js' %}"></script>
+    <script src="{% static 'assets_carrousel/js/scripts.js' %}"></script>
     <script>
         window.onload = function() {
             document.getElementById("q").focus();
@@ -683,6 +797,31 @@
             $('#informacionDelCliente').val(datosDelCliente);
             $('#datosDelCliente').attr("hidden", false);
             $('#idCliente').val(cliente.id);
+        }
+    </script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+        function autofillObservations(observacionesId) {
+            const observationsField = document.getElementById('observaciones-'+observacionesId);
+            observationsField.value = 'Sin observaciones sobre este detalle de producto.';
+            observationsField.disabled = true;
+            observationsField.removeAttribute('required');
+            console.log('addDivbutton-'+observacionesId);
+            const addDivbutton = document.getElementById('addDivbutton-'+observacionesId);
+            const addDivbuttonObser = document.getElementById('addDivbuttonObser-'+observacionesId);
+            addDivbuttonObser.hidden = true;
+            addDivbutton.classList.remove('col-md-12');
+            addDivbutton.classList.add('col-md-12');
+        }
+    </script>
+    <script>
+        function validateInput(inputElement) {
+            const max = parseFloat(inputElement.getAttribute('max'));
+            if (inputElement.value > max) {
+                inputElement.value = max;
+            }
         }
     </script>
 {% endblock %}

@@ -27,7 +27,7 @@ def productos_view(request, pk):
             return redirect('administracion:listar_empresas')
 
     if request.method == "POST":
-        append_product_to_cart(request, empresa, pk)
+        return append_product_to_cart(request, empresa, pk)
     productos = Product.objects.filter(
         category_id=pk, eliminado=False, empresa=empresa).order_by('-stock')
     return render(request, 'mvcapp/productos/productos.html',

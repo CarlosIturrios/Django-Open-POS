@@ -70,6 +70,7 @@ def carrito_view(request):
     tipos_de_orden = None
     places = None
     productos_busqueda = None
+    articulos = Product.objects.filter(eliminado=False, empresa=empresa)
     if request.method == "POST":
         search_content = request.POST.get('q', None)
         cantidad = 1
@@ -97,7 +98,7 @@ def carrito_view(request):
     if 'cart' in request.session:
         productos, total, tipos_de_orden, places = consulta_carrito(request, empresa)
     return render(request, 'mvcapp/carrito.html',
-                    {'productos': productos, 'total': total, 'tipos_de_orden': tipos_de_orden,
+                    {'productos': productos, 'articulos': articulos, 'total': total, 'tipos_de_orden': tipos_de_orden,
                       'places': places,'empresa_pk': empresa.pk, 'productos_busqueda': productos_busqueda})
 
 
@@ -118,6 +119,25 @@ def dashboard(request):
         fecha_inicial = request.POST.get('date1', None)
         fecha_final = request.POST.get('date2', None)
 
+        # Establecer el valor predeterminado de los campos de fecha
+        if not fecha_inicial:
+            fecha_inicial = timezone.localtime(timezone.now())
+        if not fecha_final:
+            fecha_final = timezone.localtime(timezone.now())
+
+        # Ensure date1 and date2 are strings
+        if isinstance(fecha_inicial, datetime):
+            fecha_inicial = fecha_inicial.strftime('%Y-%m-%d')
+        if isinstance(fecha_final, datetime):
+            fecha_final = fecha_final.strftime('%Y-%m-%d')
+
+        fecha_inicial = datetime.strptime(fecha_inicial, '%Y-%m-%d')
+        fecha_inicial = fecha_inicial.replace(hour=0, minute=0, second=0)
+
+        # Agregar la hora final (23:59:59) a fecha_final
+        fecha_final = datetime.strptime(fecha_final, '%Y-%m-%d')
+        fecha_final = fecha_final.replace(hour=23, minute=59, second=59)
+
         ventas_del_dia = Order.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final], pagado=True,
                                               eliminado=False,
                                               empresa=empresa).aggregate(Sum('amount'))
@@ -132,6 +152,19 @@ def dashboard(request):
     else:
         fecha_inicial = timezone.localtime(timezone.now())
         fecha_final = timezone.localtime(timezone.now())
+
+        # Ensure date1 and date2 are strings
+        if isinstance(fecha_inicial, datetime):
+            fecha_inicial = fecha_inicial.strftime('%Y-%m-%d')
+        if isinstance(fecha_final, datetime):
+            fecha_final = fecha_final.strftime('%Y-%m-%d')
+
+        fecha_inicial = datetime.strptime(fecha_inicial, '%Y-%m-%d')
+        fecha_inicial = fecha_inicial.replace(hour=0, minute=0, second=0)
+
+        # Agregar la hora final (23:59:59) a fecha_final
+        fecha_final = datetime.strptime(fecha_final, '%Y-%m-%d')
+        fecha_final = fecha_final.replace(hour=23, minute=59, second=59)
 
         ventas_del_dia = Order.objects.filter(fecha_de_creacion__range=[fecha_inicial, fecha_final],
             pagado=True, eliminado=False, empresa=empresa).aggregate(Sum('amount'))
@@ -719,4 +752,10 @@ def append_product_to_cart(request, empresa, pk):
         request.session['cart'] = cart
 
     messages.add_message(request, messages.SUCCESS, '{0} agregada a la orden'.format(producto.name))
+    print('entro carrito')
+    carrito = request.POST.get('carrito', None)
+    if carrito:
+        print(carrito, 'if')
+        return redirect('mainapp:carrito')
+    
     return redirect('mainapp:productos', pk)
