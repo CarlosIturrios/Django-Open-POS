@@ -1,0 +1,92 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>DOPSHOPPING - Automatizando tu negocio</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="DOPSHOPPING">
+    <meta name="keywords" content="HTML5, bootstrap, mobile, app, landing, ios, android, responsive">
+
+    <!-- Font -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
+    <!-- Themify Icons -->
+    <link rel="stylesheet" href="{% static 'website/css/themify-icons.css' %}">
+    <!-- Owl carousel -->
+    <link rel="stylesheet" href="{% static 'website/css/owl.carousel.min.css' %}">
+    <!-- Main css -->
+    <link href="{% static 'website/css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'template/plugins/toastr/toastr.min.css' %}">
+</head>
+
+<body data-spy="scroll" data-target="#navbar" data-offset="30">
+    <div class="row">
+      <div class="container mt-5">
+          <h1>La empresa no tiene servicio en este momento.</h1>
+          <p class="tagline">Vuelva a intentar en horario de atención.</p>
+          <h3>Hora actual: {{ hora_actual }}</h3>
+          <h3>Horario de atención: {{ hora_inicio }} - {{ hora_fin }}</h3>
+          <div class="col-12 col-sm-12 col-md-12">
+            <a href="/app/{{ nombre_para_pagos }}">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-success elevation-1"><i
+                                class="fas fa-shopping-basket"></i></span>
+                    <div class="info-box-content">
+                      <a href="/app/{{ nombre_para_pagos }}" id="copyUrlBtn"  data-url="dopshopping.com/app/{{ nombre_para_pagos }}">
+
+                          <div class="info-box mb-3">
+                              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-basket"></i></span>
+                              <div class="info-box-content">
+                                  <span class="info-box-text">Haga clic para copiar la URL del cliente</span>
+                              </div>
+                          </div>
+                      </a>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+            </a>
+            <!-- /.info-box -->
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery and Bootstrap -->
+    <script src="{% static 'website/js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'website/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Plugins JS -->
+    <script src="{% static 'website/js/owl.carousel.min.js' %}"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'website/js/script.js' %}"></script>
+    <script src="{% static 'template/plugins/toastr/toastr.min.js' %}"></script>
+    <script>
+        const copyUrlBtn = document.getElementById('copyUrlBtn');
+    copyUrlBtn.addEventListener('click', () => {
+        const urlToCopy = copyUrlBtn.getAttribute('data-url');
+        const tempInput = document.createElement('input');
+        tempInput.value = urlToCopy;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        alert('URL copiada al portapapeles: ' + urlToCopy);
+    });
+    </script>
+    <script>
+        {% if messages %}
+            {% for message in messages %}
+                toastr.options.closeButton = true;
+                toastr.options.progressBar = true;
+                toastr.options.positionClass = "toast-bottom-right";
+                toastr.{{ message.tags }}("{{ message }}");
+            {% endfor %}
+        {% endif %}
+    </script>
+</body>
+
+</html>
