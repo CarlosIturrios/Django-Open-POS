@@ -182,7 +182,7 @@ def productos_customer_view(request, cadena, pk):
         hora_fin = empresa.horario_de_acceso.hora_fin
         if not validar_horario(hora_inicio, hora_fin, hora_actual):    
             messages.add_message(request, messages.WARNING, 'La empresa está fuera de horario')
-            return redirect('website:website')
+            return redirect('website:fuera_de_horario', empresa.pk)
     if not empresa.vigente:
         messages.add_message(request, messages.WARNING,
                              'La empresa presenta adeudo y no tiene disponible la sección de pedidos')
