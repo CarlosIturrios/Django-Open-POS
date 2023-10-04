@@ -5,11 +5,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>POS | {{ cadena }}</title>
-
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
-    />
     <!-- Font Awesome Icons -->
     <link
       rel="stylesheet"
@@ -140,54 +135,58 @@
           {% endfor %}
       {% endif %}
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLrN2_odewMEHxUXX7CFM7PfO1R8V6Zu8&libraries=places"></script>
+
     <script>
+      // Reemplaza 'TU_API_KEY' con tu clave de API de OpenCageData
+      var apiKey = 'b8b5984563a94eea80996edc56769030';
+
+      window.direccion = "";
+      
+      var cadena = "{{ request.resolver_match.kwargs.cadena }}";
+
+      function goBack() {
+        window.history.back();
+      }
+
+      // Función para obtener la ciudad por latitud y longitud
+      function obtenerCiudadPorLatitudLongitud(latitud, longitud) {
+        // Realiza una solicitud al servicio de geocodificación inversa de OpenCageData
+        $.ajax({
+          url: "https://api.opencagedata.com/geocode/v1/json",
+          method: "GET",
+          data: {
+            q: latitud + "," + longitud,
+            key: apiKey,
+          },
+          success: function (respuesta) {
+            if (respuesta.results.length > 0) {
+              var ciudad = respuesta.results[0].components.city;
+              redireccionarCiudad(ciudad);
+            } else {
+              mostrarError("No se encontró información de ciudad para estas coordenadas.");
+            }
+          },
+          error: function () {
+            mostrarError("Ocurrió un proceso inesperado al obtener la ciudad.");
+          },
+        });
+      }
+
       function obtenerUbicacion() {
         if (navigator.geolocation) {
           mostrarCarga(); // Mostrar mensaje de carga mientras se obtiene la ubicación
           navigator.geolocation.getCurrentPosition(
-            mostrarUbicacion,
+            function (posicion) {
+              var latitud = posicion.coords.latitude;
+              var longitud = posicion.coords.longitude;
+              obtenerCiudadPorLatitudLongitud(latitud, longitud); // Obtener ciudad por latitud y longitud
+            },
             errorUbicacion
           );
         } else {
           mostrarError("Geolocalización no es soportada por este navegador.");
         }
-      }
-
-      function mostrarUbicacion(posicion) {
-        var latitud = posicion.coords.latitude;
-        var longitud = posicion.coords.longitude;
-
-        // Crear una instancia del geocodificador de Google Maps
-        var geocoder = new google.maps.Geocoder();
-
-        // Crear una objeto de tipo LatLng con las coordenadas
-        var latlng = new google.maps.LatLng(latitud, longitud);
-
-        // Realizar una solicitud de geocodificación inversa
-        geocoder.geocode({ location: latlng }, function (results, status) {
-          if (status === google.maps.GeocoderStatus.OK) {
-            if (results[0]) {
-              var ciudad;
-              for (var i = 0; i < results[0].address_components.length; i++) {
-                var addressComponent = results[0].address_components[i];
-                if (addressComponent.types.includes("locality")) {
-                  ciudad = addressComponent.long_name;
-                  break;
-                }
-              }
-
-              window.direccion = results[0].formatted_address;
-
-              redireccionarCiudad(ciudad); // Llamar a la función de redireccionamiento
-            } else {
-              mostrarError("No se encontraron resultados de geocodificación.");
-            }
-          } else {
-            mostrarError("Error en la solicitud de geocodificación: " + status);
-          }
-        });
-      }
+      };
 
       function errorUbicacion(error) {
         switch (error.code) {
@@ -206,6 +205,7 @@
       }
 
       function redireccionarCiudad(ciudad) {
+        console.log('ciudad:  ', ciudad)
         $.ajax({
           url: "/api/empresa/" + cadena + "/",
           success: function (respuesta) {
