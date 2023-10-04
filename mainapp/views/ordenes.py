@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
@@ -437,16 +438,28 @@ def listar_ordenes_view(request):
             return redirect('administracion:listar_empresas')
 
     ordenes = Order.objects.filter(eliminado=False, empresa=empresa)
-
+    
     # Obtener los parámetros de consulta de fecha
     date1 = request.GET.get('date1')
     date2 = request.GET.get('date2')
-
     # Establecer el valor predeterminado de los campos de fecha
     if not date1:
         date1 = timezone.localtime(timezone.now())
     if not date2:
         date2 = timezone.localtime(timezone.now())
+
+    # Ensure date1 and date2 are strings
+    if isinstance(date1, datetime):
+        date1 = date1.strftime('%Y-%m-%d')
+    if isinstance(date2, datetime):
+        date2 = date2.strftime('%Y-%m-%d')
+
+    fecha_inicial = datetime.strptime(date1, '%Y-%m-%d')
+    date1 = fecha_inicial.replace(hour=0, minute=0, second=0)
+
+    # Agregar la hora final (23:59:59) a fecha_final
+    fecha_final = datetime.strptime(date2, '%Y-%m-%d')
+    date2 = fecha_final.replace(hour=23, minute=59, second=59)
 
     # Filtrar por rango de fechas si se proporcionan los parámetros de consulta
     if date1 and date2:
@@ -454,3 +467,4 @@ def listar_ordenes_view(request):
         
     return render(request, 'mvcapp/ordenes/listar_ordenes.html',
                   {'ordenes': ordenes, 'empresa_pk': empresa.pk})
+
