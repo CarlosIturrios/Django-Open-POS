@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 
 from mainapp.models import Category
@@ -165,7 +165,9 @@ def eliminar_categoria_view(request, categoria_id):
 def categorias_customer_view(request, cadena):
     empresa = get_object_or_404(Empresa, nombre_para_pagos=cadena)
     if empresa.horario_de_acceso:
-        hora_actual = timezone.localtime(timezone.now()).time()
+        hora_actual = timezone.now()
+        hora_actual_hermosillo = hora_actual - timedelta(hours=7)
+        hora_actual = hora_actual_hermosillo.time()
         hora_inicio = empresa.horario_de_acceso.hora_inicio
         hora_fin = empresa.horario_de_acceso.hora_fin
         if not validar_horario(hora_inicio, hora_fin, hora_actual):    
