@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     nginx
 
+RUN ln -snf /usr/share/zoneinfo/America/Hermosillo /etc/localtime && echo "America/Hermosillo" > /etc/timezone
+
 RUN pip3 install setuptools
 
 RUN wget -O /wkhtmltox_0.12.1.4-2.bionic_amd64.deb \
