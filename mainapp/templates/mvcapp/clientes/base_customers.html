@@ -49,25 +49,7 @@
 
     <div class="container-fluid" id="contenidoPrincipal" style="display: none">
       <br />
-      {% if 'cart' in request.session %}
-
-      <b>
-        <a class="float-right"
-          href="{% url 'mainapp:carrito_customer_view' cadena %}" style="font-size: 24px; color: #7a0c0c; text-decoration: none;">
-          Pasar a pagar 🛒 
-        </a>
-      </b>
-      {% endif %}
       <section class="content">
-        <b>
-          <a
-            class="float-left"
-            href="{% url 'mainapp:categorias_customer_view' request.resolver_match.kwargs.cadena %}">
-            Elegir de otra categoria
-            <i class="fas fa-arrow-alt-circle-left"></i>
-          </a>
-        </b>
-        <br>
         <div class="container-fluid">
           <div class="row">
             <div class="col-sm-4 col-md-4">
@@ -89,11 +71,42 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-6">
+            <b>
+              <a
+                class="float-left"
+                href="{% url 'mainapp:categorias_customer_view' request.resolver_match.kwargs.cadena %}">
+                Elegir de otra categoria
+                <i class="fas fa-arrow-alt-circle-left"></i>
+              </a>
+            </b>
+          </div>
+          <div class="col-md-6">
+            {% if 'cart' in request.session %}
+
+            <b>
+              <a class="float-right"
+                href="{% url 'mainapp:carrito_customer_view' cadena %}" style="font-size: 20px; color: #7a0c0c; text-decoration: none;">
+                Pasar a pagar 🛒 
+              </a>
+            </b>
+            {% endif %}
+          </div>
+        </div>
+        <br>
       </section>
       <!-- Main content -->
-      <section class="content">{% block main %}{% endblock %}</section>
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            {% block main %}{% endblock %}
+            </div>
+          </div>
+        </section>
       <!--  /.content -->
-      <div class="lockscreen-footer text-center" style=" position: fixed; bottom: 0; width: 100%; padding: 5px; z-index: 9999;">
+      
+      <div class="lockscreen-footer text-center" style=" bottom: 0; width: 100%; padding: 5px; z-index: 9999;">
         <strong>
           <a href="https://dopshopping.com/" target="_blank">
             <b>DOP</b>SHOPPING
