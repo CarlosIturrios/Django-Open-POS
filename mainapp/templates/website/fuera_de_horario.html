@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!doctype html>
 <html lang="en">
 
@@ -29,7 +30,7 @@
     <div class="row">
       <div class="container mt-5">
           <h1>{{ nombre_comercial }} no tiene servicio en este momento.</h1>
-          <h3>Hora actual: {{ hora_actual }}</h3>
+          <h3 id="hora-actual">Hora actual: {{ hora_actual }}</h3>
           <h3>Horario de atención: {{ hora_inicio }} - {{ hora_fin }}</h3>
           <div class="col-12 col-sm-12 col-md-12">
             <a href="/app/{{ nombre_para_pagos }}">
@@ -42,7 +43,7 @@
                           <div class="info-box mb-3">
                               <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-basket"></i></span>
                               <div class="info-box-content">
-                                  <span class="info-box-text">Haga clic para copiar la URL del cliente</span>
+                                  <span class="info-box-text">Haga clic para volver a intentar y copiar la URL de {{ nombre_comercial }}</span>
                               </div>
                           </div>
                       </a>
@@ -54,7 +55,40 @@
         </div>
       </div>
     </div>
-
+        <div class="section light-bg" id="gallery">
+            <div class="container">
+                <div class="section-title">
+                    <small>Nuestro menu</small>
+                    <h3>Visitanos en: {{ direccion_sucursal }}</h3>
+                </div>
+    
+                <div class="img-gallery owl-carousel owl-theme">
+                    {% for producto in productos %}
+                        <div class="card bg-light d-flex flex-fill">
+                            <div class="card-header text-muted border-bottom-0">
+                            </div>
+                            <div class="card-body pt-0">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <h4><b>{{ producto.name }}</b></h4>
+                                        <h2><b>$ {{ producto.price |floatformat:2|intcomma }}</b></h2>
+                                        {{ producto.description }}
+                                    </div>
+                                    <div class="col-5 text-center">
+                                        <img alt="{{ producto.description }}" 
+                                        {% if producto.image %}
+                                            src="{{ producto.image.url }}"
+                                        {% endif %}
+                                            style="width: 128px; height: 128px;"
+                                            class="img-fluid mb-2">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     <!-- jQuery and Bootstrap -->
     <script src="{% static 'website/js/jquery-3.2.1.min.js' %}"></script>
     <script src="{% static 'website/js/bootstrap.bundle.min.js' %}"></script>
@@ -75,6 +109,22 @@
         document.body.removeChild(tempInput);
         alert('URL copiada al portapapeles: ' + urlToCopy);
     });
+    function actualizarHora() {
+    const horaActualElement = document.getElementById('hora-actual');
+    const fecha = new Date();
+    const hora = fecha.getHours();
+    const minutos = fecha.getMinutes();
+    const segundos = fecha.getSeconds();
+    const horaFormateada = `${hora}:${minutos}:${segundos}`;
+        horaActualElement.textContent = horaFormateada;
+    }
+
+    // Actualiza la hora cada segundo
+    setInterval(actualizarHora, 1000);
+
+    // Llama a la función una vez al cargar la página para mostrar la hora inicial
+    actualizarHora();
+
     </script>
     <script>
         {% if messages %}
