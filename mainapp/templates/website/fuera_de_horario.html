@@ -58,8 +58,10 @@
         <div class="section light-bg" id="gallery">
             <div class="container">
                 <div class="section-title">
-                    <small>Nuestro menu</small>
-                    <h3>Visitanos en: {{ direccion_sucursal }}</h3>
+                    {% if direccion_sucursal %}
+                        <small>Visitanos en: {{ direccion_sucursal }}</small>
+                    {% endif %}
+                    <h3>Nuestro menu</h3>
                 </div>
     
                 <div class="img-gallery owl-carousel owl-theme">
