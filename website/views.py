@@ -20,7 +20,8 @@ def fuera_de_horario(request, pk):
     hora_fin = empresa.horario_de_acceso.hora_fin
     nombre_comercial = empresa.nombre_comercial
     nombre_para_pagos = empresa.nombre_para_pagos
-    direccion_sucursal = Place.objects.filter(eliminado=False, empresa=empresa).values('direction').first()
+    direccion_sucursal = Place.objects.filter(eliminado=False,
+                                               empresa=empresa).values('direction').first() or None
 
     productos = Product.objects.filter(eliminado=False, empresa=empresa).values(
         'name','description','category','price','image',
