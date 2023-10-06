@@ -178,7 +178,6 @@ def detalle_de_la_orden(request):
             orden.status_id = 2
             orden.waiter = request.user
             orden.save()
-            total = float(0)
             for item in request.session['cart']:
                 bandera = True
                 for producto in orden.relacion_Order_a_OrderDetail.all():
@@ -187,8 +186,8 @@ def detalle_de_la_orden(request):
                         producto.observaciones += str(item['observaciones'])
                         producto.save()
                         bandera = False
-                        total += (float(producto.product.price)
-                                  * float(producto.quantity))
+                    
+                        
                 if bandera:
                     producto = Product.objects.get(
                         pk=item['id_product'], eliminado=False, empresa=empresa)
@@ -198,14 +197,18 @@ def detalle_de_la_orden(request):
                     detalle.observaciones = str(item['observaciones'])
                     detalle.order = orden
                     detalle.empresa = empresa
-                    detalle.save()
-                    total += (float(producto.price) * float(detalle.quantity))
+                    detalle.save()           
+            detalle = orden.relacion_Order_a_OrderDetail.all()
+            total = float(0)
+            for item in detalle:
+                producto = item.product
+                total += float(producto.price) * float(item.quantity)
             orden.amount = total
             orden.save()
             del request.session['cart']
             del request.session['order']
             messages.add_message(request, messages.SUCCESS,
-                                 'Orden #{0} cobrada con exito'.format(orden.pk))
+                                 'Orden #{0} actualizada con exito'.format(orden.pk))
             return redirect('mainapp:orden_cobrada', orden.pk)
         else:
             messages.add_message(request, messages.ERROR,
