@@ -61,7 +61,7 @@
                     {% if direccion_sucursal %}
                         <small>Visitanos en: {{ direccion_sucursal }}</small>
                     {% endif %}
-                    <h3>Nuestro menu</h3>
+                    <h3>Nuestro Menú</h3>
                 </div>
     
                 <div class="img-gallery owl-carousel owl-theme">
@@ -112,13 +112,17 @@
         alert('URL copiada al portapapeles: ' + urlToCopy);
     });
     function actualizarHora() {
-    const horaActualElement = document.getElementById('hora-actual');
-    const fecha = new Date();
-    const hora = fecha.getHours();
-    const minutos = fecha.getMinutes();
-    const segundos = fecha.getSeconds();
-    const horaFormateada = `${hora}:${minutos}:${segundos}`;
+        const horaActualElement = document.getElementById('hora-actual');
+        const fecha = new Date();
+        const hora = agregarCeroIzquierda(fecha.getHours());
+        const minutos = agregarCeroIzquierda(fecha.getMinutes());
+        const segundos = agregarCeroIzquierda(fecha.getSeconds());
+        const horaFormateada = `${hora}:${minutos}:${segundos}`;
         horaActualElement.textContent = horaFormateada;
+    }
+
+    function agregarCeroIzquierda(valor) {
+        return valor < 10 ? `0${valor}` : valor;
     }
 
     // Actualiza la hora cada segundo
