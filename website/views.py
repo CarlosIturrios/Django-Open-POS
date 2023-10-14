@@ -23,9 +23,7 @@ def fuera_de_horario(request, pk):
     direccion_sucursal = Place.objects.filter(eliminado=False,
                                                empresa=empresa).values('direction').first() or None
 
-    productos = Product.objects.filter(eliminado=False, empresa=empresa).values(
-        'name','description','category','price','image',
-    )
+    productos = Product.objects.filter(eliminado=False, empresa=empresa)
 
     context = {
         'hora_actual': hora_actual,

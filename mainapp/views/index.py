@@ -727,7 +727,6 @@ def validar_horario(hora_inicio, hora_fin, hora_actual):
     
 def append_product_to_cart(request, empresa, pk):
     id_product = request.POST.get('id_product', None)
-    print('id_product linea 671: ',id_product)
     cantidad = request.POST.get('cantidad', None)
     observaciones = request.POST.get('observaciones', None)
     try:
