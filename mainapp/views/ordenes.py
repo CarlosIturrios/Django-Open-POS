@@ -8,6 +8,8 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.core import serializers
 
+import ast
+
 from mainapp.models import Product
 from mainapp.models import Order
 from mainapp.models import OrderDetail
@@ -183,7 +185,11 @@ def detalle_de_la_orden(request):
                 for producto in orden.relacion_Order_a_OrderDetail.all():
                     if producto.product_id == int(item['id_product']):
                         producto.quantity += int(item['cantidad'])
-                        producto.observaciones += str(item['observaciones'])
+                        #producto.observaciones += str(item['observaciones'])   
+                        lista = ast.literal_eval(producto.observaciones)
+                        
+                        lista.append(str(item['observaciones'][0]))                     
+                        producto.observaciones = lista
                         producto.save()
                         bandera = False
                     
