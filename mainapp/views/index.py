@@ -452,11 +452,18 @@ def consulta_carrito(request, empresa, en_linea=False):
             image_url = producto.image.url
         else:
             image_url = "#"
+        # TO DO este fragmento de codigo se duplica hay que hacer un metodo            
+        observacion = str(item['observaciones'])
+        if observacion and observacion !='[][]':
+            lista_formateada = [elemento.strip().capitalize() if elemento is not None else "Todo incluido" for elemento in eval(observacion)]
+        else:
+            lista_formateada = ''
         productos.append({
             'pk': producto.pk,
             'name': producto.name,
             'description': producto.description,
             'quantity': item['cantidad'],
+            'observaciones': '\n'.join([f"- {elemento}" for elemento in lista_formateada]),
             'image': image_url,
             'price': float(producto.price),
             'total': float(producto.price) * float(item['cantidad']),
