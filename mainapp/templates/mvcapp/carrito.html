@@ -122,6 +122,7 @@
                                     <tr>
                                         <th></th>
                                         <th>Producto</th>
+                                        <th>Observaciones</th>
                                         <th>Cantidad</th>
                                         <th>Precio</th>
                                         <th>Total</th>
@@ -137,6 +138,7 @@
                                                     class="img-fluid mb-2">
                                             </td>
                                             <td>{{ producto.name }}</td>
+                                            <td>{{ producto.observaciones }}</td>
                                             <td>{{ producto.quantity }}</td>
                                             <td><small>$</small>{{ producto.price|floatformat:2|intcomma }}</td>
                                             <td><small>$</small>{{ producto.total|floatformat:2|intcomma }}</td>
