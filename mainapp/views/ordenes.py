@@ -187,8 +187,10 @@ def detalle_de_la_orden(request):
                         producto.quantity += int(item['cantidad'])
                         #producto.observaciones += str(item['observaciones'])   
                         lista = ast.literal_eval(producto.observaciones)
-                        
-                        lista.append(str(item['observaciones'][0]))                     
+                        if len(item['observaciones']) > 0:
+                            lista.append(str(item['observaciones'][0]))
+                        else:
+                            lista = []
                         producto.observaciones = lista
                         producto.save()
                         bandera = False
@@ -350,6 +352,7 @@ def orden(request, pk):
     request.session['order'] = pk
     for product in orden.relacion_Order_a_OrderDetail.all():
         producto = product.product
+        # TO DO este fragmento de codigo se duplica hay que hacer un metodo            
         if product.observaciones and product.observaciones !='[][]':
             print(product.observaciones)
             lista_formateada = [elemento.strip().capitalize() if elemento is not None else "Todo incluido" for elemento in eval(product.observaciones)]
